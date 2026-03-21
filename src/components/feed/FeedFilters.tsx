@@ -10,10 +10,11 @@ interface FeedFiltersProps {
 }
 
 const sources: { key: EventSource; label: string; color: string }[] = [
-  { key: 'acled', label: 'ACLED', color: 'text-terminal-green' },
+  { key: 'acled', label: 'GEOCON', color: 'text-terminal-green' },
   { key: 'adsb', label: 'ADS-B', color: 'text-terminal-blue' },
   { key: 'aisstream', label: 'AIS', color: 'text-terminal-amber' },
   { key: 'deepstate', label: 'DSTATE', color: 'text-terminal-red' },
+  { key: 'telegram', label: 'TGRAM', color: 'text-terminal-green-dim' },
 ];
 
 const severities: { key: Severity; label: string; color: string }[] = [

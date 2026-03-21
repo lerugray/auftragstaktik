@@ -5,6 +5,7 @@ import { useState } from 'react';
 interface LayerState {
   frontlines: boolean;
   aircraft: boolean;
+  airDefense: boolean;
   maritime: boolean;
   acled: boolean;
 }
@@ -20,6 +21,7 @@ interface MapControlsProps {
 const layerConfig: { key: keyof LayerState; label: string; color: string }[] = [
   { key: 'frontlines', label: 'FRONTLINES', color: 'text-terminal-red' },
   { key: 'aircraft', label: 'AIRCRAFT', color: 'text-terminal-blue' },
+  { key: 'airDefense', label: 'AIR DEFENSE', color: 'text-severity-high' },
   { key: 'maritime', label: 'MARITIME', color: 'text-terminal-amber' },
   { key: 'acled', label: 'EVENTS', color: 'text-terminal-green' },
 ];

@@ -11,7 +11,10 @@
       "Bash(curl -s \"https://geoconfirmed.org/api/Placemark/Ukraine/1/5\")",
       "Bash(python3 -c \":*)",
       "WebFetch(domain:aisstream.io)",
-      "Bash(gh api:*)"
+      "Bash(gh api:*)",
+      "Bash(npx kill-port:*)",
+      "Bash(taskkill //f //im node.exe)",
+      "Bash(rm -rf .next)"
     ]
   }
 }

@@ -8,13 +8,14 @@ import type { EventRecord, EventSource, Severity } from '@/lib/types/events';
 interface IntelFeedProps {
   theaterId: string;
   theaterConflicts: string; // comma-separated GeoConfirmed conflict slugs
+  telegramChannels?: string; // comma-separated Telegram channel names
   onEventClick?: (event: EventRecord) => void;
 }
 
-const ALL_SOURCES: EventSource[] = ['acled', 'adsb', 'aisstream', 'deepstate'];
+const ALL_SOURCES: EventSource[] = ['acled', 'adsb', 'aisstream', 'deepstate', 'telegram'];
 const ALL_SEVERITIES: Severity[] = ['critical', 'high', 'medium', 'low', 'info'];
 
-export function IntelFeed({ theaterId, theaterConflicts, onEventClick }: IntelFeedProps) {
+export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEventClick }: IntelFeedProps) {
   const [events, setEvents] = useState<EventRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +26,9 @@ export function IntelFeed({ theaterId, theaterConflicts, onEventClick }: IntelFe
 
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await fetch(`/api/events?conflicts=${encodeURIComponent(theaterConflicts)}`);
+      let url = `/api/events?conflicts=${encodeURIComponent(theaterConflicts)}`;
+      if (telegramChannels) url += `&telegram=${encodeURIComponent(telegramChannels)}`;
+      const res = await fetch(url);
       if (!res.ok) throw new Error(`API returned ${res.status}`);
       const data = await res.json();
       setEvents(data.events || []);
@@ -36,7 +39,7 @@ export function IntelFeed({ theaterId, theaterConflicts, onEventClick }: IntelFe
     } finally {
       setLoading(false);
     }
-  }, [theaterConflicts]);
+  }, [theaterConflicts, telegramChannels]);
 
   // Initial fetch + polling every 30 seconds
   useEffect(() => {

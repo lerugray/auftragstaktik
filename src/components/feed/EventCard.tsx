@@ -15,6 +15,7 @@ const sourceStyles: Record<string, { color: string; label: string }> = {
   adsb: { color: 'text-terminal-blue', label: 'ADS-B' },
   aisstream: { color: 'text-terminal-amber', label: 'AIS' },
   deepstate: { color: 'text-terminal-red', label: 'DSTATE' },
+  telegram: { color: 'text-terminal-green-dim', label: 'TGRAM' },
 };
 
 function formatDTG(isoDate: string): string {
@@ -37,9 +38,19 @@ export function EventCard({ event, onClick }: EventCardProps) {
   const severity = severityStyles[event.severity];
   const source = sourceStyles[event.source] || { color: 'text-tactical-text-dim', label: event.source.toUpperCase() };
 
+  const handleClick = () => {
+    // Telegram posts: open original message in new tab
+    if (event.source === 'telegram') {
+      const link = (event.rawData as Record<string, unknown>)?.link as string;
+      if (link) window.open(link, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    onClick?.(event);
+  };
+
   return (
     <button
-      onClick={() => onClick?.(event)}
+      onClick={handleClick}
       className="w-full text-left px-3 py-2.5 border-b border-tactical-border hover:bg-tactical-surface/50 transition-colors"
     >
       {/* Top row: severity badge + DTG + source */}

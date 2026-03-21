@@ -24,6 +24,7 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 ## Data Sources
 - DeepState (frontlines) — no key needed
 - GeoConfirmed (conflict events) — no key needed, replaced ACLED as primary source
+- Telegram (military blogs) — scraped from public preview pages, auto-translated
 - adsb.lol (aircraft) — no key needed
 - aisstream.io (maritime/AIS) — free API key via GitHub auth
 
@@ -57,5 +58,6 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 - **Phase 6: LLM Briefing Generator** — COMPLETE (Ollama default, slop filter, structured SITREP)
 - **Phase 7: Bug Fixes + UX Polish** — COMPLETE (theater-scoped events, pulse markers, wiki links, news links)
 - **Phase 8: Theater Expansion + Help + Accessibility** — COMPLETE (6 theaters, help menu, light theme)
+- **Phase 9: Telegram + AD/SAM Layer** — COMPLETE (Telegram scraping + translation, 18 AD installations)
 
-**Next: Phase 9** — Telegram Channel Integration
+**Next: Phase 10** — PDF SITREP Export + Final Polish

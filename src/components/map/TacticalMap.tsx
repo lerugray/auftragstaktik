@@ -9,12 +9,14 @@ import { FrontlineLayer } from './FrontlineLayer';
 import { AircraftLayer } from './AircraftLayer';
 import { MaritimeLayer } from './MaritimeLayer';
 import { ConflictEventLayer } from './ConflictEventLayer';
+import { AirDefenseLayer } from './AirDefenseLayer';
 import { DetailPanel } from './DetailPanel';
 import { MapControls } from './MapControls';
 import { MapLegend } from './MapLegend';
 import type { Theater } from '@/lib/theaters';
 import type { MapHandle } from '@/components/layout/DashboardShell';
 import type { AircraftRecord, MaritimeRecord, EventRecord } from '@/lib/types/events';
+import type { AirDefenseInstallation } from '@/lib/data/airDefense';
 
 interface TacticalMapProps {
   theater: Theater;
@@ -31,6 +33,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
   const [selectedAircraft, setSelectedAircraft] = useState<AircraftRecord | null>(null);
   const [selectedVessel, setSelectedVessel] = useState<MaritimeRecord | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
+  const [selectedAD, setSelectedAD] = useState<AirDefenseInstallation | null>(null);
   const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
   const [activeEventTypes, setActiveEventTypes] = useState<Set<string>>(new Set([
     'Missile strike', 'Drone strike', 'Air/drone strike',
@@ -43,6 +46,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
   const [layers, setLayers] = useState({
     frontlines: true,
     aircraft: true,
+    airDefense: true,
     maritime: true,
     acled: true,
   });
@@ -142,6 +146,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     setSelectedAircraft(null);
     setSelectedVessel(null);
     setSelectedEvent(null);
+    setSelectedAD(null);
   }, []);
 
   const handleAircraftClick = useCallback((aircraft: AircraftRecord) => {
@@ -157,6 +162,11 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
   const handleEventClick = useCallback((event: EventRecord) => {
     clearSelections();
     setSelectedEvent(event);
+  }, [clearSelections]);
+
+  const handleADClick = useCallback((installation: AirDefenseInstallation) => {
+    clearSelections();
+    setSelectedAD(installation);
   }, [clearSelections]);
 
   return (
@@ -190,6 +200,13 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
               onHighlightClear={() => setHighlightedEventId(null)}
             />
           )}
+          {layers.airDefense && (
+            <AirDefenseLayer
+              map={mapRef.current}
+              theater={theater}
+              onInstallationClick={handleADClick}
+            />
+          )}
         </>
       )}
 
@@ -215,6 +232,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
         aircraft={selectedAircraft}
         vessel={selectedVessel}
         event={selectedEvent}
+        airDefense={selectedAD}
         onClose={clearSelections}
       />
 

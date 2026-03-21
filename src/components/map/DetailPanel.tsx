@@ -2,12 +2,14 @@
 
 import type { ReactNode } from 'react';
 import type { AircraftRecord, MaritimeRecord, EventRecord } from '@/lib/types/events';
+import type { AirDefenseInstallation } from '@/lib/data/airDefense';
 import { getAircraftWikiUrl, getVesselWikiUrl } from '@/lib/data/wikiLinks';
 
 interface DetailPanelProps {
   aircraft?: AircraftRecord | null;
   vessel?: MaritimeRecord | null;
   event?: EventRecord | null;
+  airDefense?: AirDefenseInstallation | null;
   onClose: () => void;
 }
 
@@ -26,14 +28,15 @@ const CLASSIFICATION_LABELS: Record<string, { label: string; color: string }> = 
   unknown: { label: 'UNKNOWN', color: 'bg-tactical-text-dim/20 text-tactical-text-dim' },
 };
 
-export function DetailPanel({ aircraft, vessel, event, onClose }: DetailPanelProps) {
-  if (!aircraft && !vessel && !event) return null;
+export function DetailPanel({ aircraft, vessel, event, airDefense, onClose }: DetailPanelProps) {
+  if (!aircraft && !vessel && !event && !airDefense) return null;
 
   return (
     <div className="absolute bottom-12 left-2 bg-tactical-dark/95 border border-tactical-border p-3 min-w-[280px] max-w-[350px]">
       {aircraft && <AircraftDetail aircraft={aircraft} onClose={onClose} />}
       {vessel && <VesselDetail vessel={vessel} onClose={onClose} />}
       {event && <ConflictEventDetail event={event} onClose={onClose} />}
+      {airDefense && <AirDefenseDetail installation={airDefense} onClose={onClose} />}
     </div>
   );
 }
@@ -163,6 +166,46 @@ function ConflictEventDetail({ event, onClose }: { event: EventRecord; onClose: 
         >
           NEWS COVERAGE
         </a>
+      </div>
+    </>
+  );
+}
+
+const STATUS_BADGE: Record<string, string> = {
+  confirmed: 'bg-terminal-green/20 text-terminal-green',
+  suspected: 'bg-terminal-amber/20 text-terminal-amber',
+  relocated: 'bg-tactical-text-dim/20 text-tactical-text-dim',
+};
+
+function AirDefenseDetail({ installation, onClose }: { installation: AirDefenseInstallation; onClose: () => void }) {
+  const statusClass = STATUS_BADGE[installation.status] || STATUS_BADGE.suspected;
+  const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(installation.system)}`;
+
+  return (
+    <>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${statusClass}`}>
+            {installation.status.toUpperCase()}
+          </span>
+          <span className="text-sm font-mono font-bold text-tactical-text">
+            AIR DEFENSE
+          </span>
+        </div>
+        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+      </div>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+        <DetailRow label="SYSTEM" value={
+          <WikiLink href={wikiUrl}>{installation.system}</WikiLink>
+        } />
+        <DetailRow label="OPER" value={installation.operator} />
+        <DetailRow label="LOC" value={installation.location} />
+        <DetailRow label="LAT" value={installation.lat.toFixed(4) + '°'} />
+        <DetailRow label="LON" value={installation.lng.toFixed(4) + '°'} />
+        <DetailRow label="CONFIRMED" value={installation.lastConfirmed} />
+      </div>
+      <div className="mt-2 pt-2 border-t border-tactical-border text-xs font-mono text-tactical-text-dim leading-relaxed">
+        {installation.source}
       </div>
     </>
   );

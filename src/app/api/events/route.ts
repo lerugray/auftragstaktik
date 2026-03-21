@@ -3,15 +3,26 @@ import { fetchGeoConfirmedEvents } from '@/lib/data/geoconfirmed';
 import { normalizeGeoConfirmedEvents } from '@/lib/processing/eventNormalizer';
 import { deduplicateEvents } from '@/lib/processing/deduplicator';
 import { severityOrder } from '@/lib/processing/severityTagger';
+import { fetchMultipleChannels } from '@/lib/data/telegram';
+import { geoTagText } from '@/lib/data/gazetteer';
 import type { EventRecord, Severity } from '@/lib/types/events';
+
+// Keyword-based severity for Telegram posts
+function detectSeverity(text: string): Severity {
+  if (/missile|ballistic|nuclear|chemical|mass casualt/i.test(text)) return 'critical';
+  if (/strike|bomb|shell|artiller|drone attack|offensive|breakthrough/i.test(text)) return 'high';
+  if (/clash|fight|assault|advance|retreat|captured|destroy/i.test(text)) return 'medium';
+  if (/fortif|trench|deploy|reinforce|movement|convoy/i.test(text)) return 'low';
+  return 'info';
+}
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
     const conflictsParam = searchParams.get('conflicts') || 'ukraine';
+    const telegramChannels = searchParams.get('telegram')?.split(',').filter(Boolean) || [];
     const severityFilter = searchParams.get('severity')?.split(',') as Severity[] | undefined;
 
-    // Support comma-separated conflict slugs (e.g., "israel,syria,yemen,iran")
     const conflicts = conflictsParam.split(',').map(s => s.trim()).filter(Boolean);
 
     const allEvents: EventRecord[] = [];
@@ -24,6 +35,36 @@ export async function GET(request: NextRequest) {
         allEvents.push(...normalized);
       } catch (err) {
         console.error(`Failed to fetch GeoConfirmed events for ${conflict}:`, err);
+      }
+    }
+
+    // Fetch Telegram channel posts
+    if (telegramChannels.length > 0) {
+      try {
+        const posts = await fetchMultipleChannels(telegramChannels);
+        for (const post of posts) {
+          const displayText = post.translatedText || post.text;
+          const geo = geoTagText(post.text) || geoTagText(displayText);
+          allEvents.push({
+            id: `tg-${post.id}`,
+            source: 'telegram',
+            timestamp: new Date(post.date).toISOString(),
+            coordinates: geo ? [geo.lng, geo.lat] : [0, 0],
+            eventType: 'Telegram Report',
+            severity: detectSeverity(displayText),
+            title: displayText.substring(0, 120) + (displayText.length > 120 ? '...' : ''),
+            description: displayText,
+            rawData: {
+              channel: post.channel,
+              originalText: post.text,
+              link: post.link,
+              geoTagged: !!geo,
+              locationName: geo?.name,
+            },
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch Telegram posts:', err);
       }
     }
 
@@ -46,7 +87,8 @@ export async function GET(request: NextRequest) {
       events,
       count: events.length,
       sources: {
-        geoconfirmed: { status: 'connected', eventCount: events.length },
+        geoconfirmed: { status: 'connected', eventCount: allEvents.filter(e => e.source === 'acled').length },
+        telegram: { status: telegramChannels.length > 0 ? 'connected' : 'disabled', eventCount: allEvents.filter(e => e.source === 'telegram').length },
       },
     });
   } catch (error) {

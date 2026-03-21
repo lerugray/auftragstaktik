@@ -49,6 +49,13 @@ export function DashboardShell() {
     return conflicts?.join(',') || 'ukraine';
   }, [theater]);
 
+  // Get Telegram channels for the active theater
+  const telegramChannels = useMemo(() => {
+    const tgSource = theater.dataSources.find((ds) => ds.source === 'telegram' && ds.enabled);
+    const channels = tgSource?.params?.channels as string[] | undefined;
+    return channels?.join(',') || '';
+  }, [theater]);
+
   const handleEventClick = useCallback((event: EventRecord) => {
     if (mapHandleRef.current) {
       mapHandleRef.current.flyTo(event.coordinates[0], event.coordinates[1], 10);
@@ -82,6 +89,7 @@ export function DashboardShell() {
             <IntelFeed
               theaterId={theaterId}
               theaterConflicts={theaterConflicts}
+              telegramChannels={telegramChannels}
               onEventClick={handleEventClick}
             />
           </PanelFrame>

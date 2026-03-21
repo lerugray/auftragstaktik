@@ -41,6 +41,7 @@ export const theaters: Theater[] = [
       { source: 'adsb', enabled: true, params: { bbox: [22.0, 44.0, 40.5, 52.5] } },
       { source: 'aisstream', enabled: true, params: { bbox: [27.0, 40.0, 42.0, 47.0] } },
       { source: 'acled', enabled: true, params: { conflicts: ['ukraine'] } },
+      { source: 'telegram', enabled: true, params: { channels: ['ryaborig', 'DeepStateUA', 'waboronzo'] } },
     ],
   },
   {

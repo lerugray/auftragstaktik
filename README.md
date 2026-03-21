@@ -38,6 +38,7 @@ The name comes from the German doctrine of mission-type tactics: give the object
 | [GeoConfirmed](https://geoconfirmed.org) | Verified conflict events (strikes, shelling, clashes) | None |
 | [adsb.lol](https://adsb.lol) | Aircraft positions via ADS-B, including military | None |
 | [aisstream.io](https://aisstream.io) | Ship positions via AIS, military vessel classification | Free API key |
+| Telegram channels | Military blog posts (Rybar, DeepState UA, WarGonzo), auto-translated | None |
 
 All external calls go through server-side routes. Keys stay on the server.
 
@@ -125,7 +126,7 @@ For briefings, install [Ollama](https://ollama.com) and run `ollama pull llama3`
 - [x] Phase 6: LLM briefing generator (Ollama, slop filter, structured SITREP)
 - [x] Phase 7: Theater-scoped events fix, pulse markers, equipment wiki links, news links
 - [x] Phase 8: Theater expansion (6 theaters), help menu, light/high-contrast theme
-- [ ] Phase 9: Telegram channel integration with translation
+- [x] Phase 9: Telegram integration (translated military blogs), static AD/SAM layer
 - [ ] Phase 10: PDF SITREP export, keyboard shortcuts, deployment
 
 ---

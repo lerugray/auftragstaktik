@@ -50,20 +50,22 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
           </HelpSection>
 
           <HelpSection title="DATA SOURCES">
-            <table className="w-full text-xs">
+            <table className="w-full text-sm">
               <tbody>
                 <HelpRow label="DEEPSTATE" desc="Ukrainian frontline positions and occupied territory. Updates daily." />
                 <HelpRow label="GEOCONFIRMED" desc="Geolocated, verified conflict events. Strikes, shelling, vehicle losses, troop movements." />
                 <HelpRow label="ADS-B" desc="Live aircraft positions via adsb.lol. Military and civilian. 10-second refresh." />
                 <HelpRow label="AIS" desc="Ship positions via aisstream.io. Military vessel classification by MMSI and type code." />
+                <HelpRow label="TELEGRAM" desc="Military blog posts from public Telegram channels (Rybar, DeepState UA, WarGonzo). Auto-translated to English." />
               </tbody>
             </table>
           </HelpSection>
 
           <HelpSection title="TACTICAL MAP">
             <ul className="space-y-1">
-              <li>Use the <Hl>LAYERS</Hl> panel on the right to toggle frontlines, aircraft, maritime, and events.</li>
+              <li>Use the <Hl>LAYERS</Hl> panel on the right to toggle frontlines, aircraft, air defense, maritime, and events.</li>
               <li>Click any marker to open its detail panel (bottom-left). Aircraft types and vessel classes link to Wikipedia.</li>
+              <li>The <Hl>AIR DEFENSE</Hl> layer shows publicly confirmed SAM/AD installations (S-400, Patriot, Iron Dome, etc.) from OSINT sources.</li>
               <li>Use <Hl>EVENT FILTER</Hl> to show or hide specific event types (missiles, drones, artillery, etc.).</li>
               <li>The <Hl>LEGEND</Hl> button (bottom-right) explains every symbol on the map. Expand <Hl>NATO SYMBOL REFERENCE</Hl> for the full icon set.</li>
             </ul>
@@ -71,9 +73,10 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
 
           <HelpSection title="INTELLIGENCE FEED">
             <ul className="space-y-1">
-              <li>Scrolling feed of all conflict events, sorted by time.</li>
-              <li>Filter by source (top row) or severity level.</li>
-              <li>Click any event card to fly the map to that location. The target marker pulses so you can find it.</li>
+              <li>Scrolling feed of all conflict events and Telegram posts, sorted by time.</li>
+              <li>Filter by source (<Hl>GEOCON</Hl>, <Hl>TGRAM</Hl>, etc.) or severity level.</li>
+              <li>Click any GeoConfirmed event to fly the map to that location. The target marker pulses so you can find it.</li>
+              <li>Click any Telegram post to open the original message in a new tab.</li>
               <li>Event detail panels include a <Hl>NEWS COVERAGE</Hl> link to relevant reporting.</li>
             </ul>
           </HelpSection>
@@ -123,8 +126,8 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
 function HelpSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div>
-      <h3 className="text-xs font-mono text-terminal-amber tracking-widest font-bold mb-1.5">{title}</h3>
-      <div className="text-xs font-mono text-tactical-text leading-relaxed">
+      <h3 className="text-sm font-mono text-terminal-amber tracking-widest font-bold mb-1.5">{title}</h3>
+      <div className="text-sm font-mono text-tactical-text leading-relaxed">
         {children}
       </div>
     </div>

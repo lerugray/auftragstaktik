@@ -183,6 +183,30 @@
 - Theme preference persisted in localStorage
 - Files: theme.ts, globals.css (light overrides), map/styles.ts (light basemap), DashboardShell (theme state)
 
+### Phase 9: Telegram Integration + AD/SAM Layer — COMPLETE
+
+#### 9A: Telegram channel integration
+- Scrapes public Telegram preview pages (`t.me/s/{channel}`) directly — RSSHub public instance was returning 403
+- Auto-translates Russian/Ukrainian text to English via `translatte` npm package
+- Gazetteer with 30+ conflict-zone locations (Ukraine, Middle East, Myanmar) for geo-tagging posts
+- `[TGRAM]` source tag and filter in intel feed
+- Clicking a TGRAM event opens the original Telegram post in a new tab
+- Ukraine theater configured with: Rybar, DeepState UA, WarGonzo
+- Signal integration investigated — not feasible (E2E encrypted, no public channels)
+
+#### 9B: Static air defense / SAM layer
+- 18 curated installations across Ukraine, Middle East, Baltic theaters
+- Systems: S-400, S-300, Patriot, NASAMS, IRIS-T, Iron Dome, David's Sling
+- NATO ground AD symbols (friendly blue, hostile red) on map, togglable via AIR DEFENSE layer
+- Detail panel: system type (Wikipedia link), operator, location, status, last confirmed date, source citation
+- Added AD symbols to NATO Symbol Reference in legend
+
+#### Other fixes this phase
+- NATO Symbol Reference now renders aircraft with correct colors (red military, blue civilian)
+- Legend label updated: "Civilian / commercial aircraft"
+- Filter bar source label fixed: ACLED → GEOCON
+- Help menu text bumped to text-sm for readability
+- Help menu updated with Telegram, air defense, and filter instructions
+
 ### Remaining Phases
-- Phase 9: Telegram channel integration (Rybar, DeepState UA, WarGonzo) with translation
 - Phase 10: PDF SITREP export, keyboard shortcuts, Docker deployment

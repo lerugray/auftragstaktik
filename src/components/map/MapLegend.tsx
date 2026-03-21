@@ -20,15 +20,17 @@ const natoItems = [
   { sidc: 'SNAPCF--------', label: 'Civilian / commercial aircraft', colors: { fillColor: '#00aaff33', iconColor: '#00aaff' } },
 ];
 
-const natoSymbolRef = [
+const natoSymbolRef: { sidc: string; label: string; desc: string; colors?: { fillColor?: string; iconColor?: string } }[] = [
   { sidc: 'SHGPUCFRMS----', label: 'Missile Strike', desc: 'Hostile surface-to-surface missile attack' },
   { sidc: 'SHAPUCFRD-----', label: 'Drone / Air Strike', desc: 'Hostile unmanned aerial vehicle strike' },
   { sidc: 'SHGPUCFRA-----', label: 'Artillery / Shelling', desc: 'Hostile indirect fire, artillery, or rocket attack' },
   { sidc: 'SHGPUCFRSS----', label: 'Explosion', desc: 'Hostile detonation or explosive event' },
   { sidc: 'SHGPUCI-------', label: 'Armed Clash', desc: 'Hostile ground engagement between forces' },
   { sidc: 'SHGPUCAT------', label: 'Armor (Destroyed)', desc: 'Hostile tank or armored vehicle, destroyed' },
-  { sidc: 'SHAP----------', label: 'Military Aircraft', desc: 'Hostile fixed-wing aircraft (ADS-B tracked)' },
-  { sidc: 'SNAPCF--------', label: 'Civilian / Commercial', desc: 'Neutral civilian or commercial fixed-wing (ADS-B tracked)' },
+  { sidc: 'SHAP----------', label: 'Military Aircraft', desc: 'Hostile fixed-wing aircraft (ADS-B tracked)', colors: { fillColor: '#ff444433', iconColor: '#ff4444' } },
+  { sidc: 'SNAPCF--------', label: 'Civilian / Commercial', desc: 'Neutral civilian or commercial fixed-wing (ADS-B tracked)', colors: { fillColor: '#00aaff33', iconColor: '#00aaff' } },
+  { sidc: 'SFGPUCD-------', label: 'Air Defense (Friendly)', desc: 'Friendly air defense installation (OSINT confirmed)' },
+  { sidc: 'SHGPUCD-------', label: 'Air Defense (Hostile)', desc: 'Hostile air defense installation (OSINT confirmed)' },
   { sidc: 'SHSPCL--------', label: 'Naval Event', desc: 'Hostile naval or maritime-related event' },
   { sidc: 'SHGPE---------', label: 'General Event', desc: 'Hostile activity, type unspecified' },
 ];
@@ -128,11 +130,11 @@ export function MapLegend() {
 
           {showNato && (
             <div className="flex flex-col gap-2 mt-2 max-h-[300px] overflow-y-auto">
-              {natoSymbolRef.map(({ sidc, label, desc }) => (
+              {natoSymbolRef.map(({ sidc, label, desc, colors }) => (
                 <div key={sidc} className="flex items-start gap-2">
                   <div
                     className="flex-shrink-0 mt-0.5"
-                    dangerouslySetInnerHTML={{ __html: renderMilSymbol(sidc, 22) }}
+                    dangerouslySetInnerHTML={{ __html: renderMilSymbol(sidc, 22, colors) }}
                   />
                   <div>
                     <div className="text-xs font-mono text-tactical-text font-bold">{label}</div>
