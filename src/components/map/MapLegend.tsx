@@ -1,5 +1,8 @@
 'use client';
 
+import { useState } from 'react';
+import ms from 'milsymbol';
+
 const legendItems = [
   { label: 'Occupied territory', color: '#a52714', shape: 'fill' },
   { label: 'Contested / unknown', color: '#bcaaa4', shape: 'fill' },
@@ -11,6 +14,27 @@ const legendItems = [
   { label: 'Fishing vessel', color: '#22aa66', shape: 'circle' },
   { label: 'Unknown vessel', color: '#888888', shape: 'circle' },
 ];
+
+const natoSymbolRef = [
+  { sidc: 'SHGPUCFRMS----', label: 'Missile Strike', desc: 'Hostile surface-to-surface missile attack' },
+  { sidc: 'SHAPUCFRD-----', label: 'Drone / Air Strike', desc: 'Hostile unmanned aerial vehicle strike' },
+  { sidc: 'SHGPUCFRA-----', label: 'Artillery / Shelling', desc: 'Hostile indirect fire, artillery, or rocket attack' },
+  { sidc: 'SHGPUCFRSS----', label: 'Explosion', desc: 'Hostile detonation or explosive event' },
+  { sidc: 'SHGPUCI-------', label: 'Armed Clash', desc: 'Hostile ground engagement between forces' },
+  { sidc: 'SHGPUCAT------', label: 'Armor (Destroyed)', desc: 'Hostile tank or armored vehicle, destroyed' },
+  { sidc: 'SHAP----------', label: 'Military Aircraft', desc: 'Hostile fixed-wing aircraft (ADS-B tracked)' },
+  { sidc: 'SNAPCF--------', label: 'Civilian Aircraft', desc: 'Neutral civilian fixed-wing (ADS-B tracked)' },
+  { sidc: 'SHGPE---------', label: 'General Event', desc: 'Hostile activity, type unspecified' },
+];
+
+function renderMilSymbol(sidc: string, size: number = 20): string {
+  try {
+    const symbol = new ms.Symbol(sidc, { size, frame: true, fill: true } as Record<string, unknown>);
+    return symbol.asSVG();
+  } catch {
+    return '';
+  }
+}
 
 function LegendIcon({ color, shape }: { color: string; shape: string }) {
   const size = 14;
@@ -43,7 +67,6 @@ function LegendIcon({ color, shape }: { color: string; shape: string }) {
       </svg>
     );
   }
-  // circle
   return (
     <svg width={size} height={size} viewBox="0 0 14 14">
       <circle cx="7" cy="7" r="5" fill={color + '33'} stroke={color} strokeWidth="1.5" />
@@ -53,17 +76,59 @@ function LegendIcon({ color, shape }: { color: string; shape: string }) {
 }
 
 export function MapLegend() {
+  const [expanded, setExpanded] = useState(false);
+  const [showNato, setShowNato] = useState(false);
+
   return (
-    <div className="absolute bottom-12 right-2 bg-tactical-dark/90 border border-tactical-border p-3 max-w-[200px]">
-      <div className="text-xs font-mono text-tactical-text-dim tracking-widest mb-2">LEGEND</div>
-      <div className="flex flex-col gap-1.5">
-        {legendItems.map(({ label, color, shape }) => (
-          <div key={label} className="flex items-center gap-2">
-            <LegendIcon color={color} shape={shape} />
-            <span className="text-xs font-mono text-tactical-text">{label}</span>
+    <div className="absolute bottom-12 right-2 bg-tactical-dark/90 border border-tactical-border max-w-[260px]">
+      {/* Header — click to collapse/expand */}
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center justify-between px-3 py-2 text-xs font-mono text-tactical-text-dim tracking-widest hover:text-tactical-text"
+      >
+        <span>LEGEND</span>
+        <span>{expanded ? '▲' : '▼'}</span>
+      </button>
+
+      {expanded && (
+        <div className="px-3 pb-3">
+          {/* Map symbols */}
+          <div className="flex flex-col gap-1.5 mb-3">
+            {legendItems.map(({ label, color, shape }) => (
+              <div key={label} className="flex items-center gap-2">
+                <LegendIcon color={color} shape={shape} />
+                <span className="text-xs font-mono text-tactical-text">{label}</span>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+
+          {/* NATO Symbol Reference toggle */}
+          <button
+            onClick={() => setShowNato(!showNato)}
+            className="w-full flex items-center justify-between py-1.5 border-t border-tactical-border text-xs font-mono text-terminal-green/80 tracking-wider hover:text-terminal-green"
+          >
+            <span>NATO SYMBOL REFERENCE</span>
+            <span>{showNato ? '▲' : '▼'}</span>
+          </button>
+
+          {showNato && (
+            <div className="flex flex-col gap-2 mt-2 max-h-[300px] overflow-y-auto">
+              {natoSymbolRef.map(({ sidc, label, desc }) => (
+                <div key={sidc} className="flex items-start gap-2">
+                  <div
+                    className="flex-shrink-0 mt-0.5"
+                    dangerouslySetInnerHTML={{ __html: renderMilSymbol(sidc, 22) }}
+                  />
+                  <div>
+                    <div className="text-xs font-mono text-tactical-text font-bold">{label}</div>
+                    <div className="text-[11px] font-mono text-tactical-text-dim leading-snug">{desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
