@@ -1,18 +1,20 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, MutableRefObject } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { tacticalDarkStyle } from '@/lib/map/styles';
 import { FrontlineLayer } from './FrontlineLayer';
 import { MapControls } from './MapControls';
 import type { Theater } from '@/lib/theaters';
+import type { MapHandle } from '@/components/layout/DashboardShell';
 
 interface TacticalMapProps {
   theater: Theater;
+  mapHandleRef?: MutableRefObject<MapHandle | null>;
 }
 
-export function TacticalMap({ theater }: TacticalMapProps) {
+export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [mapReady, setMapReady] = useState(false);
@@ -69,6 +71,15 @@ export function TacticalMap({ theater }: TacticalMapProps) {
     });
 
     mapRef.current = map;
+
+    // Expose flyTo handle
+    if (mapHandleRef) {
+      mapHandleRef.current = {
+        flyTo: (lng: number, lat: number, zoom?: number) => {
+          map.flyTo({ center: [lng, lat], zoom: zoom || 10, duration: 1200 });
+        },
+      };
+    }
 
     return () => {
       mapRef.current = null;
