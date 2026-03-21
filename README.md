@@ -32,10 +32,10 @@ The name comes from the German doctrine of mission-type tactics: give the object
 ![Ukraine Theater](docs/screenshots/built-a-tactical-osint-terminal-with-claude-code-in-two-v0-wjz5zn2vdgqg1.webp)
 
 **Middle East Theater** — Israel/Syria/Iran/Yemen events, aircraft, AD coverage zones
-![Middle East Theater](docs/screenshots/built-a-tactical-osint-terminal-with-claude-code-in-two-v0-ko0zijfcegqg1.webp)
+![Middle East Theater](docs/screenshots/built-a-tactical-osint-terminal-with-claude-code-in-two-v0-ifjzmzrzdgqg1.webp)
 
 **Briefing Generator** — Ollama-powered SITREP with PDF export
-![Briefing Generator](docs/screenshots/built-a-tactical-osint-terminal-with-claude-code-in-two-v0-ifjzmzrzdgqg1.webp)
+![Briefing Generator](docs/screenshots/built-a-tactical-osint-terminal-with-claude-code-in-two-v0-ko0zijfcegqg1.webp)
 
 ---
 
