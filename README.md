@@ -62,27 +62,60 @@ Add a new theater by writing a config object in `src/lib/theaters/index.ts`.
 
 ---
 
-## Quick Start
+## Setup
 
-```bash
-git clone https://github.com/lerugray/auftragstaktik.git
-cd auftragstaktik
-npm install
-```
+### Prerequisites
 
-Create a `.env.local` file:
+- **Node.js 18+** — Download from [nodejs.org](https://nodejs.org). Pick the LTS version. Run the installer, accept defaults.
+- **Git** — Download from [git-scm.com](https://git-scm.com). Run the installer, accept defaults.
+- **Ollama** (optional, for briefings) — Download from [ollama.com](https://ollama.com). Run the installer.
 
-```env
-AISSTREAM_API_KEY=your-key-here  # Free at aisstream.io (GitHub auth)
-```
+### Step-by-step
 
-```bash
-npm run dev
-```
+1. **Open a terminal.** On Windows, press `Win+R`, type `cmd`, hit Enter. On Mac, open Terminal from Applications.
 
-Open `http://localhost:3117`.
+2. **Clone the repository:**
+   ```bash
+   git clone https://github.com/lerugray/auftragstaktik.git
+   cd auftragstaktik
+   ```
 
-For briefings, install [Ollama](https://ollama.com) and run `ollama pull llama3`.
+3. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+   This downloads all required packages. Takes 1-2 minutes.
+
+4. **Create your environment file.** In the `auftragstaktik` folder, create a file called `.env.local` with this content:
+   ```env
+   AISSTREAM_API_KEY=your-key-here
+   ```
+   Get a free API key at [aisstream.io](https://aisstream.io) (sign in with GitHub). This enables ship tracking. Everything else works without keys.
+
+5. **Start the app:**
+   ```bash
+   npm run dev
+   ```
+
+6. **Open your browser** to `http://localhost:3117`.
+
+### Enable briefings (optional)
+
+The SITREP briefing generator runs on Ollama, a free local AI runtime. Without it, everything else still works — you just can't generate briefings.
+
+1. Install Ollama from [ollama.com](https://ollama.com)
+2. Open a new terminal and run:
+   ```bash
+   ollama pull llama3
+   ```
+3. Keep Ollama running in the background. The briefing panel will auto-detect it.
+
+### Troubleshooting
+
+- **"Cannot find module" errors** — Delete the `.next` folder and restart: `rm -rf .next && npm run dev`
+- **Port 3117 in use** — Another instance is running. Close it or use `npx kill-port 3117`
+- **No ship data** — Make sure your `.env.local` has a valid `AISSTREAM_API_KEY`
+- **No aircraft near conflict zones** — Airspace is often closed in active war zones. Aircraft show around the edges (Poland, Romania, Turkey for Ukraine)
 
 ---
 
