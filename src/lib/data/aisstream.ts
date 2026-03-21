@@ -22,7 +22,7 @@ function classifyVessel(vesselType: number, mmsi: string): VesselClassification 
 let bgCollecting = false;
 let storedVessels: MaritimeRecord[] = [];
 
-function runCollector(apiKey: string, bounds: number[][]): Promise<MaritimeRecord[]> {
+function runCollector(apiKey: string, bounds: number[][][]): Promise<MaritimeRecord[]> {
   return new Promise((resolve) => {
     const projectRoot = process.cwd();
     const tmpFile = path.join(os.tmpdir(), `aisstream-${Date.now()}.json`);

@@ -53,12 +53,18 @@ export function createAircraftSymbolSvg(options: SymbolOptions, size: number = 2
   return svg;
 }
 
-export function createSymbolDataUri(options: SymbolOptions, size: number = 24): string {
-  const svg = createAircraftSymbolSvg(options, size);
-  return `data:image/svg+xml;base64,${btoa(svg)}`;
-}
+export function createEventSymbolSvg(sidc: string, size: number = 20): string {
+  const cacheKey = `event-${sidc}-${size}`;
+  const cached = symbolCache.get(cacheKey);
+  if (cached) return cached;
 
-export function getSymbolAnchor(options: SymbolOptions, size: number = 24): { x: number; y: number } {
-  // milsymbol centers vary by symbol type — approximate center
-  return { x: size / 2, y: size / 2 };
+  const symbol = new ms.Symbol(sidc, {
+    size: size,
+    frame: true,
+    fill: true,
+  } as Record<string, unknown>);
+
+  const svg = symbol.asSVG();
+  symbolCache.set(cacheKey, svg);
+  return svg;
 }

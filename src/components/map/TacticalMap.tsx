@@ -7,12 +7,13 @@ import { tacticalDarkStyle } from '@/lib/map/styles';
 import { FrontlineLayer } from './FrontlineLayer';
 import { AircraftLayer } from './AircraftLayer';
 import { MaritimeLayer } from './MaritimeLayer';
+import { ConflictEventLayer } from './ConflictEventLayer';
 import { DetailPanel } from './DetailPanel';
 import { MapControls } from './MapControls';
 import { MapLegend } from './MapLegend';
 import type { Theater } from '@/lib/theaters';
 import type { MapHandle } from '@/components/layout/DashboardShell';
-import type { AircraftRecord, MaritimeRecord } from '@/lib/types/events';
+import type { AircraftRecord, MaritimeRecord, EventRecord } from '@/lib/types/events';
 
 interface TacticalMapProps {
   theater: Theater;
@@ -27,6 +28,7 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
   const [cursor, setCursor] = useState<[number, number] | null>(null);
   const [selectedAircraft, setSelectedAircraft] = useState<AircraftRecord | null>(null);
   const [selectedVessel, setSelectedVessel] = useState<MaritimeRecord | null>(null);
+  const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
   const [layers, setLayers] = useState({
     frontlines: true,
     aircraft: true,
@@ -80,6 +82,7 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
     map.on('click', () => {
       setSelectedAircraft(null);
       setSelectedVessel(null);
+      setSelectedEvent(null);
     });
 
     mapRef.current = map;
@@ -114,15 +117,26 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
     setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
   }, []);
 
-  const handleAircraftClick = useCallback((aircraft: AircraftRecord) => {
+  const clearSelections = useCallback(() => {
+    setSelectedAircraft(null);
     setSelectedVessel(null);
-    setSelectedAircraft(aircraft);
+    setSelectedEvent(null);
   }, []);
 
+  const handleAircraftClick = useCallback((aircraft: AircraftRecord) => {
+    clearSelections();
+    setSelectedAircraft(aircraft);
+  }, [clearSelections]);
+
   const handleVesselClick = useCallback((vessel: MaritimeRecord) => {
-    setSelectedAircraft(null);
+    clearSelections();
     setSelectedVessel(vessel);
-  }, []);
+  }, [clearSelections]);
+
+  const handleEventClick = useCallback((event: EventRecord) => {
+    clearSelections();
+    setSelectedEvent(event);
+  }, [clearSelections]);
 
   return (
     <div className="relative w-full h-full">
@@ -145,6 +159,13 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
               onVesselClick={handleVesselClick}
             />
           )}
+          {layers.acled && (
+            <ConflictEventLayer
+              map={mapRef.current}
+              theater={theater}
+              onEventClick={handleEventClick}
+            />
+          )}
         </>
       )}
 
@@ -156,7 +177,8 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
       <DetailPanel
         aircraft={selectedAircraft}
         vessel={selectedVessel}
-        onClose={() => { setSelectedAircraft(null); setSelectedVessel(null); }}
+        event={selectedEvent}
+        onClose={clearSelections}
       />
 
       {/* Bottom status bar */}

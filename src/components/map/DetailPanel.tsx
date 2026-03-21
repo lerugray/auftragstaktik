@@ -1,10 +1,11 @@
 'use client';
 
-import type { AircraftRecord, MaritimeRecord } from '@/lib/types/events';
+import type { AircraftRecord, MaritimeRecord, EventRecord } from '@/lib/types/events';
 
 interface DetailPanelProps {
   aircraft?: AircraftRecord | null;
   vessel?: MaritimeRecord | null;
+  event?: EventRecord | null;
   onClose: () => void;
 }
 
@@ -23,13 +24,14 @@ const CLASSIFICATION_LABELS: Record<string, { label: string; color: string }> = 
   unknown: { label: 'UNKNOWN', color: 'bg-tactical-text-dim/20 text-tactical-text-dim' },
 };
 
-export function DetailPanel({ aircraft, vessel, onClose }: DetailPanelProps) {
-  if (!aircraft && !vessel) return null;
+export function DetailPanel({ aircraft, vessel, event, onClose }: DetailPanelProps) {
+  if (!aircraft && !vessel && !event) return null;
 
   return (
     <div className="absolute bottom-12 left-2 bg-tactical-dark/95 border border-tactical-border p-3 min-w-[280px] max-w-[350px]">
       {aircraft && <AircraftDetail aircraft={aircraft} onClose={onClose} />}
       {vessel && <VesselDetail vessel={vessel} onClose={onClose} />}
+      {event && <ConflictEventDetail event={event} onClose={onClose} />}
     </div>
   );
 }
@@ -88,6 +90,43 @@ function VesselDetail({ vessel, onClose }: { vessel: MaritimeRecord; onClose: ()
         <DetailRow label="SPD" value={`${vessel.speed.toFixed(1)} kts`} />
         <DetailRow label="HDG" value={`${Math.round(vessel.heading)}°`} />
         {vessel.destination && <DetailRow label="DEST" value={vessel.destination} />}
+      </div>
+    </>
+  );
+}
+
+const SEVERITY_BADGE: Record<string, string> = {
+  critical: 'bg-severity-critical/20 text-severity-critical',
+  high: 'bg-severity-high/20 text-severity-high',
+  medium: 'bg-severity-medium/20 text-severity-medium',
+  low: 'bg-severity-low/20 text-severity-low',
+  info: 'bg-severity-info/20 text-severity-info',
+};
+
+function ConflictEventDetail({ event, onClose }: { event: EventRecord; onClose: () => void }) {
+  const badgeClass = SEVERITY_BADGE[event.severity] || SEVERITY_BADGE.info;
+  return (
+    <>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${badgeClass}`}>
+            {event.severity.toUpperCase()}
+          </span>
+          <span className="text-sm font-mono font-bold text-tactical-text">
+            {event.eventType}
+          </span>
+        </div>
+        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+      </div>
+      <div className="text-sm font-mono text-tactical-text mb-2">{event.title}</div>
+      {event.description && (
+        <div className="text-xs font-mono text-tactical-text-dim mb-2 leading-relaxed">{event.description}</div>
+      )}
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+        <DetailRow label="DATE" value={event.timestamp.substring(0, 10)} />
+        <DetailRow label="SRC" value={event.source.toUpperCase()} />
+        <DetailRow label="LAT" value={event.coordinates[1].toFixed(4) + '°'} />
+        <DetailRow label="LON" value={event.coordinates[0].toFixed(4) + '°'} />
       </div>
     </>
   );
