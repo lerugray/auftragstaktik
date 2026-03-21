@@ -84,12 +84,20 @@
 
 .maplibregl-ctrl-attrib {
   background: transparent !important;
-  color: rgba(107, 107, 128, 0.4) !important;
+  color: rgba(107, 107, 128, 0.3) !important;
   font-size: 9px !important;
 }
 
 .maplibregl-ctrl-attrib a {
-  color: rgba(107, 107, 128, 0.4) !important;
+  color: rgba(107, 107, 128, 0.3) !important;
+}
+
+.maplibregl-ctrl-attrib.maplibregl-compact {
+  display: none !important;
+}
+
+.maplibregl-ctrl-bottom-left {
+  display: none !important;
 }
 
 /* Hide Next.js dev toolbar */

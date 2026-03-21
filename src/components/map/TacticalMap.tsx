@@ -5,9 +5,12 @@ import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { tacticalDarkStyle } from '@/lib/map/styles';
 import { FrontlineLayer } from './FrontlineLayer';
+import { AircraftLayer } from './AircraftLayer';
+import { DetailPanel } from './DetailPanel';
 import { MapControls } from './MapControls';
 import type { Theater } from '@/lib/theaters';
 import type { MapHandle } from '@/components/layout/DashboardShell';
+import type { AircraftRecord } from '@/lib/types/events';
 
 interface TacticalMapProps {
   theater: Theater;
@@ -20,6 +23,7 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
   const [mapReady, setMapReady] = useState(false);
   const [zoom, setZoom] = useState(theater.zoom);
   const [cursor, setCursor] = useState<[number, number] | null>(null);
+  const [selectedAircraft, setSelectedAircraft] = useState<AircraftRecord | null>(null);
   const [layers, setLayers] = useState({
     frontlines: true,
     aircraft: true,
@@ -45,7 +49,6 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
       'bottom-left'
     );
 
-    // Nav controls — no compass to avoid overlap issues
     map.addControl(
       new maplibregl.NavigationControl({ showCompass: false }),
       'top-right'
@@ -70,9 +73,13 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
       setCursor(null);
     });
 
+    // Click on map (not on a marker) closes detail panel
+    map.on('click', () => {
+      setSelectedAircraft(null);
+    });
+
     mapRef.current = map;
 
-    // Expose flyTo handle
     if (mapHandleRef) {
       mapHandleRef.current = {
         flyTo: (lng: number, lat: number, zoom?: number) => {
@@ -88,7 +95,6 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fly to new theater when it changes
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapReady) return;
@@ -104,6 +110,10 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
     setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
   }, []);
 
+  const handleAircraftClick = useCallback((aircraft: AircraftRecord) => {
+    setSelectedAircraft(aircraft);
+  }, []);
+
   return (
     <div className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-full" />
@@ -111,10 +121,20 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
       {mapReady && mapRef.current && (
         <>
           {layers.frontlines && <FrontlineLayer map={mapRef.current} theater={theater} />}
+          {layers.aircraft && (
+            <AircraftLayer
+              map={mapRef.current}
+              theater={theater}
+              onAircraftClick={handleAircraftClick}
+            />
+          )}
         </>
       )}
 
       <MapControls layers={layers} onToggle={toggleLayer} />
+
+      {/* Aircraft detail panel */}
+      <DetailPanel aircraft={selectedAircraft} onClose={() => setSelectedAircraft(null)} />
 
       {/* Bottom status bar */}
       <div className="absolute bottom-2 left-2 right-2 flex items-center gap-6 bg-tactical-dark/80 border border-tactical-border px-3 py-1.5 pointer-events-none">
