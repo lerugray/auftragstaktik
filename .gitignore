@@ -32,6 +32,9 @@ yarn-error.log*
 .env
 .env*.local
 
+# temp collector scripts
+.aisstream-collector.js
+
 # vercel
 .vercel
 

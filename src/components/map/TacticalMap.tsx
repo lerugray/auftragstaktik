@@ -6,11 +6,12 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { tacticalDarkStyle } from '@/lib/map/styles';
 import { FrontlineLayer } from './FrontlineLayer';
 import { AircraftLayer } from './AircraftLayer';
+import { MaritimeLayer } from './MaritimeLayer';
 import { DetailPanel } from './DetailPanel';
 import { MapControls } from './MapControls';
 import type { Theater } from '@/lib/theaters';
 import type { MapHandle } from '@/components/layout/DashboardShell';
-import type { AircraftRecord } from '@/lib/types/events';
+import type { AircraftRecord, MaritimeRecord } from '@/lib/types/events';
 
 interface TacticalMapProps {
   theater: Theater;
@@ -24,6 +25,7 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
   const [zoom, setZoom] = useState(theater.zoom);
   const [cursor, setCursor] = useState<[number, number] | null>(null);
   const [selectedAircraft, setSelectedAircraft] = useState<AircraftRecord | null>(null);
+  const [selectedVessel, setSelectedVessel] = useState<MaritimeRecord | null>(null);
   const [layers, setLayers] = useState({
     frontlines: true,
     aircraft: true,
@@ -76,6 +78,7 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
     // Click on map (not on a marker) closes detail panel
     map.on('click', () => {
       setSelectedAircraft(null);
+      setSelectedVessel(null);
     });
 
     mapRef.current = map;
@@ -111,7 +114,13 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
   }, []);
 
   const handleAircraftClick = useCallback((aircraft: AircraftRecord) => {
+    setSelectedVessel(null);
     setSelectedAircraft(aircraft);
+  }, []);
+
+  const handleVesselClick = useCallback((vessel: MaritimeRecord) => {
+    setSelectedAircraft(null);
+    setSelectedVessel(vessel);
   }, []);
 
   return (
@@ -128,13 +137,24 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
               onAircraftClick={handleAircraftClick}
             />
           )}
+          {layers.maritime && (
+            <MaritimeLayer
+              map={mapRef.current}
+              theater={theater}
+              onVesselClick={handleVesselClick}
+            />
+          )}
         </>
       )}
 
       <MapControls layers={layers} onToggle={toggleLayer} />
 
-      {/* Aircraft detail panel */}
-      <DetailPanel aircraft={selectedAircraft} onClose={() => setSelectedAircraft(null)} />
+      {/* Detail panel */}
+      <DetailPanel
+        aircraft={selectedAircraft}
+        vessel={selectedVessel}
+        onClose={() => { setSelectedAircraft(null); setSelectedVessel(null); }}
+      />
 
       {/* Bottom status bar */}
       <div className="absolute bottom-2 left-2 right-2 flex items-center gap-6 bg-tactical-dark/80 border border-tactical-border px-3 py-1.5 pointer-events-none">
