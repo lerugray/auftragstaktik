@@ -36,6 +36,9 @@ export function AircraftLayer({ map, theater, onAircraftClick }: AircraftLayerPr
       const currentHexes = new Set<string>();
 
       for (const ac of aircraft) {
+        // Skip stationary ground transponders (towers, ground stations)
+        if (ac.onGround && ac.speed === 0 && ac.altitude <= 0) continue;
+
         currentHexes.add(ac.icao);
 
         const existing = markersRef.current.get(ac.icao);

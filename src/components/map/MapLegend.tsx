@@ -14,10 +14,10 @@ const shapeItems = [
   { label: 'Unknown vessel', color: '#888888', shape: 'circle' },
 ];
 
-// Items using actual NATO milsymbol renderings (aircraft)
+// Items using actual NATO milsymbol renderings (aircraft) — colors must match milsymbolFactory
 const natoItems = [
-  { sidc: 'SHAP----------', label: 'Military aircraft' },
-  { sidc: 'SNAPCF--------', label: 'Civilian / commercial aircraft' },
+  { sidc: 'SHAP----------', label: 'Military aircraft', colors: { fillColor: '#ff444433', iconColor: '#ff4444' } },
+  { sidc: 'SNAPCF--------', label: 'Civilian / commercial aircraft', colors: { fillColor: '#00aaff33', iconColor: '#00aaff' } },
 ];
 
 const natoSymbolRef = [
@@ -33,9 +33,9 @@ const natoSymbolRef = [
   { sidc: 'SHGPE---------', label: 'General Event', desc: 'Hostile activity, type unspecified' },
 ];
 
-function renderMilSymbol(sidc: string, size: number = 20): string {
+function renderMilSymbol(sidc: string, size: number = 20, colors?: { fillColor?: string; iconColor?: string }): string {
   try {
-    const symbol = new ms.Symbol(sidc, { size, frame: true, fill: true } as Record<string, unknown>);
+    const symbol = new ms.Symbol(sidc, { size, frame: true, fill: true, ...colors } as Record<string, unknown>);
     return symbol.asSVG();
   } catch {
     return '';
@@ -106,11 +106,11 @@ export function MapLegend() {
                 <span className="text-xs font-mono text-tactical-text">{label}</span>
               </div>
             ))}
-            {natoItems.map(({ sidc, label }) => (
+            {natoItems.map(({ sidc, label, colors }) => (
               <div key={sidc} className="flex items-center gap-2">
                 <div
                   className="flex-shrink-0 w-[14px] h-[14px] flex items-center justify-center"
-                  dangerouslySetInnerHTML={{ __html: renderMilSymbol(sidc, 16) }}
+                  dangerouslySetInnerHTML={{ __html: renderMilSymbol(sidc, 16, colors) }}
                 />
                 <span className="text-xs font-mono text-tactical-text">{label}</span>
               </div>

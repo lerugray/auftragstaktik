@@ -18,13 +18,8 @@ function getAircraftSIDC(options: SymbolOptions): string {
   // C-D = Function ID
 
   const affiliation = options.military ? 'H' : 'N'; // hostile mil, neutral civilian
-  const dimension = options.onGround ? 'G' : 'A'; // ground or air
 
-  if (options.onGround) {
-    return `S${affiliation}G-UCI---`;  // Ground unit
-  }
-
-  // Air symbols
+  // Always use air symbols — on-ground aircraft are still aircraft, not infantry
   if (options.military) {
     return `S${affiliation}AP------`; // Military aircraft
   }

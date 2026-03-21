@@ -157,6 +157,11 @@ const AIRCRAFT_WIKI: Record<string, string> = {
   C172: 'Cessna_172',
   PA28: 'Piper_PA-28_Cherokee',
   DA42: 'Diamond_DA42',
+
+  // Ground infrastructure (not aircraft — but show up in ADS-B data)
+  TWR: 'Air_traffic_control',
+  GND: 'Air_traffic_control',
+  RAMP: 'Airport_ramp',
 };
 
 // Maps vessel class names to Wikipedia slugs
