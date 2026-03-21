@@ -29,6 +29,14 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
   const [selectedAircraft, setSelectedAircraft] = useState<AircraftRecord | null>(null);
   const [selectedVessel, setSelectedVessel] = useState<MaritimeRecord | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
+  const [activeEventTypes, setActiveEventTypes] = useState<Set<string>>(new Set([
+    'Missile strike', 'Drone strike', 'Air/drone strike',
+    'Explosion/Strike', 'Artillery/Shelling', 'Shelling/artillery/missile attack',
+    'Armed clash', 'Battles',
+    'Tank destroyed', 'Vehicle destroyed', 'APC/IFV destroyed',
+    'Fire/Smoke', 'Fortification', 'Troops', 'Conflict event',
+    'Strategic developments', 'Other',
+  ]));
   const [layers, setLayers] = useState({
     frontlines: true,
     aircraft: true,
@@ -164,12 +172,26 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
               map={mapRef.current}
               theater={theater}
               onEventClick={handleEventClick}
+              activeEventTypes={activeEventTypes}
             />
           )}
         </>
       )}
 
-      <MapControls layers={layers} onToggle={toggleLayer} />
+      <MapControls
+        layers={layers}
+        onToggle={toggleLayer}
+        activeEventTypes={activeEventTypes}
+        onToggleEventType={(type) => {
+          setActiveEventTypes((prev) => {
+            const next = new Set(prev);
+            if (next.has(type)) next.delete(type);
+            else next.add(type);
+            return next;
+          });
+        }}
+        showEventFilters={layers.acled}
+      />
 
       <MapLegend />
 

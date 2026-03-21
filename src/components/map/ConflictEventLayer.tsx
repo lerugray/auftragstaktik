@@ -12,6 +12,7 @@ interface ConflictEventLayerProps {
   map: MaplibreMap;
   theater: Theater;
   onEventClick?: (event: EventRecord) => void;
+  activeEventTypes?: Set<string>;
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
@@ -22,8 +23,8 @@ const SEVERITY_COLORS: Record<string, string> = {
   info: '#00aaff',
 };
 
-export function ConflictEventLayer({ map, theater, onEventClick }: ConflictEventLayerProps) {
-  const markersRef = useRef<Map<string, maplibregl.Marker>>(new Map());
+export function ConflictEventLayer({ map, theater, onEventClick, activeEventTypes }: ConflictEventLayerProps) {
+  const markersRef = useRef<Map<string, { marker: maplibregl.Marker; eventType: string }>>(new Map());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchAndRender = useCallback(async () => {
@@ -44,9 +45,10 @@ export function ConflictEventLayer({ map, theater, onEventClick }: ConflictEvent
         currentIds.add(event.id);
 
         if (markersRef.current.has(event.id)) {
-          // Already rendered
           continue;
         }
+
+        if (!event.coordinates[0] || !event.coordinates[1]) continue;
 
         // Get NATO symbol for this event type
         const rawData = event.rawData as Record<string, unknown>;
@@ -81,13 +83,13 @@ export function ConflictEventLayer({ map, theater, onEventClick }: ConflictEvent
           .setLngLat([event.coordinates[0], event.coordinates[1]])
           .addTo(map);
 
-        markersRef.current.set(event.id, marker);
+        markersRef.current.set(event.id, { marker, eventType: event.eventType });
       }
 
       // Remove markers for events no longer present
-      for (const [id, marker] of markersRef.current) {
+      for (const [id, entry] of markersRef.current) {
         if (!currentIds.has(id)) {
-          marker.remove();
+          entry.marker.remove();
           markersRef.current.delete(id);
         }
       }
@@ -102,12 +104,23 @@ export function ConflictEventLayer({ map, theater, onEventClick }: ConflictEvent
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      for (const marker of markersRef.current.values()) {
-        marker.remove();
+      for (const entry of markersRef.current.values()) {
+        entry.marker.remove();
       }
       markersRef.current.clear();
     };
   }, [fetchAndRender]);
+
+  // Toggle marker visibility based on active event type filters
+  useEffect(() => {
+    for (const entry of markersRef.current.values()) {
+      const visible = !activeEventTypes || activeEventTypes.has(entry.eventType);
+      const el = entry.marker.getElement();
+      if (el) {
+        el.style.display = visible ? '' : 'none';
+      }
+    }
+  }, [activeEventTypes]);
 
   return null;
 }
