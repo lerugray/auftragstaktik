@@ -9,6 +9,7 @@ import { AircraftLayer } from './AircraftLayer';
 import { MaritimeLayer } from './MaritimeLayer';
 import { DetailPanel } from './DetailPanel';
 import { MapControls } from './MapControls';
+import { MapLegend } from './MapLegend';
 import type { Theater } from '@/lib/theaters';
 import type { MapHandle } from '@/components/layout/DashboardShell';
 import type { AircraftRecord, MaritimeRecord } from '@/lib/types/events';
@@ -148,6 +149,8 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
       )}
 
       <MapControls layers={layers} onToggle={toggleLayer} />
+
+      <MapLegend />
 
       {/* Detail panel */}
       <DetailPanel

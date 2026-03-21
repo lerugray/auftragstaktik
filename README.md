@@ -98,10 +98,10 @@ Open `http://localhost:3117`.
 
 - [x] Phase 0: Project scaffolding, theater system, LLM abstraction
 - [x] Phase 1: Tactical map with DeepState frontline data
-- [ ] Phase 2: Intelligence feed
-- [ ] Phase 3: Aircraft tracking layer (ADS-B)
-- [ ] Phase 4: Maritime/naval layer (AIS) with warship classification
-- [ ] Phase 5: ACLED conflict events
+- [x] Phase 2: Intelligence feed (GeoConfirmed, 250+ verified events)
+- [x] Phase 3: Aircraft tracking layer (ADS-B via adsb.lol, NATO symbology)
+- [x] Phase 4: Maritime/naval layer (AIS via aisstream.io, vessel classification)
+- [ ] Phase 5: Conflict event markers on map (NATO symbology for strikes/shelling)
 - [ ] Phase 6: LLM briefing generator
 - [ ] Phase 7: PDF SITREP export
 - [ ] Phase 8: Visual polish and deployment
