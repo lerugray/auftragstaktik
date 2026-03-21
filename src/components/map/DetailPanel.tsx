@@ -1,6 +1,8 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import type { AircraftRecord, MaritimeRecord, EventRecord } from '@/lib/types/events';
+import { getAircraftWikiUrl, getVesselWikiUrl } from '@/lib/data/wikiLinks';
 
 interface DetailPanelProps {
   aircraft?: AircraftRecord | null;
@@ -36,7 +38,24 @@ export function DetailPanel({ aircraft, vessel, event, onClose }: DetailPanelPro
   );
 }
 
+function WikiLink({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-terminal-blue hover:text-terminal-blue/80 hover:underline"
+    >
+      {children}
+    </a>
+  );
+}
+
 function AircraftDetail({ aircraft, onClose }: { aircraft: AircraftRecord; onClose: () => void }) {
+  const typeValue = aircraft.aircraftType ? (
+    <WikiLink href={getAircraftWikiUrl(aircraft.aircraftType)}>{aircraft.aircraftType}</WikiLink>
+  ) : null;
+
   return (
     <>
       <div className="flex items-center justify-between mb-2">
@@ -54,7 +73,7 @@ function AircraftDetail({ aircraft, onClose }: { aircraft: AircraftRecord; onClo
       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
         <DetailRow label="ICAO" value={aircraft.icao.toUpperCase()} />
         {aircraft.registration && <DetailRow label="REG" value={aircraft.registration} />}
-        {aircraft.aircraftType && <DetailRow label="TYPE" value={aircraft.aircraftType} />}
+        {typeValue && <DetailRow label="TYPE" value={typeValue} />}
         <DetailRow label="ALT" value={formatAltitude(aircraft.altitude)} />
         <DetailRow label="SPD" value={`${aircraft.speed} kts`} />
         <DetailRow label="HDG" value={`${Math.round(aircraft.heading)}°`} />
@@ -69,6 +88,11 @@ function AircraftDetail({ aircraft, onClose }: { aircraft: AircraftRecord; onClo
 
 function VesselDetail({ vessel, onClose }: { vessel: MaritimeRecord; onClose: () => void }) {
   const cls = CLASSIFICATION_LABELS[vessel.classification] || CLASSIFICATION_LABELS.unknown;
+
+  const classValue = vessel.shipClass ? (
+    <WikiLink href={getVesselWikiUrl(vessel.shipClass)}>{vessel.shipClass}</WikiLink>
+  ) : null;
+
   return (
     <>
       <div className="flex items-center justify-between mb-2">
@@ -86,7 +110,7 @@ function VesselDetail({ vessel, onClose }: { vessel: MaritimeRecord; onClose: ()
         {vessel.imo && <DetailRow label="IMO" value={vessel.imo} />}
         {vessel.callsign && <DetailRow label="CALL" value={vessel.callsign} />}
         {vessel.flag && <DetailRow label="FLAG" value={vessel.flag} />}
-        {vessel.shipClass && <DetailRow label="CLASS" value={vessel.shipClass} />}
+        {classValue && <DetailRow label="CLASS" value={classValue} />}
         <DetailRow label="SPD" value={`${vessel.speed.toFixed(1)} kts`} />
         <DetailRow label="HDG" value={`${Math.round(vessel.heading)}°`} />
         {vessel.destination && <DetailRow label="DEST" value={vessel.destination} />}
@@ -105,6 +129,8 @@ const SEVERITY_BADGE: Record<string, string> = {
 
 function ConflictEventDetail({ event, onClose }: { event: EventRecord; onClose: () => void }) {
   const badgeClass = SEVERITY_BADGE[event.severity] || SEVERITY_BADGE.info;
+  const newsUrl = `https://news.google.com/search?q=${encodeURIComponent(event.eventType + ' ' + event.title.split(' ').slice(0, 4).join(' '))}`;
+
   return (
     <>
       <div className="flex items-center justify-between mb-2">
@@ -128,11 +154,21 @@ function ConflictEventDetail({ event, onClose }: { event: EventRecord; onClose: 
         <DetailRow label="LAT" value={event.coordinates[1].toFixed(4) + '°'} />
         <DetailRow label="LON" value={event.coordinates[0].toFixed(4) + '°'} />
       </div>
+      <div className="mt-2 pt-2 border-t border-tactical-border flex gap-3">
+        <a
+          href={newsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs font-mono text-terminal-blue hover:text-terminal-blue/80 hover:underline"
+        >
+          NEWS COVERAGE
+        </a>
+      </div>
     </>
   );
 }
 
-function DetailRow({ label, value }: { label: string; value: string }) {
+function DetailRow({ label, value }: { label: string; value: ReactNode }) {
   return (
     <>
       <span className="text-tactical-text-dim">{label}</span>

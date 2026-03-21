@@ -26,6 +26,10 @@ const EVENT_SIDC_MAP: Record<string, SIDCMapping> = {
   'Vehicle destroyed': { sidc: 'SHGPUCAW------', label: 'Vehicle (Destroyed)' },
   'APC/IFV destroyed': { sidc: 'SHGPUCAI------', label: 'APC/IFV (Destroyed)' },
 
+  // Air / Naval
+  'Aircraft': { sidc: 'SHAP----------', label: 'Aircraft' },
+  'Naval': { sidc: 'SHSPCL--------', label: 'Naval' },
+
   // Other
   'Fire/Smoke': { sidc: 'SHGPUCF-------', label: 'Fire/Smoke' },
   'Fortification': { sidc: 'SHGPUCF-------', label: 'Fortification' },
@@ -38,7 +42,7 @@ const EVENT_SIDC_MAP: Record<string, SIDCMapping> = {
 };
 
 // Default SIDC for unknown event types
-const DEFAULT_SIDC: SIDCMapping = { sidc: 'SUGPE---------', label: 'Unknown Event' };
+const DEFAULT_SIDC: SIDCMapping = { sidc: 'SHGPE---------', label: 'Unknown Event' };
 
 export function getEventSIDC(eventType: string, side?: string): SIDCMapping {
   const mapping = EVENT_SIDC_MAP[eventType] || DEFAULT_SIDC;

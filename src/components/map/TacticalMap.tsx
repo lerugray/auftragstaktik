@@ -29,6 +29,7 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
   const [selectedAircraft, setSelectedAircraft] = useState<AircraftRecord | null>(null);
   const [selectedVessel, setSelectedVessel] = useState<MaritimeRecord | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
+  const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
   const [activeEventTypes, setActiveEventTypes] = useState<Set<string>>(new Set([
     'Missile strike', 'Drone strike', 'Air/drone strike',
     'Explosion/Strike', 'Artillery/Shelling', 'Shelling/artillery/missile attack',
@@ -99,6 +100,9 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
       mapHandleRef.current = {
         flyTo: (lng: number, lat: number, zoom?: number) => {
           map.flyTo({ center: [lng, lat], zoom: zoom || 10, duration: 1200 });
+        },
+        highlightEvent: (eventId: string) => {
+          setHighlightedEventId(eventId);
         },
       };
     }
@@ -173,6 +177,8 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
               theater={theater}
               onEventClick={handleEventClick}
               activeEventTypes={activeEventTypes}
+              highlightedEventId={highlightedEventId}
+              onHighlightClear={() => setHighlightedEventId(null)}
             />
           )}
         </>

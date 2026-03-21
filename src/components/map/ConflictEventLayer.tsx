@@ -13,6 +13,8 @@ interface ConflictEventLayerProps {
   theater: Theater;
   onEventClick?: (event: EventRecord) => void;
   activeEventTypes?: Set<string>;
+  highlightedEventId?: string | null;
+  onHighlightClear?: () => void;
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
@@ -23,7 +25,7 @@ const SEVERITY_COLORS: Record<string, string> = {
   info: '#00aaff',
 };
 
-export function ConflictEventLayer({ map, theater, onEventClick, activeEventTypes }: ConflictEventLayerProps) {
+export function ConflictEventLayer({ map, theater, onEventClick, activeEventTypes, highlightedEventId, onHighlightClear }: ConflictEventLayerProps) {
   const markersRef = useRef<Map<string, { marker: maplibregl.Marker; eventType: string }>>(new Map());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -31,10 +33,11 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
     const acledSource = theater.dataSources.find((ds) => ds.source === 'acled' && ds.enabled);
     if (!acledSource) return;
 
-    const country = (acledSource.params?.country as string) || theater.name;
+    const conflicts = (acledSource.params?.conflicts as string[]) || ['ukraine'];
+    const conflictsStr = conflicts.join(',');
 
     try {
-      const res = await fetch(`/api/events?country=${encodeURIComponent(country)}`);
+      const res = await fetch(`/api/events?conflicts=${encodeURIComponent(conflictsStr)}`);
       if (!res.ok) return;
       const data = await res.json();
       const events: EventRecord[] = data.events || [];
@@ -121,6 +124,29 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
       }
     }
   }, [activeEventTypes]);
+
+  // Highlight (pulse) a specific marker when clicked from the feed
+  useEffect(() => {
+    if (!highlightedEventId) return;
+
+    const entry = markersRef.current.get(highlightedEventId);
+    if (!entry) return;
+
+    const el = entry.marker.getElement();
+    if (!el) return;
+
+    el.classList.add('marker-pulse');
+
+    const timeout = setTimeout(() => {
+      el.classList.remove('marker-pulse');
+      onHighlightClear?.();
+    }, 4000);
+
+    return () => {
+      clearTimeout(timeout);
+      el.classList.remove('marker-pulse');
+    };
+  }, [highlightedEventId, onHighlightClear]);
 
   return null;
 }

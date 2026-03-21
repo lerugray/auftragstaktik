@@ -7,12 +7,14 @@ import { Header } from './Header';
 import { PanelFrame } from './PanelFrame';
 import { MapWrapper } from '@/components/map';
 import { IntelFeed } from '@/components/feed/IntelFeed';
+import { BriefingPanel } from '@/components/briefing/BriefingPanel';
 import { getDefaultTheater, getTheater } from '@/lib/theaters';
 import type { EventRecord } from '@/lib/types/events';
 
 // Map ref type for fly-to functionality
 export interface MapHandle {
   flyTo: (lng: number, lat: number, zoom?: number) => void;
+  highlightEvent?: (eventId: string) => void;
 }
 
 export function DashboardShell() {
@@ -20,15 +22,17 @@ export function DashboardShell() {
   const theater = useMemo(() => getTheater(theaterId) ?? getDefaultTheater(), [theaterId]);
   const mapHandleRef = useRef<MapHandle | null>(null);
 
-  // Get the country name for the active theater's ACLED queries
-  const theaterCountry = useMemo(() => {
+  // Get GeoConfirmed conflict slugs for the active theater
+  const theaterConflicts = useMemo(() => {
     const acledSource = theater.dataSources.find((ds) => ds.source === 'acled');
-    return (acledSource?.params?.country as string) || theater.name;
+    const conflicts = acledSource?.params?.conflicts as string[] | undefined;
+    return conflicts?.join(',') || 'ukraine';
   }, [theater]);
 
   const handleEventClick = useCallback((event: EventRecord) => {
     if (mapHandleRef.current) {
       mapHandleRef.current.flyTo(event.coordinates[0], event.coordinates[1], 10);
+      mapHandleRef.current.highlightEvent?.(event.id);
     }
   }, []);
 
@@ -52,19 +56,14 @@ export function DashboardShell() {
           <PanelFrame title="Intelligence Feed" className="flex-[60]">
             <IntelFeed
               theaterId={theaterId}
-              theaterCountry={theaterCountry}
+              theaterConflicts={theaterConflicts}
               onEventClick={handleEventClick}
             />
           </PanelFrame>
 
           {/* Bottom: Briefing (40%) */}
           <PanelFrame title="Briefing Generator" className="flex-[40]">
-            <div className="flex items-center justify-center h-full text-tactical-text-dim">
-              <div className="text-center">
-                <div className="text-terminal-blue/40 text-3xl mb-3">&#x2637;</div>
-                <div className="text-base tracking-wider">SITREP MODULE STANDBY</div>
-              </div>
-            </div>
+            <BriefingPanel theaterId={theaterId} theaterName={theater.name} />
           </PanelFrame>
         </div>
       </div>

@@ -3,16 +3,21 @@
 import { useState } from 'react';
 import ms from 'milsymbol';
 
-const legendItems = [
+// Items using simple SVG shapes (territories, vessels)
+const shapeItems = [
   { label: 'Occupied territory', color: '#a52714', shape: 'fill' },
   { label: 'Contested / unknown', color: '#bcaaa4', shape: 'fill' },
   { label: 'Unit deployment zone', color: '#e65100', shape: 'dashed' },
-  { label: 'Military aircraft', color: '#ff4444', shape: 'diamond' },
-  { label: 'Civilian aircraft', color: '#00aaff', shape: 'diamond' },
   { label: 'Naval / military vessel', color: '#ff4444', shape: 'circle-diamond' },
   { label: 'Merchant vessel', color: '#4488cc', shape: 'circle' },
   { label: 'Fishing vessel', color: '#22aa66', shape: 'circle' },
   { label: 'Unknown vessel', color: '#888888', shape: 'circle' },
+];
+
+// Items using actual NATO milsymbol renderings (aircraft)
+const natoItems = [
+  { sidc: 'SHAP----------', label: 'Military aircraft' },
+  { sidc: 'SNAPCF--------', label: 'Civilian aircraft' },
 ];
 
 const natoSymbolRef = [
@@ -24,6 +29,7 @@ const natoSymbolRef = [
   { sidc: 'SHGPUCAT------', label: 'Armor (Destroyed)', desc: 'Hostile tank or armored vehicle, destroyed' },
   { sidc: 'SHAP----------', label: 'Military Aircraft', desc: 'Hostile fixed-wing aircraft (ADS-B tracked)' },
   { sidc: 'SNAPCF--------', label: 'Civilian Aircraft', desc: 'Neutral civilian fixed-wing (ADS-B tracked)' },
+  { sidc: 'SHSPCL--------', label: 'Naval Event', desc: 'Hostile naval or maritime-related event' },
   { sidc: 'SHGPE---------', label: 'General Event', desc: 'Hostile activity, type unspecified' },
 ];
 
@@ -94,9 +100,18 @@ export function MapLegend() {
         <div className="px-3 pb-3">
           {/* Map symbols */}
           <div className="flex flex-col gap-1.5 mb-3">
-            {legendItems.map(({ label, color, shape }) => (
+            {shapeItems.map(({ label, color, shape }) => (
               <div key={label} className="flex items-center gap-2">
                 <LegendIcon color={color} shape={shape} />
+                <span className="text-xs font-mono text-tactical-text">{label}</span>
+              </div>
+            ))}
+            {natoItems.map(({ sidc, label }) => (
+              <div key={sidc} className="flex items-center gap-2">
+                <div
+                  className="flex-shrink-0 w-[14px] h-[14px] flex items-center justify-center"
+                  dangerouslySetInnerHTML={{ __html: renderMilSymbol(sidc, 16) }}
+                />
                 <span className="text-xs font-mono text-tactical-text">{label}</span>
               </div>
             ))}

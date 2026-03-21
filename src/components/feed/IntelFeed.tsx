@@ -7,14 +7,14 @@ import type { EventRecord, EventSource, Severity } from '@/lib/types/events';
 
 interface IntelFeedProps {
   theaterId: string;
-  theaterCountry: string;
+  theaterConflicts: string; // comma-separated GeoConfirmed conflict slugs
   onEventClick?: (event: EventRecord) => void;
 }
 
 const ALL_SOURCES: EventSource[] = ['acled', 'adsb', 'aisstream', 'deepstate'];
 const ALL_SEVERITIES: Severity[] = ['critical', 'high', 'medium', 'low', 'info'];
 
-export function IntelFeed({ theaterId, theaterCountry, onEventClick }: IntelFeedProps) {
+export function IntelFeed({ theaterId, theaterConflicts, onEventClick }: IntelFeedProps) {
   const [events, setEvents] = useState<EventRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,7 @@ export function IntelFeed({ theaterId, theaterCountry, onEventClick }: IntelFeed
 
   const fetchEvents = useCallback(async () => {
     try {
-      const res = await fetch(`/api/events?country=${encodeURIComponent(theaterCountry)}&hours=168`);
+      const res = await fetch(`/api/events?conflicts=${encodeURIComponent(theaterConflicts)}`);
       if (!res.ok) throw new Error(`API returned ${res.status}`);
       const data = await res.json();
       setEvents(data.events || []);
@@ -36,7 +36,7 @@ export function IntelFeed({ theaterId, theaterCountry, onEventClick }: IntelFeed
     } finally {
       setLoading(false);
     }
-  }, [theaterCountry]);
+  }, [theaterConflicts]);
 
   // Initial fetch + polling every 30 seconds
   useEffect(() => {

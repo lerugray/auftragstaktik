@@ -4,7 +4,7 @@ export interface LLMProvider {
 }
 
 export interface LLMConfig {
-  provider: 'claude' | 'openai' | 'openai-compatible';
+  provider: 'ollama' | 'claude' | 'openai' | 'openai-compatible';
   apiKey: string;
   model: string;
   baseUrl?: string;
@@ -12,9 +12,9 @@ export interface LLMConfig {
 
 export function getLLMConfig(): LLMConfig {
   return {
-    provider: (process.env.LLM_PROVIDER as LLMConfig['provider']) || 'claude',
+    provider: (process.env.LLM_PROVIDER as LLMConfig['provider']) || 'ollama',
     apiKey: process.env.LLM_API_KEY || '',
-    model: process.env.LLM_MODEL || 'claude-sonnet-4-20250514',
-    baseUrl: process.env.LLM_BASE_URL || undefined,
+    model: process.env.LLM_MODEL || 'llama3',
+    baseUrl: process.env.LLM_BASE_URL || 'http://localhost:11434/v1',
   };
 }

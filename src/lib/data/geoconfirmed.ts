@@ -6,10 +6,15 @@ const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 const API_BASE = 'https://geoconfirmed.org/api';
 
 // Icon color hex → faction mapping
+// GeoConfirmed uses consistent color codes across conflicts:
+// Blue = defending/friendly side, Red = attacking/hostile side, Brown = unknown/other
 const FACTION_MAP: Record<string, { faction: string; side: string }> = {
-  '0051CA': { faction: 'Ukraine', side: 'friendly' },
-  'E00000': { faction: 'Russia', side: 'hostile' },
+  '0051CA': { faction: 'Defending', side: 'friendly' },
+  '0000FF': { faction: 'Defending', side: 'friendly' },
+  'E00000': { faction: 'Attacking', side: 'hostile' },
+  'FF0000': { faction: 'Attacking', side: 'hostile' },
   'AC7339': { faction: 'Unknown/Other', side: 'unknown' },
+  '808080': { faction: 'Unknown/Other', side: 'unknown' },
 };
 
 // Icon filename number → event type mapping (common ones)

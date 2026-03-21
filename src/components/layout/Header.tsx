@@ -56,7 +56,7 @@ export function Header({ activeTheaterId, onTheaterChange }: HeaderProps) {
         <StatusIndicator label="FRONTLINE" status="stale" />
         <StatusIndicator label="ADS-B" status="stale" />
         <StatusIndicator label="AIS" status="stale" />
-        <StatusIndicator label="ACLED" status="stale" />
+        <StatusIndicator label="GEOCON" status="stale" />
       </div>
     </header>
   );

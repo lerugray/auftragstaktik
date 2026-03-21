@@ -5,28 +5,26 @@ import { deduplicateEvents } from '@/lib/processing/deduplicator';
 import { severityOrder } from '@/lib/processing/severityTagger';
 import type { EventRecord, Severity } from '@/lib/types/events';
 
-// Map theater countries to GeoConfirmed conflict names
-const CONFLICT_MAP: Record<string, string> = {
-  Ukraine: 'Ukraine',
-  Iran: 'Iran',
-};
-
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = request.nextUrl;
-    const country = searchParams.get('country') || 'Ukraine';
+    const conflictsParam = searchParams.get('conflicts') || 'ukraine';
     const severityFilter = searchParams.get('severity')?.split(',') as Severity[] | undefined;
+
+    // Support comma-separated conflict slugs (e.g., "israel,syria,yemen,iran")
+    const conflicts = conflictsParam.split(',').map(s => s.trim()).filter(Boolean);
 
     const allEvents: EventRecord[] = [];
 
-    // GeoConfirmed events (primary source — free, no auth, real-time)
-    try {
-      const conflictName = CONFLICT_MAP[country] || country;
-      const geoData = await fetchGeoConfirmedEvents(conflictName, 5, 50);
-      const normalized = normalizeGeoConfirmedEvents(geoData);
-      allEvents.push(...normalized);
-    } catch (err) {
-      console.error('Failed to fetch GeoConfirmed events:', err);
+    // Fetch GeoConfirmed events for each conflict slug
+    for (const conflict of conflicts) {
+      try {
+        const geoData = await fetchGeoConfirmedEvents(conflict, 5, 50);
+        const normalized = normalizeGeoConfirmedEvents(geoData);
+        allEvents.push(...normalized);
+      } catch (err) {
+        console.error(`Failed to fetch GeoConfirmed events for ${conflict}:`, err);
+      }
     }
 
     // Deduplicate across sources
