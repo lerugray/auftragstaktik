@@ -71,6 +71,36 @@ export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEve
     (e) => activeSources.includes(e.source) && activeSeverities.includes(e.severity)
   );
 
+  const exportData = useCallback((format: 'json' | 'csv') => {
+    if (filteredEvents.length === 0) return;
+
+    let content: string;
+    let mimeType: string;
+    let ext: string;
+
+    if (format === 'json') {
+      content = JSON.stringify(filteredEvents, null, 2);
+      mimeType = 'application/json';
+      ext = 'json';
+    } else {
+      const headers = ['id', 'source', 'timestamp', 'eventType', 'severity', 'title', 'lat', 'lng'];
+      const rows = filteredEvents.map(e =>
+        [e.id, e.source, e.timestamp, e.eventType, e.severity, `"${e.title.replace(/"/g, '""')}"`, e.coordinates[1], e.coordinates[0]].join(',')
+      );
+      content = [headers.join(','), ...rows].join('\n');
+      mimeType = 'text/csv';
+      ext = 'csv';
+    }
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `auftragstaktik_events_${new Date().toISOString().substring(0, 10)}.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }, [filteredEvents]);
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full text-tactical-text-dim">
@@ -102,9 +132,23 @@ export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEve
         onToggleSeverity={toggleSeverity}
       />
 
-      {/* Event count */}
-      <div className="px-3 py-1.5 text-xs font-mono text-tactical-text-dim border-b border-tactical-border bg-tactical-dark/50">
-        {filteredEvents.length} EVENTS / {events.length} TOTAL
+      {/* Event count + export */}
+      <div className="flex items-center justify-between px-3 py-1.5 text-xs font-mono text-tactical-text-dim border-b border-tactical-border bg-tactical-dark/50">
+        <span>{filteredEvents.length} EVENTS / {events.length} TOTAL</span>
+        <div className="flex gap-2">
+          <button
+            onClick={() => exportData('json')}
+            className="text-terminal-blue hover:text-terminal-blue/80"
+          >
+            JSON
+          </button>
+          <button
+            onClick={() => exportData('csv')}
+            className="text-terminal-blue hover:text-terminal-blue/80"
+          >
+            CSV
+          </button>
+        </div>
       </div>
 
       {/* Scrolling event list */}

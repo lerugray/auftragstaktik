@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { pdf } from '@react-pdf/renderer';
 import { getTheater } from '@/lib/theaters';
+import { SitrepDocument } from '@/lib/pdf/SitrepDocument';
 import type { BriefingResponse } from '@/lib/types/events';
 
 interface BriefingPanelProps {
@@ -123,6 +125,21 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
       setState('error');
     }
   }, [theaterId, theaterName, timeframe, scopeBounds]);
+
+  const exportPdf = useCallback(async () => {
+    if (!briefing) return;
+    try {
+      const blob = await pdf(<SitrepDocument briefing={briefing} />).toBlob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `SITREP_${briefing.dtg.replace(/\s+/g, '_')}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('PDF export failed:', err);
+    }
+  }, [briefing]);
 
   // Unavailable state
   if (ollamaStatus === 'unavailable') {
@@ -270,12 +287,20 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
             DTG: {briefing?.dtg} | Sources: {briefing?.sourceCount}
           </span>
         </div>
-        <button
-          onClick={() => { setState('idle'); setBriefing(null); }}
-          className="text-xs font-mono text-tactical-text-dim hover:text-tactical-text border border-tactical-border px-2 py-1"
-        >
-          NEW
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={exportPdf}
+            className="text-xs font-mono text-terminal-blue hover:text-terminal-blue/80 border border-tactical-border px-2 py-1"
+          >
+            PDF
+          </button>
+          <button
+            onClick={() => { setState('idle'); setBriefing(null); }}
+            className="text-xs font-mono text-tactical-text-dim hover:text-tactical-text border border-tactical-border px-2 py-1"
+          >
+            NEW
+          </button>
+        </div>
       </div>
 
       {/* Briefing content */}

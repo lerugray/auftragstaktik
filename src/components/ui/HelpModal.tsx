@@ -105,6 +105,22 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
             </ul>
           </HelpSection>
 
+          <HelpSection title="KEYBOARD SHORTCUTS">
+            <table className="w-full text-sm">
+              <tbody>
+                <HelpRow label="1-6" desc="Toggle map layers (1=Frontlines, 2=Aircraft, 3=Air Defense, 4=Heatmap, 5=Maritime, 6=Events)" />
+                <HelpRow label="ESC" desc="Close detail panel" />
+              </tbody>
+            </table>
+          </HelpSection>
+
+          <HelpSection title="DATA EXPORT">
+            <ul className="space-y-1">
+              <li>Click <Hl>JSON</Hl> or <Hl>CSV</Hl> in the feed header to download filtered events.</li>
+              <li>Click <Hl>PDF</Hl> on a generated SITREP to download a formatted briefing document.</li>
+            </ul>
+          </HelpSection>
+
           <HelpSection title="CLASSIFICATION">
             <p>
               All data shown is <Hl>UNCLASSIFIED // OSINT</Hl>. Every source is publicly accessible.

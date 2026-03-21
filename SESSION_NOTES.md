@@ -208,5 +208,41 @@
 - Help menu text bumped to text-sm for readability
 - Help menu updated with Telegram, air defense, and filter instructions
 
-### Remaining Phases
-- Phase 10: PDF SITREP export, keyboard shortcuts, Docker deployment
+### Phase 10: PDF Export + Advanced Features — COMPLETE
+
+#### 10A: PDF SITREP export
+- `@react-pdf/renderer` generates formatted PDF from BriefingResponse
+- Military-style layout: classification banners (top/bottom), DTG, sections, footer
+- "PDF" button appears in briefing header when SITREP is ready
+- Downloads as `SITREP_{DTG}.pdf`
+
+#### 10B: AD range rings
+- Each air defense installation now renders its engagement envelope as a circle on the map
+- S-400: 400km, S-300: 200km, Patriot: 160km, Iron Dome: 70km, NASAMS/IRIS-T: 40km, David's Sling: 300km
+- Friendly rings in blue, hostile in red, dashed borders, low-opacity fill
+- Shows overlapping coverage zones and gaps at a glance
+- Range shown in detail panel on click
+
+#### 10C: Event heatmap mode
+- Toggle "HEATMAP" in layer controls to show event density overlay
+- MapLibre native heatmap layer, severity-weighted (critical=1.0, info=0.2)
+- Color ramp: blue → cyan → green → yellow → orange → red
+- Zoom-responsive radius and intensity
+
+#### 10D: Timeline scrubber
+- Bar at bottom of map with 24H / 3D / 7D / 14D / 30D / ALL buttons
+- Filters conflict event markers by age
+- Works with the event type filters (both apply simultaneously)
+
+#### 10E: Keyboard shortcuts
+- 1-6 keys toggle map layers (Frontlines, Aircraft, Air Defense, Heatmap, Maritime, Events)
+- Escape closes detail panel
+- Ignores key presses when focused on input/select elements
+
+#### 10F: Data export
+- JSON and CSV export buttons in intel feed header
+- Exports currently filtered events (respects source/severity filters)
+- CSV with headers: id, source, timestamp, eventType, severity, title, lat, lng
+
+### Project Complete
+All 10 phases implemented. Remaining: Docker deployment if desired.

@@ -6,6 +6,7 @@ interface LayerState {
   frontlines: boolean;
   aircraft: boolean;
   airDefense: boolean;
+  heatmap: boolean;
   maritime: boolean;
   acled: boolean;
 }
@@ -22,6 +23,7 @@ const layerConfig: { key: keyof LayerState; label: string; color: string }[] = [
   { key: 'frontlines', label: 'FRONTLINES', color: 'text-terminal-red' },
   { key: 'aircraft', label: 'AIRCRAFT', color: 'text-terminal-blue' },
   { key: 'airDefense', label: 'AIR DEFENSE', color: 'text-severity-high' },
+  { key: 'heatmap', label: 'HEATMAP', color: 'text-severity-medium' },
   { key: 'maritime', label: 'MARITIME', color: 'text-terminal-amber' },
   { key: 'acled', label: 'EVENTS', color: 'text-terminal-green' },
 ];

@@ -15,6 +15,7 @@ interface ConflictEventLayerProps {
   activeEventTypes?: Set<string>;
   highlightedEventId?: string | null;
   onHighlightClear?: () => void;
+  timelineDaysBack?: number; // 0 = show all
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
@@ -25,8 +26,8 @@ const SEVERITY_COLORS: Record<string, string> = {
   info: '#00aaff',
 };
 
-export function ConflictEventLayer({ map, theater, onEventClick, activeEventTypes, highlightedEventId, onHighlightClear }: ConflictEventLayerProps) {
-  const markersRef = useRef<Map<string, { marker: maplibregl.Marker; eventType: string }>>(new Map());
+export function ConflictEventLayer({ map, theater, onEventClick, activeEventTypes, highlightedEventId, onHighlightClear, timelineDaysBack = 0 }: ConflictEventLayerProps) {
+  const markersRef = useRef<Map<string, { marker: maplibregl.Marker; eventType: string; timestamp?: string }>>(new Map());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchAndRender = useCallback(async () => {
@@ -86,7 +87,7 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
           .setLngLat([event.coordinates[0], event.coordinates[1]])
           .addTo(map);
 
-        markersRef.current.set(event.id, { marker, eventType: event.eventType });
+        markersRef.current.set(event.id, { marker, eventType: event.eventType, timestamp: event.timestamp });
       }
 
       // Remove markers for events no longer present
@@ -114,16 +115,26 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
     };
   }, [fetchAndRender]);
 
-  // Toggle marker visibility based on active event type filters
+  // Toggle marker visibility based on active event type filters and timeline
   useEffect(() => {
-    for (const entry of markersRef.current.values()) {
-      const visible = !activeEventTypes || activeEventTypes.has(entry.eventType);
+    const cutoff = timelineDaysBack > 0
+      ? Date.now() - (timelineDaysBack * 24 * 60 * 60 * 1000)
+      : 0;
+
+    for (const [id, entry] of markersRef.current) {
+      let visible = !activeEventTypes || activeEventTypes.has(entry.eventType);
+
+      // Apply timeline filter if set
+      if (visible && cutoff > 0 && entry.timestamp) {
+        visible = new Date(entry.timestamp).getTime() >= cutoff;
+      }
+
       const el = entry.marker.getElement();
       if (el) {
         el.style.display = visible ? '' : 'none';
       }
     }
-  }, [activeEventTypes]);
+  }, [activeEventTypes, timelineDaysBack]);
 
   // Highlight (pulse) a specific marker when clicked from the feed
   useEffect(() => {

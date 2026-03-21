@@ -200,6 +200,7 @@ function AirDefenseDetail({ installation, onClose }: { installation: AirDefenseI
         } />
         <DetailRow label="OPER" value={installation.operator} />
         <DetailRow label="LOC" value={installation.location} />
+        <DetailRow label="RANGE" value={`${installation.rangeKm} km`} />
         <DetailRow label="LAT" value={installation.lat.toFixed(4) + '°'} />
         <DetailRow label="LON" value={installation.lng.toFixed(4) + '°'} />
         <DetailRow label="CONFIRMED" value={installation.lastConfirmed} />

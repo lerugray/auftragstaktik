@@ -10,6 +10,8 @@ import { AircraftLayer } from './AircraftLayer';
 import { MaritimeLayer } from './MaritimeLayer';
 import { ConflictEventLayer } from './ConflictEventLayer';
 import { AirDefenseLayer } from './AirDefenseLayer';
+import { HeatmapLayer } from './HeatmapLayer';
+import { TimelineScrubber } from './TimelineScrubber';
 import { DetailPanel } from './DetailPanel';
 import { MapControls } from './MapControls';
 import { MapLegend } from './MapLegend';
@@ -35,6 +37,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
   const [selectedAD, setSelectedAD] = useState<AirDefenseInstallation | null>(null);
   const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
+  const [timelineDaysBack, setTimelineDaysBack] = useState(0); // 0 = all
   const [activeEventTypes, setActiveEventTypes] = useState<Set<string>>(new Set([
     'Missile strike', 'Drone strike', 'Air/drone strike',
     'Explosion/Strike', 'Artillery/Shelling', 'Shelling/artillery/missile attack',
@@ -47,6 +50,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     frontlines: true,
     aircraft: true,
     airDefense: true,
+    heatmap: false,
     maritime: true,
     acled: true,
   });
@@ -149,6 +153,24 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     setSelectedAD(null);
   }, []);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLTextAreaElement) return;
+      switch (e.key) {
+        case '1': toggleLayer('frontlines'); break;
+        case '2': toggleLayer('aircraft'); break;
+        case '3': toggleLayer('airDefense'); break;
+        case '4': toggleLayer('heatmap'); break;
+        case '5': toggleLayer('maritime'); break;
+        case '6': toggleLayer('acled'); break;
+        case 'Escape': clearSelections(); break;
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [toggleLayer, clearSelections]);
+
   const handleAircraftClick = useCallback((aircraft: AircraftRecord) => {
     clearSelections();
     setSelectedAircraft(aircraft);
@@ -198,6 +220,13 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
               activeEventTypes={activeEventTypes}
               highlightedEventId={highlightedEventId}
               onHighlightClear={() => setHighlightedEventId(null)}
+              timelineDaysBack={timelineDaysBack}
+            />
+          )}
+          {layers.heatmap && (
+            <HeatmapLayer
+              map={mapRef.current}
+              theater={theater}
             />
           )}
           {layers.airDefense && (
@@ -234,6 +263,11 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
         event={selectedEvent}
         airDefense={selectedAD}
         onClose={clearSelections}
+      />
+
+      <TimelineScrubber
+        visible={layers.acled}
+        onRangeChange={setTimelineDaysBack}
       />
 
       {/* Bottom status bar */}

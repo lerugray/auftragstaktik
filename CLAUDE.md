@@ -59,5 +59,4 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 - **Phase 7: Bug Fixes + UX Polish** — COMPLETE (theater-scoped events, pulse markers, wiki links, news links)
 - **Phase 8: Theater Expansion + Help + Accessibility** — COMPLETE (6 theaters, help menu, light theme)
 - **Phase 9: Telegram + AD/SAM Layer** — COMPLETE (Telegram scraping + translation, 18 AD installations)
-
-**Next: Phase 10** — PDF SITREP Export + Final Polish
+- **Phase 10: PDF Export + Advanced Features** — COMPLETE (PDF SITREP, range rings, heatmap, timeline, keyboard shortcuts, data export)

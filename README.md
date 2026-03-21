@@ -127,7 +127,7 @@ For briefings, install [Ollama](https://ollama.com) and run `ollama pull llama3`
 - [x] Phase 7: Theater-scoped events fix, pulse markers, equipment wiki links, news links
 - [x] Phase 8: Theater expansion (6 theaters), help menu, light/high-contrast theme
 - [x] Phase 9: Telegram integration (translated military blogs), static AD/SAM layer
-- [ ] Phase 10: PDF SITREP export, keyboard shortcuts, deployment
+- [x] Phase 10: PDF SITREP export, range rings, heatmap, timeline, keyboard shortcuts, data export
 
 ---
 
