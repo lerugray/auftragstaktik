@@ -157,7 +157,32 @@
 - Conflict event detail panel now includes "NEWS COVERAGE" link
 - Links to Google News search scoped to event type + title keywords
 
-### Remaining Phases (Updated Plan)
-- Phase 8: Theater expansion (Baltic, East Asia, Africa, Myanmar), help menu, light/high-contrast theme
+### Phase 8: Theater Expansion + Help + Accessibility — COMPLETE
+
+#### 8A: Theater expansion
+- Added 4 new theaters: Baltic / N. Europe, East Asia / Pacific, Africa, Myanmar
+- Baltic: Kaliningrad, Baltic Sea, Finland/Russia border, Baltic States, Norwegian Coast
+- East Asia: Korean Peninsula, Taiwan Strait, South China Sea, East China Sea, Sea of Japan
+- Africa: Sahel, Horn of Africa, Sudan, DR Congo, Libya, Mozambique
+- Myanmar: Shan, Kachin, Rakhine, Sagaing conflict zones
+- All theaters have ADS-B, AIS, and GeoConfirmed data sources configured
+- Total: 6 theaters with 37 sub-regions
+
+#### 8B: Help menu
+- HELP button in header opens modal overlay
+- Sections: What is this, Data Sources, Tactical Map, Intelligence Feed, Theaters, Briefing Generator, Classification
+- Written with stop-slop rules — no filler, no AI patterns
+- Escape key or backdrop click to close
+- CLAUDE.md updated: help menu must be updated with stop-slop when adding new features
+
+#### 8C: Light/high-contrast theme
+- LIGHT/DARK toggle button in header
+- Light theme: high-contrast colors, light backgrounds, dark text, WCAG AA compliant
+- Map basemap swaps between CartoDB Dark Matter and CartoDB Positron
+- Scanline overlay hidden in light mode
+- Theme preference persisted in localStorage
+- Files: theme.ts, globals.css (light overrides), map/styles.ts (light basemap), DashboardShell (theme state)
+
+### Remaining Phases
 - Phase 9: Telegram channel integration (Rybar, DeepState UA, WarGonzo) with translation
 - Phase 10: PDF SITREP export, keyboard shortcuts, Docker deployment

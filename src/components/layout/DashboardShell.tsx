@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { ClassificationBanner } from '@/components/ui/ClassificationBanner';
 import { ScanlineOverlay } from '@/components/ui/ScanlineOverlay';
 import { Header } from './Header';
@@ -9,6 +9,7 @@ import { MapWrapper } from '@/components/map';
 import { IntelFeed } from '@/components/feed/IntelFeed';
 import { BriefingPanel } from '@/components/briefing/BriefingPanel';
 import { getDefaultTheater, getTheater } from '@/lib/theaters';
+import { getStoredTheme, setStoredTheme, type ThemeMode } from '@/lib/theme';
 import type { EventRecord } from '@/lib/types/events';
 
 // Map ref type for fly-to functionality
@@ -21,6 +22,25 @@ export function DashboardShell() {
   const [theaterId, setTheaterId] = useState(getDefaultTheater().id);
   const theater = useMemo(() => getTheater(theaterId) ?? getDefaultTheater(), [theaterId]);
   const mapHandleRef = useRef<MapHandle | null>(null);
+  const [theme, setTheme] = useState<ThemeMode>('dark');
+
+  // Load stored theme on mount
+  useEffect(() => {
+    setTheme(getStoredTheme());
+  }, []);
+
+  // Apply theme class to body
+  useEffect(() => {
+    document.documentElement.classList.toggle('theme-light', theme === 'light');
+  }, [theme]);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      setStoredTheme(next);
+      return next;
+    });
+  }, []);
 
   // Get GeoConfirmed conflict slugs for the active theater
   const theaterConflicts = useMemo(() => {
@@ -39,14 +59,19 @@ export function DashboardShell() {
   return (
     <div className="flex flex-col h-screen bg-tactical-dark text-tactical-text font-mono">
       <ClassificationBanner />
-      <Header activeTheaterId={theaterId} onTheaterChange={setTheaterId} />
+      <Header
+        activeTheaterId={theaterId}
+        onTheaterChange={setTheaterId}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
 
       {/* Main content: 3-panel layout */}
       <div className="flex-1 flex overflow-hidden p-2 gap-2">
         {/* Left: Map (65%) */}
         <div className="flex-[65] min-w-0">
           <PanelFrame title="Tactical Map" className="h-full">
-            <MapWrapper theater={theater} mapHandleRef={mapHandleRef} />
+            <MapWrapper theater={theater} mapHandleRef={mapHandleRef} theme={theme} />
           </PanelFrame>
         </div>
 

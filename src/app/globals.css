@@ -22,6 +22,58 @@
   --font-heading: "Rajdhani", "Arial Narrow", sans-serif;
 }
 
+/* Light / high-contrast theme overrides */
+.theme-light {
+  --color-terminal-green: #006622;
+  --color-terminal-green-dim: #338844;
+  --color-terminal-amber: #996600;
+  --color-terminal-red: #cc0000;
+  --color-terminal-blue: #0055aa;
+  --color-tactical-dark: #f0f0f4;
+  --color-tactical-panel: #ffffff;
+  --color-tactical-border: #c0c0cc;
+  --color-tactical-surface: #e8e8f0;
+  --color-tactical-text: #1a1a2e;
+  --color-tactical-text-dim: #555570;
+  --color-severity-critical: #cc0000;
+  --color-severity-high: #cc4400;
+  --color-severity-medium: #996600;
+  --color-severity-low: #006622;
+  --color-severity-info: #0055aa;
+}
+
+/* Hide scanline overlay in light mode */
+.theme-light .scanline-overlay {
+  display: none;
+}
+
+/* Light mode scrollbar */
+.theme-light ::-webkit-scrollbar-track {
+  background: #e8e8f0;
+}
+
+.theme-light ::-webkit-scrollbar-thumb {
+  background: #c0c0cc;
+}
+
+.theme-light ::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Light mode map controls */
+.theme-light .maplibregl-ctrl-group {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid #c0c0cc !important;
+}
+
+.theme-light .maplibregl-ctrl-group button {
+  color: #555 !important;
+}
+
+.theme-light .maplibregl-ctrl-group button:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
 /* Scanline CRT effect overlay */
 .scanline-overlay {
   pointer-events: none;

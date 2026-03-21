@@ -27,3 +27,35 @@ export const tacticalDarkStyle: StyleSpecification = {
   ],
   glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
 };
+
+export const tacticalLightStyle: StyleSpecification = {
+  version: 8,
+  name: 'Tactical Light',
+  sources: {
+    'carto-light': {
+      type: 'raster',
+      tiles: [
+        'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
+        'https://b.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
+        'https://c.basemaps.cartocdn.com/light_all/{z}/{x}/{y}@2x.png',
+      ],
+      tileSize: 256,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>',
+    },
+  },
+  layers: [
+    {
+      id: 'carto-light-layer',
+      type: 'raster',
+      source: 'carto-light',
+      minzoom: 0,
+      maxzoom: 20,
+    },
+  ],
+  glyphs: 'https://fonts.openmaptiles.org/{fontstack}/{range}.pbf',
+};
+
+export function getMapStyle(theme: 'dark' | 'light'): StyleSpecification {
+  return theme === 'light' ? tacticalLightStyle : tacticalDarkStyle;
+}

@@ -17,7 +17,7 @@ const shapeItems = [
 // Items using actual NATO milsymbol renderings (aircraft)
 const natoItems = [
   { sidc: 'SHAP----------', label: 'Military aircraft' },
-  { sidc: 'SNAPCF--------', label: 'Civilian aircraft' },
+  { sidc: 'SNAPCF--------', label: 'Civilian / commercial aircraft' },
 ];
 
 const natoSymbolRef = [
@@ -28,7 +28,7 @@ const natoSymbolRef = [
   { sidc: 'SHGPUCI-------', label: 'Armed Clash', desc: 'Hostile ground engagement between forces' },
   { sidc: 'SHGPUCAT------', label: 'Armor (Destroyed)', desc: 'Hostile tank or armored vehicle, destroyed' },
   { sidc: 'SHAP----------', label: 'Military Aircraft', desc: 'Hostile fixed-wing aircraft (ADS-B tracked)' },
-  { sidc: 'SNAPCF--------', label: 'Civilian Aircraft', desc: 'Neutral civilian fixed-wing (ADS-B tracked)' },
+  { sidc: 'SNAPCF--------', label: 'Civilian / Commercial', desc: 'Neutral civilian or commercial fixed-wing (ADS-B tracked)' },
   { sidc: 'SHSPCL--------', label: 'Naval Event', desc: 'Hostile naval or maritime-related event' },
   { sidc: 'SHGPE---------', label: 'General Event', desc: 'Hostile activity, type unspecified' },
 ];

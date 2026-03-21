@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { StatusIndicator } from '@/components/ui/StatusIndicator';
+import { HelpModal } from '@/components/ui/HelpModal';
 import { theaters } from '@/lib/theaters';
+import type { ThemeMode } from '@/lib/theme';
 
 interface HeaderProps {
   activeTheaterId: string;
   onTheaterChange: (id: string) => void;
+  theme: ThemeMode;
+  onToggleTheme: () => void;
 }
 
 function formatUTCTime(date: Date): string {
@@ -16,8 +20,9 @@ function formatUTCTime(date: Date): string {
   return `${dateStr} ${time}Z`;
 }
 
-export function Header({ activeTheaterId, onTheaterChange }: HeaderProps) {
+export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme }: HeaderProps) {
   const [time, setTime] = useState<string>('');
+  const [helpOpen, setHelpOpen] = useState(false);
 
   useEffect(() => {
     const update = () => setTime(formatUTCTime(new Date()));
@@ -27,37 +32,53 @@ export function Header({ activeTheaterId, onTheaterChange }: HeaderProps) {
   }, []);
 
   return (
-    <header className="flex items-center justify-between px-4 py-2 bg-tactical-surface border-b border-tactical-border">
-      {/* Left: Title */}
-      <div className="flex items-center gap-4">
-        <h1 className="text-lg font-mono font-bold text-terminal-green tracking-[0.3em] uppercase">
-          Auftragstaktik
-        </h1>
-        <select
-          value={activeTheaterId}
-          onChange={(e) => onTheaterChange(e.target.value)}
-          className="bg-tactical-dark border border-tactical-border text-tactical-text text-xs font-mono px-2 py-1 focus:outline-none focus:border-terminal-green/50"
-        >
-          {theaters.map((t) => (
-            <option key={t.id} value={t.id}>
-              {t.name}
-            </option>
-          ))}
-        </select>
-      </div>
+    <>
+      <header className="flex items-center justify-between px-4 py-2 bg-tactical-surface border-b border-tactical-border">
+        {/* Left: Title + Theater + Help */}
+        <div className="flex items-center gap-4">
+          <h1 className="text-lg font-mono font-bold text-terminal-green tracking-[0.3em] uppercase">
+            Auftragstaktik
+          </h1>
+          <select
+            value={activeTheaterId}
+            onChange={(e) => onTheaterChange(e.target.value)}
+            className="bg-tactical-dark border border-tactical-border text-tactical-text text-xs font-mono px-2 py-1 focus:outline-none focus:border-terminal-green/50"
+          >
+            {theaters.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={() => setHelpOpen(true)}
+            className="text-xs font-mono text-tactical-text-dim hover:text-terminal-green border border-tactical-border px-2 py-1"
+          >
+            HELP
+          </button>
+          <button
+            onClick={onToggleTheme}
+            className="text-xs font-mono text-tactical-text-dim hover:text-terminal-green border border-tactical-border px-2 py-1"
+          >
+            {theme === 'dark' ? 'LIGHT' : 'DARK'}
+          </button>
+        </div>
 
-      {/* Center: Clock */}
-      <div className="font-mono text-sm text-terminal-amber tracking-wider">
-        {time || '\u00A0'}
-      </div>
+        {/* Center: Clock */}
+        <div className="font-mono text-sm text-terminal-amber tracking-wider">
+          {time || '\u00A0'}
+        </div>
 
-      {/* Right: Status indicators */}
-      <div className="flex items-center gap-4">
-        <StatusIndicator label="FRONTLINE" status="stale" />
-        <StatusIndicator label="ADS-B" status="stale" />
-        <StatusIndicator label="AIS" status="stale" />
-        <StatusIndicator label="GEOCON" status="stale" />
-      </div>
-    </header>
+        {/* Right: Status indicators */}
+        <div className="flex items-center gap-4">
+          <StatusIndicator label="FRONTLINE" status="stale" />
+          <StatusIndicator label="ADS-B" status="stale" />
+          <StatusIndicator label="AIS" status="stale" />
+          <StatusIndicator label="GEOCON" status="stale" />
+        </div>
+      </header>
+
+      <HelpModal open={helpOpen} onClose={() => setHelpOpen(false)} />
+    </>
   );
 }

@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, useCallback, MutableRefObject } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { tacticalDarkStyle } from '@/lib/map/styles';
+import { getMapStyle } from '@/lib/map/styles';
+import type { ThemeMode } from '@/lib/theme';
 import { FrontlineLayer } from './FrontlineLayer';
 import { AircraftLayer } from './AircraftLayer';
 import { MaritimeLayer } from './MaritimeLayer';
@@ -18,9 +19,10 @@ import type { AircraftRecord, MaritimeRecord, EventRecord } from '@/lib/types/ev
 interface TacticalMapProps {
   theater: Theater;
   mapHandleRef?: MutableRefObject<MapHandle | null>;
+  theme?: ThemeMode;
 }
 
-export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
+export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [mapReady, setMapReady] = useState(false);
@@ -50,7 +52,7 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
 
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: tacticalDarkStyle,
+      style: getMapStyle(theme),
       center: theater.center,
       zoom: theater.zoom,
       minZoom: 3,
@@ -113,6 +115,13 @@ export function TacticalMap({ theater, mapHandleRef }: TacticalMapProps) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Swap basemap when theme changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+    map.setStyle(getMapStyle(theme));
+  }, [theme, mapReady]);
 
   useEffect(() => {
     const map = mapRef.current;

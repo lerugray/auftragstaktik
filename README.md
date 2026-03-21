@@ -48,10 +48,14 @@ All external calls go through server-side routes. Keys stay on the server.
 Each theater defines a bounding box, sub-regions, and active data sources. Map view, queries, feed, and briefings all scope to the active theater.
 
 **Configured theaters:**
-- **Ukraine:** Frontlines, aircraft, maritime (Black Sea), conflict events. Seven sub-regions including Donetsk, Kharkiv, Crimea.
-- **Middle East:** Israel/Gaza, Lebanon, Syria, Iran, Yemen. Aircraft, maritime (Persian Gulf, Red Sea), conflict events from four GeoConfirmed regions. Eight sub-regions.
+- **Ukraine:** Frontlines (DeepState), aircraft, maritime (Black Sea), conflict events
+- **Middle East:** Israel/Gaza, Lebanon, Syria, Iran, Yemen. Persian Gulf and Red Sea maritime
+- **Baltic / N. Europe:** Kaliningrad, Baltic Sea, Finland border, Norwegian Coast
+- **East Asia / Pacific:** Korean Peninsula, Taiwan Strait, South China Sea
+- **Africa:** Sahel, Horn of Africa, Sudan, DR Congo, Libya, Mozambique
+- **Myanmar:** Shan, Kachin, Rakhine, Sagaing conflict zones
 
-Add a new theater by writing a config object. More theaters planned (Baltic, East Asia, Africa).
+Add a new theater by writing a config object.
 
 ---
 
@@ -120,7 +124,7 @@ For briefings, install [Ollama](https://ollama.com) and run `ollama pull llama3`
 - [x] Phase 5: Conflict event markers on map (NATO symbology, event type filters)
 - [x] Phase 6: LLM briefing generator (Ollama, slop filter, structured SITREP)
 - [x] Phase 7: Theater-scoped events fix, pulse markers, equipment wiki links, news links
-- [ ] Phase 8: Theater expansion, help menu, accessibility
+- [x] Phase 8: Theater expansion (6 theaters), help menu, light/high-contrast theme
 - [ ] Phase 9: Telegram channel integration with translation
 - [ ] Phase 10: PDF SITREP export, keyboard shortcuts, deployment
 

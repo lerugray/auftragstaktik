@@ -40,6 +40,7 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 
 ## Conventions
 - **Use stop-slop** when writing any human-facing copy (READMEs, docs, descriptions, briefing output)
+- **Update help menu** (`src/components/ui/HelpModal.tsx`) when adding new functionality — keep it current with stop-slop
 - Session notes tracked in `SESSION_NOTES.md`
 - Plan file: `.claude/plans/cosmic-marinating-lemur.md`
 - All external API calls go through Next.js API routes (never from client directly)
@@ -55,5 +56,6 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 - **Phase 5: Conflict Event Markers** — COMPLETE (NATO symbology + event type filters)
 - **Phase 6: LLM Briefing Generator** — COMPLETE (Ollama default, slop filter, structured SITREP)
 - **Phase 7: Bug Fixes + UX Polish** — COMPLETE (theater-scoped events, pulse markers, wiki links, news links)
+- **Phase 8: Theater Expansion + Help + Accessibility** — COMPLETE (6 theaters, help menu, light theme)
 
-**Next: Phase 8** — Theater Expansion + Help Menu + Accessibility
+**Next: Phase 9** — Telegram Channel Integration
