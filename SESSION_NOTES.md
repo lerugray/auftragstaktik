@@ -244,5 +244,27 @@
 - Exports currently filtered events (respects source/severity filters)
 - CSV with headers: id, source, timestamp, eventType, severity, title, lat, lng
 
-### Project Complete
-All 10 phases implemented. Remaining: Docker deployment if desired.
+## Session 3 — 2026-03-22
+
+### Phase 11A: Briefing Data Enrichment — COMPLETE
+- Created `src/lib/llm/eventAggregator.ts` with 6 aggregation functions:
+  - `groupByLocation` — groups events by nearest gazetteer location (25km haversine match)
+  - `aggregateFactions` — counts hostile/friendly/unknown activity
+  - `aggregateEquipmentLosses` — rolls up confirmed destroyed equipment by type
+  - `clusterByTime` — identifies sustained activity clusters (3+ events in 2h window)
+  - `pickTopDescriptions` — top verified event descriptions by severity
+  - `pickTelegramExcerpts` — top Telegram posts with channel attribution
+- Added `reverseGeoLookup()` to gazetteer.ts for mapping coordinates to named locations
+- Rewrote prompt builder events section: location summaries, faction breakdown, equipment losses, temporal clusters, verified intel quotes, Telegram excerpts with source reliability notes
+- System prompt updated to weight GeoConfirmed (verified) over Telegram (unconfirmed)
+
+### Phase 11B: Historical Mode — SCOPED (not implemented)
+- UCDP GED recommended: 1989-2024, global, geocoded, CC BY 4.0, covers Yugoslav Wars
+- GDELT (1979+), HCED (1468 BC-2003), ACLED, Correlates of War also available
+- Architecture scoped: static CSV bundles, historical theater flag, timeline playback
+- Estimated 2-3 sessions to implement
+
+### Future Features Noted
+- Historical mode (UCDP GED dataset, Yugoslav Wars, timeline playback)
+- Docker deployment
+- Data model normalization cleanup (per senior dev feedback)

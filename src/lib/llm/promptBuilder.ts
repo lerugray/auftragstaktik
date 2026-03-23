@@ -1,6 +1,16 @@
 import type { EventRecord, AircraftRecord, MaritimeRecord } from '@/lib/types/events';
+import {
+  groupByLocation,
+  aggregateFactions,
+  aggregateEquipmentLosses,
+  clusterByTime,
+  pickTopDescriptions,
+  pickTelegramExcerpts,
+} from './eventAggregator';
 
 export const ANALYST_SYSTEM_PROMPT = `You are a military intelligence analyst producing a SITREP (Situation Report) based on open-source intelligence (OSINT) data. Write in terse, professional military style. Use standard military terminology and abbreviations. No filler, no speculation beyond what the data supports. State facts, identify patterns, assess implications.
+
+Source reliability is indicated in the data. Weight GeoConfirmed events (geolocated, visually verified) higher than Telegram reports (unconfirmed OSINT) in your assessment.
 
 Format your response EXACTLY as follows with these section headers:
 
@@ -45,45 +55,92 @@ export function buildBriefingPrompt(ctx: BriefingContext): string {
     '',
   ];
 
-  // Events summary
+  // === ENRICHED EVENTS SECTION ===
   if (ctx.events.length > 0) {
     lines.push(`=== CONFLICT EVENTS (${ctx.events.length} total) ===`);
-
-    // Group by type
-    const byType = new Map<string, number>();
-    const bySeverity = new Map<string, number>();
-    for (const e of ctx.events) {
-      byType.set(e.eventType, (byType.get(e.eventType) || 0) + 1);
-      bySeverity.set(e.severity, (bySeverity.get(e.severity) || 0) + 1);
-    }
-
-    lines.push('By type: ' + [...byType.entries()].map(([t, c]) => `${t} (${c})`).join(', '));
-    lines.push('By severity: ' + [...bySeverity.entries()].map(([s, c]) => `${s} (${c})`).join(', '));
     lines.push('');
 
-    // Include most recent/critical events (up to 30)
-    const topEvents = ctx.events
-      .sort((a, b) => {
-        const severityOrder = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
-        const sa = severityOrder[a.severity as keyof typeof severityOrder] ?? 4;
-        const sb = severityOrder[b.severity as keyof typeof severityOrder] ?? 4;
-        return sa - sb;
-      })
-      .slice(0, 30);
+    // Location summary
+    const locationGroups = groupByLocation(ctx.events);
+    lines.push('LOCATION SUMMARY:');
+    const sortedLocations = [...locationGroups.entries()]
+      .sort((a, b) => b[1].length - a[1].length)
+      .slice(0, 8);
 
-    lines.push('Key events:');
-    for (const e of topEvents) {
-      const ts = e.timestamp.substring(0, 16);
-      lines.push(`- [${e.severity.toUpperCase()}] ${ts} | ${e.eventType} | ${e.title}`);
+    for (const [location, locEvents] of sortedLocations) {
+      const typeCounts = new Map<string, number>();
+      for (const e of locEvents) {
+        const t = e.eventType.replace(/\s*\[.*\]$/, '');
+        typeCounts.set(t, (typeCounts.get(t) || 0) + 1);
+      }
+      const typeStr = [...typeCounts.entries()].map(([t, c]) => `${c} ${t}`).join(', ');
+      lines.push(`- ${location}: ${locEvents.length} events (${typeStr})`);
     }
     lines.push('');
+
+    // Faction breakdown
+    const factions = aggregateFactions(ctx.events);
+    lines.push(`FACTION BREAKDOWN:`);
+    lines.push(`Hostile: ${factions.hostile} events | Friendly: ${factions.friendly} events | Unknown: ${factions.unknown} events`);
+    lines.push('');
+
+    // Equipment losses
+    const losses = aggregateEquipmentLosses(ctx.events);
+    if (losses.size > 0) {
+      lines.push('CONFIRMED EQUIPMENT LOSSES:');
+      const lossStr = [...losses.entries()].map(([type, count]) => `${count}x ${type}`).join(', ');
+      lines.push(lossStr);
+      lines.push('');
+    }
+
+    // Temporal clusters
+    const clusters = clusterByTime(ctx.events);
+    if (clusters.length > 0) {
+      lines.push('NOTABLE ACTIVITY CLUSTERS:');
+      for (const c of clusters.slice(0, 3)) {
+        const start = c.startTime.substring(11, 16) + 'Z';
+        const end = c.endTime.substring(11, 16) + 'Z';
+        lines.push(`- ${c.location}: ${c.count} events ${start}-${end} (${c.types.join(', ')})`);
+      }
+      lines.push('');
+    }
+
+    // Top intelligence from verified sources
+    const topIntel = pickTopDescriptions(ctx.events);
+    if (topIntel.length > 0) {
+      lines.push('TOP INTELLIGENCE (GeoConfirmed, verified):');
+      for (const item of topIntel) {
+        lines.push(`- [${item.severity}] ${item.timestamp}: "${item.description}"`);
+      }
+      lines.push('');
+    }
+
+    // Telegram excerpts
+    const tgExcerpts = pickTelegramExcerpts(ctx.events);
+    if (tgExcerpts.length > 0) {
+      lines.push('TELEGRAM REPORTS (unconfirmed OSINT):');
+      for (const item of tgExcerpts) {
+        lines.push(`- @${item.channel} ${item.timestamp}: "${item.text}"`);
+      }
+      lines.push('');
+    }
+
+    // Source reliability note
+    const geoconCount = ctx.events.filter(e => e.source === 'acled').length;
+    const tgramCount = ctx.events.filter(e => e.source === 'telegram').length;
+    if (geoconCount > 0 || tgramCount > 0) {
+      lines.push('SOURCE RELIABILITY:');
+      if (geoconCount > 0) lines.push(`- GeoConfirmed (${geoconCount} events): Geolocated, visually verified`);
+      if (tgramCount > 0) lines.push(`- Telegram (${tgramCount} events): Unverified OSINT, treat as unconfirmed`);
+      lines.push('');
+    }
   } else {
     lines.push('=== CONFLICT EVENTS ===');
     lines.push('No conflict events in the reporting period.');
     lines.push('');
   }
 
-  // Aircraft summary
+  // Aircraft summary (kept concise)
   if (ctx.aircraft.length > 0) {
     const milAircraft = ctx.aircraft.filter(a => a.military);
     const civAircraft = ctx.aircraft.filter(a => !a.military);
@@ -93,7 +150,7 @@ export function buildBriefingPrompt(ctx: BriefingContext): string {
 
     if (milAircraft.length > 0) {
       lines.push('Military aircraft:');
-      for (const ac of milAircraft.slice(0, 15)) {
+      for (const ac of milAircraft.slice(0, 10)) {
         lines.push(`- ${ac.callsign || ac.icao} | ${ac.aircraftType || 'Unknown type'} | FL${Math.round(ac.altitude / 100)} | ${ac.speed}kts | HDG ${ac.heading}°`);
       }
     }
@@ -104,7 +161,7 @@ export function buildBriefingPrompt(ctx: BriefingContext): string {
     lines.push('');
   }
 
-  // Maritime summary
+  // Maritime summary (kept concise)
   if (ctx.vessels.length > 0) {
     const milVessels = ctx.vessels.filter(v => ['military', 'law-enforcement', 'coast-guard'].includes(v.classification));
     const civVessels = ctx.vessels.filter(v => !['military', 'law-enforcement', 'coast-guard'].includes(v.classification));

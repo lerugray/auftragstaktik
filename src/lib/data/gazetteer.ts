@@ -75,3 +75,30 @@ export function geoTagText(text: string): GeoMatch | null {
 
   return null;
 }
+
+// Haversine distance in km between two points
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+// Reverse lookup: find nearest named location within radius
+export function reverseGeoLookup(lat: number, lng: number, radiusKm: number = 25): string | null {
+  let nearest: string | null = null;
+  let nearestDist = Infinity;
+
+  for (const loc of LOCATIONS) {
+    const dist = haversineKm(lat, lng, loc.lat, loc.lng);
+    if (dist < radiusKm && dist < nearestDist) {
+      nearest = loc.name;
+      nearestDist = dist;
+    }
+  }
+
+  return nearest;
+}

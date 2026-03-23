@@ -14,7 +14,8 @@
       "Bash(gh api:*)",
       "Bash(npx kill-port:*)",
       "Bash(taskkill //f //im node.exe)",
-      "Bash(rm -rf .next)"
+      "Bash(rm -rf .next)",
+      "Bash(npx next:*)"
     ]
   }
 }
