@@ -1,28 +1,31 @@
+<div align="center">
+
+![Tactical Terminal](docs/screenshots/coldwar.jpg)
+
 # AUFTRAGSTAKTIK
 
-**Tactical OSINT terminal. Live frontlines, aircraft, ships, air defense coverage, and conflict events on one display with NATO military symbology.**
+**Live frontlines. Aircraft transponders. Ship tracking. Air defense envelopes. Conflict events. Translated intel from military Telegram channels. One terminal. NATO symbology. All OSINT.**
+
+*Named for the German doctrine of mission-type tactics: give the objective, let subordinates figure out execution.*
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript)
+![MapLibre](https://img.shields.io/badge/MapLibre-GL-blue)
+![Ollama](https://img.shields.io/badge/Ollama-LLM-green)
 ![License](https://img.shields.io/badge/license-MIT-green)
+
+</div>
 
 ---
 
-## What This Does
+## Capabilities
 
-Auftragstaktik pulls live data from open sources and renders it on a tactical map. Frontline positions from DeepState. Aircraft transponders from ADS-B. Ship positions from AIS. Conflict events from GeoConfirmed. Translated military blog posts from Telegram. All markers use MIL-STD-2525 NATO symbols.
-
-The name comes from the German doctrine of mission-type tactics: give the objective, let subordinates figure out execution.
-
-### Capabilities
-
-**Tactical Map.** Dark or light basemap with togglable layers: frontlines, aircraft, ships, air defense installations with range rings, conflict events, density heatmap. Click any marker for a detail panel. Aircraft types and vessel classes link to Wikipedia.
-
-**Intelligence Feed.** Scrolling event stream from GeoConfirmed and Telegram channels (auto-translated). Filter by source or severity. Click an event to fly the map there — the marker pulses so you can spot it. Export filtered data as JSON or CSV.
-
-**Briefing Generator.** Feeds aggregated intelligence to a local LLM (Ollama) and produces a structured SITREP with location summaries, faction breakdown, equipment losses, and source-attributed reporting. Export as PDF. No API costs.
-
-**Air Defense Layer.** OSINT-confirmed SAM/AD installations with engagement range rings. S-400 at 400km, Patriot at 160km, Iron Dome at 70km. Coverage overlaps and gaps are visible at a glance.
+| | |
+|---|---|
+| **Tactical Map** | Dark or light basemap. Togglable layers: frontlines, aircraft, ships, air defense with range rings, conflict events, density heatmap. Click any marker for detail panels with Wikipedia links. |
+| **Intelligence Feed** | GeoConfirmed events and Telegram posts (auto-translated). Filter by source or severity. Click to fly the map there. Export as JSON or CSV. |
+| **Briefing Generator** | Local LLM (Ollama) produces structured SITREPs from aggregated intelligence. Location summaries, faction breakdown, equipment losses, source attribution. Export as PDF. No API costs. |
+| **Air Defense Layer** | OSINT-confirmed SAM/AD installations with engagement envelopes. S-400 at 400km, Patriot at 160km, Iron Dome at 70km. Coverage zones and gaps visible at a glance. |
 
 ---
 
