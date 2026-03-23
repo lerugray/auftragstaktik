@@ -314,3 +314,9 @@
 
 **Data Model Normalization**
 - Cleanup pass on event normalizer as data sources grow (per senior dev feedback)
+
+**Sandkasten (separate project)**
+- Open-source WeGo wargame simulation inspired by CMO, built on Auftragstaktik's map/symbology
+- Project files at `../Sandkasten/` with CLAUDE.md, SESSION_NOTES.md, GDD.md
+- Shares MapLibre, milsymbol, theater system with Auftragstaktik
+- Can import real-world OSINT snapshots as playable scenarios
