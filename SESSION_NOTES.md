@@ -271,6 +271,12 @@
 - README updated with Docker setup instructions (Option B)
 - Stop-slop pass on all docs
 
+### README Branding
+- Added Cold War tactical terminal hero image at top of README
+- Centered title block with expanded tagline
+- Capabilities reformatted as feature grid table
+- Additional badges (MapLibre, Ollama)
+
 ### Future Features Noted
 - Historical mode (UCDP GED dataset, Yugoslav Wars, timeline playback, 2-3 sessions)
 - Data model normalization cleanup (per senior dev feedback)
