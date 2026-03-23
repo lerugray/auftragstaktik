@@ -280,9 +280,19 @@
 ### Future Features Noted
 
 **Historical Mode**
-- UCDP GED dataset (1989-2024, geocoded, CC BY 4.0), covers Yugoslav Wars
+- Focus on 1980+ conflicts where structured data is strongest
+- Primary datasets: UCDP GED (1989+), GDELT (1979+), HCED (pre-2003 for older conflicts)
 - Static CSV bundles, historical theater flag, timeline playback animation
-- Estimated 2-3 sessions
+- Historical military assets (OOB data, ship movements, air tasking orders) visible since transponder hiding isn't a factor
+- For pre-1980 conflicts (Vietnam, Israeli Independence): research material via BookFinder General (user's tool in docs folder above) to scrape sources and populate datasets from book-form OOBs and battle records
+
+**Target conflicts (by data availability):**
+- 1980+: Iran-Iraq War, Falklands (GDELT, HCED)
+- 1989+: Desert Storm, Yugoslav Wars, Chechnya (UCDP GED + GDELT)
+- 2001+: Afghanistan, Iraq War (UCDP GED + ACLED)
+- 2011+: Syrian Civil War, Libyan Civil Wars (UCDP GED + ACLED + GeoConfirmed)
+- Pre-1980 (ambitious): Vietnam, Israeli wars (HCED + book-sourced OOB data)
+- Estimated 2-3 sessions per conflict theater
 
 **Nuclear / CBRN Layer**
 - Static layer of known nuclear facilities: reactors, enrichment plants, weapons storage
