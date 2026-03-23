@@ -159,6 +159,12 @@ The briefing panel auto-detects Ollama. Select a scope, timeframe, and click GEN
 
 ---
 
+## Related: Sandkasten
+
+**[Sandkasten](https://github.com/lerugray/sandkasten)** is a sister project — an open-source wargame simulation built on Auftragstaktik's map and symbology. Think Command: Modern Operations, but open-source, community-driven, and able to pull real-world OSINT snapshots as playable scenarios.
+
+---
+
 ## License
 
 MIT
