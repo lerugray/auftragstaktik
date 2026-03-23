@@ -278,5 +278,29 @@
 - Additional badges (MapLibre, Ollama)
 
 ### Future Features Noted
-- Historical mode (UCDP GED dataset, Yugoslav Wars, timeline playback, 2-3 sessions)
-- Data model normalization cleanup (per senior dev feedback)
+
+**Historical Mode**
+- UCDP GED dataset (1989-2024, geocoded, CC BY 4.0), covers Yugoslav Wars
+- Static CSV bundles, historical theater flag, timeline playback animation
+- Estimated 2-3 sessions
+
+**Nuclear / CBRN Layer**
+- Static layer of known nuclear facilities: reactors, enrichment plants, weapons storage
+- Sources: IAEA, NTI, FAS public databases
+- Key sites: Dimona (Israel), Natanz/Fordow (Iran), Zaporizhzhia (Ukraine), Yongbyon (DPRK)
+- NATO CBRN symbols, proximity alerts to conflict events
+- NBC event detection: CBRN keywords in severity tagger at critical tier
+
+**Radar / Sensor Layer**
+- Known radar installations and major sensor systems with range rings
+- Early warning radars (Voronezh, AN/FPS-132), theater radars, coastal surveillance
+- Same pattern as AD/SAM layer: static data, range circles, detail panels
+
+**Military Installations / Strategic Sites Layer**
+- Known airbases, naval bases, military HQs
+- Resource chokepoints: Kharg Island (Iran oil exports), Bab el-Mandeb, Suez Canal, Strait of Malacca
+- Critical infrastructure: pipelines, ports, logistics hubs
+- Useful for context when viewing nearby conflict events and AD coverage
+
+**Data Model Normalization**
+- Cleanup pass on event normalizer as data sources grow (per senior dev feedback)
