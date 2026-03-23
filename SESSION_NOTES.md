@@ -264,7 +264,13 @@
 - Architecture scoped: static CSV bundles, historical theater flag, timeline playback
 - Estimated 2-3 sessions to implement
 
+### Docker Deployment — COMPLETE
+- Dockerfile with multi-stage build (deps → builder → runner), standalone output
+- docker-compose.yml with app + Ollama sidecar, volume for model persistence
+- .dockerignore, updated .env.example
+- README updated with Docker setup instructions (Option B)
+- Stop-slop pass on all docs
+
 ### Future Features Noted
-- Historical mode (UCDP GED dataset, Yugoslav Wars, timeline playback)
-- Docker deployment
+- Historical mode (UCDP GED dataset, Yugoslav Wars, timeline playback, 2-3 sessions)
 - Data model normalization cleanup (per senior dev feedback)

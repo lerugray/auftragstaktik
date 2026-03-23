@@ -15,7 +15,8 @@
       "Bash(npx kill-port:*)",
       "Bash(taskkill //f //im node.exe)",
       "Bash(rm -rf .next)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3117)"
     ]
   }
 }
