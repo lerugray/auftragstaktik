@@ -65,4 +65,4 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 - **Phase 12: Radar / Sensor Layer** — COMPLETE (20 radars, detection + tracking range rings, 4 theaters)
 - **Phase 13: Nuclear / CBRN Layer** — COMPLETE (20 facilities, exclusion zones, CBRN keyword detection, proximity alerts)
 - **Phase 14: Data Model Normalization** — COMPLETE (source 'acled' → 'geoconfirmed', layer key 'acled' → 'events', EventSource type updated)
-- **Phase 15: Historical Mode** — COMPLETE (UCDP GED API, 5 historical theaters, year timeline with playback, live layers disabled)
+- **Phase 15: Historical Mode** — COMPLETE (140K UCDP events bundled, 5 theaters, cumulative playback, color gradient, fatality scaling, source links)

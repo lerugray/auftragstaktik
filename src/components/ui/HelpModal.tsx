@@ -110,13 +110,16 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
 
           <HelpSection title="HISTORICAL MODE">
             <ul className="space-y-1">
-              <li>Select a historical theater from the dropdown to view archived conflict data.</li>
-              <li>Data comes from <Hl>UCDP GED</Hl> (Uppsala Conflict Data Program, Georeferenced Event Dataset) covering 1989-2023. CC BY 4.0 licensed.</li>
+              <li>Select a historical theater from the <Hl>HISTORICAL</Hl> group in the theater dropdown.</li>
+              <li>Data comes from <Hl>UCDP GED</Hl> (Uppsala Conflict Data Program, Georeferenced Event Dataset) — 140,000+ events covering 1989-2023. CC BY 4.0 licensed.</li>
               <li>Events are classified by violence type: <Hl>STATE</Hl> (government vs rebel), <Hl>NON-STATE</Hl> (rebel vs rebel), and <Hl>ONE-SIDED</Hl> (violence against civilians).</li>
-              <li>Use the <Hl>HISTORICAL TIMELINE</Hl> bar to filter events by year. Click a year to isolate it, or click <Hl>ALL</Hl> to show the full range.</li>
-              <li>Press the <Hl>play button</Hl> to animate through years. The map steps forward one year every 2 seconds.</li>
-              <li>Live data layers (aircraft, ships, frontlines) are disabled in historical mode. Static layers (air defense, installations, radar, nuclear) remain available.</li>
-              <li>Severity is derived from fatality counts: 50+ critical, 10+ high, 3+ medium, 1+ low.</li>
+              <li>Markers are <Hl>colored by year</Hl> — blue for earliest years through to red for latest. Check the <Hl>LEGEND</Hl> for the full gradient and year range.</li>
+              <li>Marker <Hl>size scales with fatalities</Hl>: small (1-2), medium (3-9), large (10-49), extra-large (50+). Major battles stand out visually.</li>
+              <li>Use the <Hl>HISTORICAL TIMELINE</Hl> bar to filter by year. Click a year to isolate it, or <Hl>ALL</Hl> for the full range. A running <Hl>KIA counter</Hl> tracks cumulative fatalities.</li>
+              <li>Playback is <Hl>cumulative</Hl> — past years fade to low opacity while the current year renders at full brightness. You can see how the conflict spread over time.</li>
+              <li>Press the <Hl>play button</Hl> to animate through years (one year every 2 seconds).</li>
+              <li>Click any event for a detail panel with faction names, fatality breakdown, <Hl>WIKIPEDIA</Hl> link, and <Hl>HISTORICAL COVERAGE</Hl> via Google News archive.</li>
+              <li>Live data layers (aircraft, ships, frontlines) are disabled. Static layers (air defense, installations, radar, nuclear) remain available.</li>
             </ul>
           </HelpSection>
 

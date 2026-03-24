@@ -29,7 +29,7 @@
 | **Installations Layer** | 35 military bases, naval ports, HQs, logistics hubs, and strategic chokepoints (Hormuz, Bab el-Mandeb, Suez, Malacca) across 4 theaters. NATO symbology with friendly/hostile affiliation. |
 | **Radar / Sensors** | 20 radar sites from Voronezh early warning (6000km) to coastal surveillance. Purple range rings show detection and tracking envelopes. |
 | **Nuclear / CBRN** | Known nuclear facilities — reactors, enrichment plants, weapons storage, test sites. Yellow exclusion zones. CBRN keywords in events auto-escalate to critical severity. |
-| **Historical Mode** | Switch to archived conflict data from UCDP GED (1989-2023). Yugoslav Wars, Gulf War, Iraq War, Afghanistan, Syrian Civil War. Year-by-year timeline with playback animation. |
+| **Historical Mode** | 140,000+ archived events from UCDP GED (1989-2023). Five theaters: Yugoslav Wars, Gulf War, Iraq War, Afghanistan, Syrian Civil War. Cumulative playback with year-based color gradient, fatality-scaled markers, running KIA counter, and Wikipedia/news archive links. |
 
 ---
 
