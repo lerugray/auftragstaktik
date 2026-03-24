@@ -335,7 +335,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
         isHistorical={isHistorical}
       />
 
-      <MapLegend />
+      <MapLegend historical={theater.historical} />
 
       {/* Detail panel */}
       <DetailPanel

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import ms from 'milsymbol';
+import type { HistoricalConfig } from '@/lib/theaters';
 
 // Items using simple SVG shapes (territories, vessels)
 const shapeItems = [
@@ -91,7 +92,37 @@ function LegendIcon({ color, shape }: { color: string; shape: string }) {
   );
 }
 
-export function MapLegend() {
+interface MapLegendProps {
+  historical?: HistoricalConfig;
+}
+
+// Generate the same color as ConflictEventLayer.getYearColor
+function getYearColor(t: number): string {
+  if (t < 0.25) {
+    const s = t / 0.25;
+    return `rgb(${Math.round(s * 0)},${Math.round(120 + s * 135)},${Math.round(255 - s * 55)})`;
+  } else if (t < 0.5) {
+    const s = (t - 0.25) / 0.25;
+    return `rgb(${Math.round(s * 220)},${Math.round(255 - s * 55)},${Math.round(200 - s * 200)})`;
+  } else if (t < 0.75) {
+    const s = (t - 0.5) / 0.25;
+    return `rgb(${Math.round(220 + s * 35)},${Math.round(200 - s * 80)},0)`;
+  } else {
+    const s = (t - 0.75) / 0.25;
+    return `rgb(255,${Math.round(120 - s * 90)},${Math.round(s * 20)})`;
+  }
+}
+
+function buildGradientStops(steps: number = 10): string {
+  const stops: string[] = [];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    stops.push(`${getYearColor(t)} ${Math.round(t * 100)}%`);
+  }
+  return `linear-gradient(to right, ${stops.join(', ')})`;
+}
+
+export function MapLegend({ historical }: MapLegendProps) {
   const [expanded, setExpanded] = useState(false);
   const [showNato, setShowNato] = useState(false);
 
@@ -126,6 +157,61 @@ export function MapLegend() {
               </div>
             ))}
           </div>
+
+          {/* Historical mode legend */}
+          {historical && (
+            <div className="mb-3 pt-2 border-t border-tactical-border">
+              <div className="text-xs font-mono text-terminal-amber tracking-wider mb-2">HISTORICAL EVENTS</div>
+
+              {/* Year color gradient */}
+              <div className="mb-2">
+                <div
+                  className="h-3 rounded-sm border border-tactical-border/50"
+                  style={{ background: buildGradientStops() }}
+                />
+                <div className="flex justify-between mt-0.5">
+                  <span className="text-[10px] font-mono text-tactical-text-dim">{historical.startYear}</span>
+                  <span className="text-[10px] font-mono text-tactical-text-dim">YEAR</span>
+                  <span className="text-[10px] font-mono text-tactical-text-dim">{historical.endYear}</span>
+                </div>
+              </div>
+
+              {/* Size by fatalities */}
+              <div className="text-[10px] font-mono text-tactical-text-dim mb-1.5">SIZE = FATALITIES</div>
+              <div className="flex items-center gap-3">
+                {[
+                  { size: 5, label: '1-2' },
+                  { size: 7, label: '3-9' },
+                  { size: 10, label: '10-49' },
+                  { size: 14, label: '50+' },
+                ].map(({ size, label }) => (
+                  <div key={label} className="flex items-center gap-1">
+                    <svg width={size + 4} height={size + 4} viewBox={`0 0 ${size + 4} ${size + 4}`}>
+                      <polygon
+                        points={`${(size + 4) / 2},1 ${size + 3},${(size + 4) / 2} ${(size + 4) / 2},${size + 3} 1,${(size + 4) / 2}`}
+                        fill="#ff880044"
+                        stroke="#ff8800"
+                        strokeWidth="1"
+                      />
+                    </svg>
+                    <span className="text-[10px] font-mono text-tactical-text-dim">{label}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Opacity key */}
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-sm bg-terminal-amber/90" />
+                  <span className="text-[10px] font-mono text-tactical-text-dim">Current year</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="w-3 h-3 rounded-sm bg-terminal-amber/30" />
+                  <span className="text-[10px] font-mono text-tactical-text-dim">Past years</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* NATO Symbol Reference toggle */}
           <button
