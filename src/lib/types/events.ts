@@ -1,4 +1,4 @@
-export type EventSource = 'deepstate' | 'adsb' | 'aisstream' | 'acled' | 'telegram';
+export type EventSource = 'deepstate' | 'adsb' | 'aisstream' | 'geoconfirmed' | 'acled' | 'telegram';
 
 export type Severity = 'critical' | 'high' | 'medium' | 'low' | 'info';
 

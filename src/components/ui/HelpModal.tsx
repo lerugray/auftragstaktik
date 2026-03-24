@@ -65,7 +65,10 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
             <ul className="space-y-1">
               <li>Use the <Hl>LAYERS</Hl> panel on the right to toggle frontlines, aircraft, air defense, maritime, and events.</li>
               <li>Click any marker to open its detail panel (bottom-left). Aircraft types and vessel classes link to Wikipedia.</li>
-              <li>The <Hl>AIR DEFENSE</Hl> layer shows publicly confirmed SAM/AD installations (S-400, Patriot, Iron Dome, etc.) from OSINT sources.</li>
+              <li>The <Hl>AIR DEFENSE</Hl> layer shows publicly confirmed SAM/AD installations (S-400, Patriot, Iron Dome, etc.) with engagement range rings.</li>
+              <li>The <Hl>INSTALLATIONS</Hl> layer shows known military bases, naval ports, HQs, and strategic chokepoints (Hormuz, Bab el-Mandeb, Suez, Malacca).</li>
+              <li>The <Hl>RADAR / SENSORS</Hl> layer shows early warning radars (Voronezh, Green Pine), theater radars, and coastal surveillance systems with detection and tracking range rings in purple.</li>
+              <li>The <Hl>NUCLEAR / CBRN</Hl> layer marks known nuclear facilities (reactors, enrichment plants, weapons sites, test sites) with yellow exclusion zones. CBRN-related keywords in events auto-escalate to critical severity.</li>
               <li>Use <Hl>EVENT FILTER</Hl> to show or hide specific event types (missiles, drones, artillery, etc.).</li>
               <li>The <Hl>LEGEND</Hl> button (bottom-right) explains every symbol on the map. Expand <Hl>NATO SYMBOL REFERENCE</Hl> for the full icon set.</li>
             </ul>
@@ -108,7 +111,7 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
           <HelpSection title="KEYBOARD SHORTCUTS">
             <table className="w-full text-sm">
               <tbody>
-                <HelpRow label="1-6" desc="Toggle map layers (1=Frontlines, 2=Aircraft, 3=Air Defense, 4=Heatmap, 5=Maritime, 6=Events)" />
+                <HelpRow label="1-9" desc="Toggle map layers (1=Frontlines, 2=Aircraft, 3=Air Defense, 4=Installations, 5=Radar, 6=Nuclear, 7=Heatmap, 8=Maritime, 9=Events)" />
                 <HelpRow label="ESC" desc="Close detail panel" />
               </tbody>
             </table>

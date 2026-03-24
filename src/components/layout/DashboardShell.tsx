@@ -44,8 +44,8 @@ export function DashboardShell() {
 
   // Get GeoConfirmed conflict slugs for the active theater
   const theaterConflicts = useMemo(() => {
-    const acledSource = theater.dataSources.find((ds) => ds.source === 'acled');
-    const conflicts = acledSource?.params?.conflicts as string[] | undefined;
+    const geoconSource = theater.dataSources.find((ds) => ds.source === 'geoconfirmed');
+    const conflicts = geoconSource?.params?.conflicts as string[] | undefined;
     return conflicts?.join(',') || 'ukraine';
   }, [theater]);
 

@@ -126,7 +126,7 @@ export function buildBriefingPrompt(ctx: BriefingContext): string {
     }
 
     // Source reliability note
-    const geoconCount = ctx.events.filter(e => e.source === 'acled').length;
+    const geoconCount = ctx.events.filter(e => e.source === 'geoconfirmed').length;
     const tgramCount = ctx.events.filter(e => e.source === 'telegram').length;
     if (geoconCount > 0 || tgramCount > 0) {
       lines.push('SOURCE RELIABILITY:');

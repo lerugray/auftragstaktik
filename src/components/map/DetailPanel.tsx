@@ -3,6 +3,9 @@
 import type { ReactNode } from 'react';
 import type { AircraftRecord, MaritimeRecord, EventRecord } from '@/lib/types/events';
 import type { AirDefenseInstallation } from '@/lib/data/airDefense';
+import type { MilitaryInstallation } from '@/lib/data/militaryInstallations';
+import type { RadarInstallation } from '@/lib/data/radarSites';
+import type { NuclearFacility } from '@/lib/data/nuclearFacilities';
 import { getAircraftWikiUrl, getVesselWikiUrl } from '@/lib/data/wikiLinks';
 
 interface DetailPanelProps {
@@ -10,6 +13,9 @@ interface DetailPanelProps {
   vessel?: MaritimeRecord | null;
   event?: EventRecord | null;
   airDefense?: AirDefenseInstallation | null;
+  installation?: MilitaryInstallation | null;
+  radar?: RadarInstallation | null;
+  nuclear?: NuclearFacility | null;
   onClose: () => void;
 }
 
@@ -28,8 +34,8 @@ const CLASSIFICATION_LABELS: Record<string, { label: string; color: string }> = 
   unknown: { label: 'UNKNOWN', color: 'bg-tactical-text-dim/20 text-tactical-text-dim' },
 };
 
-export function DetailPanel({ aircraft, vessel, event, airDefense, onClose }: DetailPanelProps) {
-  if (!aircraft && !vessel && !event && !airDefense) return null;
+export function DetailPanel({ aircraft, vessel, event, airDefense, installation, radar, nuclear, onClose }: DetailPanelProps) {
+  if (!aircraft && !vessel && !event && !airDefense && !installation && !radar && !nuclear) return null;
 
   return (
     <div className="absolute bottom-12 left-2 bg-tactical-dark/95 border border-tactical-border p-3 min-w-[280px] max-w-[350px]">
@@ -37,6 +43,9 @@ export function DetailPanel({ aircraft, vessel, event, airDefense, onClose }: De
       {vessel && <VesselDetail vessel={vessel} onClose={onClose} />}
       {event && <ConflictEventDetail event={event} onClose={onClose} />}
       {airDefense && <AirDefenseDetail installation={airDefense} onClose={onClose} />}
+      {installation && <InstallationDetail installation={installation} onClose={onClose} />}
+      {radar && <RadarDetail radar={radar} onClose={onClose} />}
+      {nuclear && <NuclearDetail facility={nuclear} onClose={onClose} />}
     </div>
   );
 }
@@ -207,6 +216,160 @@ function AirDefenseDetail({ installation, onClose }: { installation: AirDefenseI
       </div>
       <div className="mt-2 pt-2 border-t border-tactical-border text-xs font-mono text-tactical-text-dim leading-relaxed">
         {installation.source}
+      </div>
+    </>
+  );
+}
+
+const INSTALLATION_TYPE_LABELS: Record<string, string> = {
+  'airbase': 'AIR BASE',
+  'naval-base': 'NAVAL BASE',
+  'hq': 'HEADQUARTERS',
+  'logistics': 'LOGISTICS',
+  'chokepoint': 'CHOKEPOINT',
+  'infrastructure': 'INFRASTRUCTURE',
+};
+
+const INSTALLATION_STATUS_BADGE: Record<string, string> = {
+  active: 'bg-terminal-green/20 text-terminal-green',
+  damaged: 'bg-terminal-amber/20 text-terminal-amber',
+  destroyed: 'bg-terminal-red/20 text-terminal-red',
+  contested: 'bg-severity-high/20 text-severity-high',
+};
+
+function InstallationDetail({ installation, onClose }: { installation: MilitaryInstallation; onClose: () => void }) {
+  const statusClass = INSTALLATION_STATUS_BADGE[installation.status] || INSTALLATION_STATUS_BADGE.active;
+  const typeLabel = INSTALLATION_TYPE_LABELS[installation.type] || installation.type.toUpperCase();
+  const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(installation.name)}`;
+
+  return (
+    <>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${statusClass}`}>
+            {installation.status.toUpperCase()}
+          </span>
+          <span className="text-sm font-mono font-bold text-tactical-text">
+            {typeLabel}
+          </span>
+        </div>
+        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+      </div>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+        <DetailRow label="NAME" value={
+          <WikiLink href={wikiUrl}>{installation.name}</WikiLink>
+        } />
+        <DetailRow label="OPER" value={installation.operator} />
+        <DetailRow label="TYPE" value={typeLabel} />
+        <DetailRow label="LAT" value={installation.lat.toFixed(4) + '°'} />
+        <DetailRow label="LON" value={installation.lng.toFixed(4) + '°'} />
+      </div>
+      <div className="mt-2 pt-2 border-t border-tactical-border text-xs font-mono text-tactical-text-dim leading-relaxed">
+        {installation.description}
+      </div>
+      <div className="mt-1 text-[11px] font-mono text-tactical-text-dim/60">
+        {installation.source}
+      </div>
+    </>
+  );
+}
+
+const RADAR_TYPE_LABELS: Record<string, string> = {
+  'early-warning': 'EARLY WARNING',
+  'theater': 'THEATER',
+  'coastal': 'COASTAL',
+  'tracking': 'TRACKING',
+  'space-surveillance': 'SPACE SURV.',
+};
+
+function RadarDetail({ radar, onClose }: { radar: RadarInstallation; onClose: () => void }) {
+  const statusClass = STATUS_BADGE[radar.status] || STATUS_BADGE.suspected;
+  const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(radar.system)}`;
+  const typeLabel = RADAR_TYPE_LABELS[radar.radarType] || radar.radarType.toUpperCase();
+
+  return (
+    <>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${statusClass}`}>
+            {radar.status.toUpperCase()}
+          </span>
+          <span className="text-sm font-mono font-bold text-tactical-text">
+            RADAR / SENSOR
+          </span>
+        </div>
+        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+      </div>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+        <DetailRow label="SYSTEM" value={
+          <WikiLink href={wikiUrl}>{radar.system}</WikiLink>
+        } />
+        <DetailRow label="TYPE" value={typeLabel} />
+        <DetailRow label="OPER" value={radar.operator} />
+        <DetailRow label="LOC" value={radar.location} />
+        <DetailRow label="DETECT" value={`${radar.detectionRangeKm} km`} />
+        {radar.trackingRangeKm && <DetailRow label="TRACK" value={`${radar.trackingRangeKm} km`} />}
+        <DetailRow label="LAT" value={radar.lat.toFixed(4) + '°'} />
+        <DetailRow label="LON" value={radar.lng.toFixed(4) + '°'} />
+        <DetailRow label="CONFIRMED" value={radar.lastConfirmed} />
+      </div>
+      <div className="mt-2 pt-2 border-t border-tactical-border text-xs font-mono text-tactical-text-dim leading-relaxed">
+        {radar.source}
+      </div>
+    </>
+  );
+}
+
+const FACILITY_TYPE_LABELS: Record<string, string> = {
+  'reactor': 'REACTOR',
+  'enrichment': 'ENRICHMENT',
+  'weapons-storage': 'WEAPONS',
+  'research': 'RESEARCH',
+  'waste': 'WASTE',
+  'test-site': 'TEST SITE',
+};
+
+const NUCLEAR_STATUS_BADGE: Record<string, string> = {
+  active: 'bg-terminal-green/20 text-terminal-green',
+  suspended: 'bg-terminal-amber/20 text-terminal-amber',
+  decommissioned: 'bg-tactical-text-dim/20 text-tactical-text-dim',
+  'under-construction': 'bg-terminal-blue/20 text-terminal-blue',
+  damaged: 'bg-terminal-red/20 text-terminal-red',
+};
+
+function NuclearDetail({ facility, onClose }: { facility: NuclearFacility; onClose: () => void }) {
+  const statusClass = NUCLEAR_STATUS_BADGE[facility.status] || NUCLEAR_STATUS_BADGE.active;
+  const typeLabel = FACILITY_TYPE_LABELS[facility.facilityType] || facility.facilityType.toUpperCase();
+  const wikiUrl = `https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(facility.name)}`;
+
+  return (
+    <>
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${statusClass}`}>
+            {facility.status.toUpperCase()}
+          </span>
+          <span className="text-sm font-mono font-bold text-terminal-amber">
+            NUCLEAR / CBRN
+          </span>
+        </div>
+        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+      </div>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+        <DetailRow label="NAME" value={
+          <WikiLink href={wikiUrl}>{facility.name}</WikiLink>
+        } />
+        <DetailRow label="TYPE" value={typeLabel} />
+        <DetailRow label="OPER" value={facility.operator} />
+        {facility.exclusionZoneKm && <DetailRow label="ZONE" value={`${facility.exclusionZoneKm} km`} />}
+        <DetailRow label="LAT" value={facility.lat.toFixed(4) + '°'} />
+        <DetailRow label="LON" value={facility.lng.toFixed(4) + '°'} />
+      </div>
+      <div className="mt-2 pt-2 border-t border-tactical-border text-xs font-mono text-tactical-text-dim leading-relaxed">
+        {facility.description}
+      </div>
+      <div className="mt-1 text-[11px] font-mono text-tactical-text-dim/60">
+        {facility.source}
       </div>
     </>
   );

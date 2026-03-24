@@ -31,10 +31,10 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchAndRender = useCallback(async () => {
-    const acledSource = theater.dataSources.find((ds) => ds.source === 'acled' && ds.enabled);
-    if (!acledSource) return;
+    const geoconSource = theater.dataSources.find((ds) => ds.source === 'geoconfirmed' && ds.enabled);
+    if (!geoconSource) return;
 
-    const conflicts = (acledSource.params?.conflicts as string[]) || ['ukraine'];
+    const conflicts = (geoconSource.params?.conflicts as string[]) || ['ukraine'];
     const conflictsStr = conflicts.join(',');
 
     try {

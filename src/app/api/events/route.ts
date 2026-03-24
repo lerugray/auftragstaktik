@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
       events,
       count: events.length,
       sources: {
-        geoconfirmed: { status: 'connected', eventCount: allEvents.filter(e => e.source === 'acled').length },
+        geoconfirmed: { status: 'connected', eventCount: allEvents.filter(e => e.source === 'geoconfirmed').length },
         telegram: { status: telegramChannels.length > 0 ? 'connected' : 'disabled', eventCount: allEvents.filter(e => e.source === 'telegram').length },
       },
     });

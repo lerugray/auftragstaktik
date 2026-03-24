@@ -6,9 +6,12 @@ interface LayerState {
   frontlines: boolean;
   aircraft: boolean;
   airDefense: boolean;
+  installations: boolean;
+  radar: boolean;
+  nuclear: boolean;
   heatmap: boolean;
   maritime: boolean;
-  acled: boolean;
+  events: boolean;
 }
 
 interface MapControlsProps {
@@ -23,9 +26,12 @@ const layerConfig: { key: keyof LayerState; label: string; color: string }[] = [
   { key: 'frontlines', label: 'FRONTLINES', color: 'text-terminal-red' },
   { key: 'aircraft', label: 'AIRCRAFT', color: 'text-terminal-blue' },
   { key: 'airDefense', label: 'AIR DEFENSE', color: 'text-severity-high' },
+  { key: 'installations', label: 'INSTALLATIONS', color: 'text-terminal-amber' },
+  { key: 'radar', label: 'RADAR / SENSORS', color: 'text-purple-400' },
+  { key: 'nuclear', label: 'NUCLEAR / CBRN', color: 'text-yellow-400' },
   { key: 'heatmap', label: 'HEATMAP', color: 'text-severity-medium' },
   { key: 'maritime', label: 'MARITIME', color: 'text-terminal-amber' },
-  { key: 'acled', label: 'EVENTS', color: 'text-terminal-green' },
+  { key: 'events', label: 'EVENTS', color: 'text-terminal-green' },
 ];
 
 const eventTypeFilters: { type: string; label: string }[] = [

@@ -33,6 +33,14 @@ const natoSymbolRef: { sidc: string; label: string; desc: string; colors?: { fil
   { sidc: 'SHGPUCD-------', label: 'Air Defense (Hostile)', desc: 'Hostile air defense installation (OSINT confirmed)' },
   { sidc: 'SHSPCL--------', label: 'Naval Event', desc: 'Hostile naval or maritime-related event' },
   { sidc: 'SHGPE---------', label: 'General Event', desc: 'Hostile activity, type unspecified' },
+  { sidc: 'SFGPIA--------', label: 'Airbase (Friendly)', desc: 'Friendly military airfield or air base' },
+  { sidc: 'SHGPIA--------', label: 'Airbase (Hostile)', desc: 'Hostile military airfield or air base' },
+  { sidc: 'SHGPIPD-------', label: 'Naval Base (Hostile)', desc: 'Hostile naval base or port facility' },
+  { sidc: 'SNGPGL--------', label: 'Chokepoint', desc: 'Strategic maritime chokepoint (neutral)' },
+  { sidc: 'SFGPUSR-------', label: 'Radar (Friendly)', desc: 'Friendly radar / sensor installation' },
+  { sidc: 'SHGPUSR-------', label: 'Radar (Hostile)', desc: 'Hostile radar / sensor installation' },
+  { sidc: 'SFGPIB--------', label: 'Nuclear (Friendly)', desc: 'Friendly nuclear facility (IAEA monitored)' },
+  { sidc: 'SHGPIB--------', label: 'Nuclear (Hostile)', desc: 'Hostile nuclear facility (enrichment, weapons, reactor)' },
 ];
 
 function renderMilSymbol(sidc: string, size: number = 20, colors?: { fillColor?: string; iconColor?: string }): string {

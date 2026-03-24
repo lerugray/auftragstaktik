@@ -10,7 +10,7 @@ interface FeedFiltersProps {
 }
 
 const sources: { key: EventSource; label: string; color: string }[] = [
-  { key: 'acled', label: 'GEOCON', color: 'text-terminal-green' },
+  { key: 'geoconfirmed', label: 'GEOCON', color: 'text-terminal-green' },
   { key: 'adsb', label: 'ADS-B', color: 'text-terminal-blue' },
   { key: 'aisstream', label: 'AIS', color: 'text-terminal-amber' },
   { key: 'deepstate', label: 'DSTATE', color: 'text-terminal-red' },

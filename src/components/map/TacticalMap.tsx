@@ -10,6 +10,9 @@ import { AircraftLayer } from './AircraftLayer';
 import { MaritimeLayer } from './MaritimeLayer';
 import { ConflictEventLayer } from './ConflictEventLayer';
 import { AirDefenseLayer } from './AirDefenseLayer';
+import { InstallationsLayer } from './InstallationsLayer';
+import { RadarLayer } from './RadarLayer';
+import { NuclearLayer } from './NuclearLayer';
 import { HeatmapLayer } from './HeatmapLayer';
 import { TimelineScrubber } from './TimelineScrubber';
 import { DetailPanel } from './DetailPanel';
@@ -19,6 +22,9 @@ import type { Theater } from '@/lib/theaters';
 import type { MapHandle } from '@/components/layout/DashboardShell';
 import type { AircraftRecord, MaritimeRecord, EventRecord } from '@/lib/types/events';
 import type { AirDefenseInstallation } from '@/lib/data/airDefense';
+import type { MilitaryInstallation } from '@/lib/data/militaryInstallations';
+import type { RadarInstallation } from '@/lib/data/radarSites';
+import type { NuclearFacility } from '@/lib/data/nuclearFacilities';
 
 interface TacticalMapProps {
   theater: Theater;
@@ -36,6 +42,9 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
   const [selectedVessel, setSelectedVessel] = useState<MaritimeRecord | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventRecord | null>(null);
   const [selectedAD, setSelectedAD] = useState<AirDefenseInstallation | null>(null);
+  const [selectedInstallation, setSelectedInstallation] = useState<MilitaryInstallation | null>(null);
+  const [selectedRadar, setSelectedRadar] = useState<RadarInstallation | null>(null);
+  const [selectedNuclear, setSelectedNuclear] = useState<NuclearFacility | null>(null);
   const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
   const [timelineDaysBack, setTimelineDaysBack] = useState(0); // 0 = all
   const [activeEventTypes, setActiveEventTypes] = useState<Set<string>>(new Set([
@@ -50,9 +59,12 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     frontlines: true,
     aircraft: true,
     airDefense: true,
+    installations: false,
+    radar: false,
+    nuclear: false,
     heatmap: false,
     maritime: true,
-    acled: true,
+    events: true,
   });
 
   useEffect(() => {
@@ -151,6 +163,9 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     setSelectedVessel(null);
     setSelectedEvent(null);
     setSelectedAD(null);
+    setSelectedInstallation(null);
+    setSelectedRadar(null);
+    setSelectedNuclear(null);
   }, []);
 
   // Keyboard shortcuts
@@ -161,9 +176,12 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
         case '1': toggleLayer('frontlines'); break;
         case '2': toggleLayer('aircraft'); break;
         case '3': toggleLayer('airDefense'); break;
-        case '4': toggleLayer('heatmap'); break;
-        case '5': toggleLayer('maritime'); break;
-        case '6': toggleLayer('acled'); break;
+        case '4': toggleLayer('installations'); break;
+        case '5': toggleLayer('radar'); break;
+        case '6': toggleLayer('nuclear'); break;
+        case '7': toggleLayer('heatmap'); break;
+        case '8': toggleLayer('maritime'); break;
+        case '9': toggleLayer('events'); break;
         case 'Escape': clearSelections(); break;
       }
     };
@@ -191,6 +209,21 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     setSelectedAD(installation);
   }, [clearSelections]);
 
+  const handleInstallationClick = useCallback((installation: MilitaryInstallation) => {
+    clearSelections();
+    setSelectedInstallation(installation);
+  }, [clearSelections]);
+
+  const handleRadarClick = useCallback((radar: RadarInstallation) => {
+    clearSelections();
+    setSelectedRadar(radar);
+  }, [clearSelections]);
+
+  const handleNuclearClick = useCallback((facility: NuclearFacility) => {
+    clearSelections();
+    setSelectedNuclear(facility);
+  }, [clearSelections]);
+
   return (
     <div className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-full" />
@@ -212,7 +245,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
               onVesselClick={handleVesselClick}
             />
           )}
-          {layers.acled && (
+          {layers.events && (
             <ConflictEventLayer
               map={mapRef.current}
               theater={theater}
@@ -236,6 +269,27 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
               onInstallationClick={handleADClick}
             />
           )}
+          {layers.installations && (
+            <InstallationsLayer
+              map={mapRef.current}
+              theater={theater}
+              onInstallationClick={handleInstallationClick}
+            />
+          )}
+          {layers.radar && (
+            <RadarLayer
+              map={mapRef.current}
+              theater={theater}
+              onRadarClick={handleRadarClick}
+            />
+          )}
+          {layers.nuclear && (
+            <NuclearLayer
+              map={mapRef.current}
+              theater={theater}
+              onFacilityClick={handleNuclearClick}
+            />
+          )}
         </>
       )}
 
@@ -251,7 +305,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
             return next;
           });
         }}
-        showEventFilters={layers.acled}
+        showEventFilters={layers.events}
       />
 
       <MapLegend />
@@ -262,11 +316,14 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
         vessel={selectedVessel}
         event={selectedEvent}
         airDefense={selectedAD}
+        installation={selectedInstallation}
+        radar={selectedRadar}
+        nuclear={selectedNuclear}
         onClose={clearSelections}
       />
 
       <TimelineScrubber
-        visible={layers.acled}
+        visible={layers.events}
         onRangeChange={setTimelineDaysBack}
       />
 

@@ -40,7 +40,7 @@ export const theaters: Theater[] = [
       { source: 'deepstate', enabled: true },
       { source: 'adsb', enabled: true, params: { bbox: [22.0, 44.0, 40.5, 52.5] } },
       { source: 'aisstream', enabled: true, params: { bbox: [27.0, 40.0, 42.0, 47.0] } },
-      { source: 'acled', enabled: true, params: { conflicts: ['ukraine'] } },
+      { source: 'geoconfirmed', enabled: true, params: { conflicts: ['ukraine'] } },
       { source: 'telegram', enabled: true, params: { channels: ['ryaborig', 'DeepStateUA', 'waboronzo'] } },
     ],
   },
@@ -63,7 +63,7 @@ export const theaters: Theater[] = [
     dataSources: [
       { source: 'adsb', enabled: true, params: { bbox: [29.0, 12.0, 63.5, 40.0] } },
       { source: 'aisstream', enabled: true, params: { bbox: [32.0, 12.0, 62.0, 30.5] } },
-      { source: 'acled', enabled: true, params: { conflicts: ['israel', '7oct', 'syria', 'yemen', 'iran'] } },
+      { source: 'geoconfirmed', enabled: true, params: { conflicts: ['israel', '7oct', 'syria', 'yemen', 'iran'] } },
     ],
   },
   {
@@ -82,7 +82,7 @@ export const theaters: Theater[] = [
     dataSources: [
       { source: 'adsb', enabled: true, params: { bbox: [10.0, 53.0, 32.0, 72.0] } },
       { source: 'aisstream', enabled: true, params: { bbox: [10.0, 53.0, 30.0, 66.0] } },
-      { source: 'acled', enabled: true, params: { conflicts: ['world'] } },
+      { source: 'geoconfirmed', enabled: true, params: { conflicts: ['world'] } },
     ],
   },
   {
@@ -101,7 +101,7 @@ export const theaters: Theater[] = [
     dataSources: [
       { source: 'adsb', enabled: true, params: { bbox: [100.0, 15.0, 145.0, 45.0] } },
       { source: 'aisstream', enabled: true, params: { bbox: [100.0, 15.0, 145.0, 45.0] } },
-      { source: 'acled', enabled: true, params: { conflicts: ['pac'] } },
+      { source: 'geoconfirmed', enabled: true, params: { conflicts: ['pac'] } },
     ],
   },
   {
@@ -121,7 +121,7 @@ export const theaters: Theater[] = [
     dataSources: [
       { source: 'adsb', enabled: true, params: { bbox: [-18.0, -5.0, 52.0, 38.0] } },
       { source: 'aisstream', enabled: true, params: { bbox: [-18.0, -5.0, 52.0, 30.0] } },
-      { source: 'acled', enabled: true, params: { conflicts: ['africa', 'drc'] } },
+      { source: 'geoconfirmed', enabled: true, params: { conflicts: ['africa', 'drc'] } },
     ],
   },
   {
@@ -139,7 +139,7 @@ export const theaters: Theater[] = [
     dataSources: [
       { source: 'adsb', enabled: true, params: { bbox: [92.0, 9.5, 101.5, 28.5] } },
       { source: 'aisstream', enabled: true, params: { bbox: [92.0, 9.5, 101.0, 20.0] } },
-      { source: 'acled', enabled: true, params: { conflicts: ['myanmar'] } },
+      { source: 'geoconfirmed', enabled: true, params: { conflicts: ['myanmar'] } },
     ],
   },
 ];

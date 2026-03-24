@@ -12,7 +12,7 @@ interface IntelFeedProps {
   onEventClick?: (event: EventRecord) => void;
 }
 
-const ALL_SOURCES: EventSource[] = ['acled', 'adsb', 'aisstream', 'deepstate', 'telegram'];
+const ALL_SOURCES: EventSource[] = ['geoconfirmed', 'adsb', 'aisstream', 'deepstate', 'telegram'];
 const ALL_SEVERITIES: Severity[] = ['critical', 'high', 'medium', 'low', 'info'];
 
 export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEventClick }: IntelFeedProps) {

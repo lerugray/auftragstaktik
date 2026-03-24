@@ -43,8 +43,8 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
   // Get GeoConfirmed conflict slugs for this theater
   const theaterConflicts = useMemo(() => {
     if (!theater) return 'ukraine';
-    const acledSource = theater.dataSources.find(ds => ds.source === 'acled');
-    const conflicts = acledSource?.params?.conflicts as string[] | undefined;
+    const geoconSource = theater.dataSources.find(ds => ds.source === 'geoconfirmed');
+    const conflicts = geoconSource?.params?.conflicts as string[] | undefined;
     return conflicts?.join(',') || 'ukraine';
   }, [theater]);
 

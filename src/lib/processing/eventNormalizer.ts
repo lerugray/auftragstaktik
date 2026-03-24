@@ -1,5 +1,6 @@
 import type { EventRecord, ACLEDRecord, Severity } from '@/lib/types/events';
 import type { GeoConfirmedEvent } from '@/lib/data/geoconfirmed';
+import { isCBRNEvent } from '@/lib/processing/severityTagger';
 
 function hashId(source: string, ...parts: string[]): string {
   const str = [source, ...parts].join('|');
@@ -13,6 +14,10 @@ function hashId(source: string, ...parts: string[]): string {
 }
 
 function acledSeverity(record: ACLEDRecord): Severity {
+  // CBRN events always critical
+  const textToCheck = `${record.eventType} ${record.subEventType || ''} ${record.notes || ''}`;
+  if (isCBRNEvent(textToCheck)) return 'critical';
+
   if (record.fatalities >= 10) return 'critical';
   if (record.fatalities >= 3) return 'high';
 
@@ -60,6 +65,10 @@ export function normalizeACLEDEvents(records: ACLEDRecord[]): EventRecord[] {
 // GeoConfirmed normalization
 
 function geoConfirmedSeverity(event: GeoConfirmedEvent): Severity {
+  // CBRN events always critical
+  const textToCheck = `${event.eventType} ${event.faction}`;
+  if (isCBRNEvent(textToCheck)) return 'critical';
+
   const type = event.eventType.toLowerCase();
   if (type.includes('missile')) return 'critical';
   if (type.includes('drone strike')) return 'high';
@@ -80,7 +89,7 @@ function formatGeoConfirmedTitle(event: GeoConfirmedEvent): string {
 export function normalizeGeoConfirmedEvent(event: GeoConfirmedEvent): EventRecord {
   return {
     id: `geoconfirmed-${event.id}`,
-    source: 'acled', // Using 'acled' source slot since GeoConfirmed replaces it in the feed
+    source: 'geoconfirmed',
     timestamp: new Date(event.date).toISOString(),
     coordinates: [event.longitude, event.latitude],
     eventType: event.eventType,
