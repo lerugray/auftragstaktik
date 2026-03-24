@@ -4,7 +4,7 @@
 
 # AUFTRAGSTAKTIK
 
-**Live frontlines. Aircraft transponders. Ship tracking. Air defense envelopes. Conflict events. Translated intel from military Telegram channels. One terminal. NATO symbology. All OSINT.**
+**Live frontlines. Aircraft transponders. Ship tracking. Air defense envelopes. Radar coverage. Military installations. Nuclear facilities. Conflict events. Translated intel from military Telegram channels. One terminal. NATO symbology. All OSINT.**
 
 *Named for the German doctrine of mission-type tactics: give the objective, let subordinates figure out execution.*
 
@@ -22,10 +22,13 @@
 
 | | |
 |---|---|
-| **Tactical Map** | Dark or light basemap. Togglable layers: frontlines, aircraft, ships, air defense with range rings, conflict events, density heatmap. Click any marker for detail panels with Wikipedia links. |
+| **Tactical Map** | Dark or light basemap. 9 togglable layers: frontlines, aircraft, ships, air defense, installations, radar, nuclear, conflict events, density heatmap. Click any marker for detail panels with Wikipedia links. |
 | **Intelligence Feed** | GeoConfirmed events and Telegram posts (auto-translated). Filter by source or severity. Click to fly the map there. Export as JSON or CSV. |
 | **Briefing Generator** | Local LLM (Ollama) produces structured SITREPs from aggregated intelligence. Location summaries, faction breakdown, equipment losses, source attribution. Export as PDF. No API costs. |
 | **Air Defense Layer** | OSINT-confirmed SAM/AD installations with engagement envelopes. S-400 at 400km, Patriot at 160km, Iron Dome at 70km. Coverage zones and gaps visible at a glance. |
+| **Installations Layer** | 35 military bases, naval ports, HQs, logistics hubs, and strategic chokepoints (Hormuz, Bab el-Mandeb, Suez, Malacca) across 4 theaters. NATO symbology with friendly/hostile affiliation. |
+| **Radar / Sensors** | 20 radar sites from Voronezh early warning (6000km) to coastal surveillance. Purple range rings show detection and tracking envelopes. |
+| **Nuclear / CBRN** | Known nuclear facilities — reactors, enrichment plants, weapons storage, test sites. Yellow exclusion zones. CBRN keywords in events auto-escalate to critical severity. |
 
 ---
 
@@ -51,7 +54,7 @@
 | [adsb.lol](https://adsb.lol) | Aircraft positions via ADS-B, military and civilian | None |
 | [aisstream.io](https://aisstream.io) | Ship positions via AIS, military vessel classification | Free API key |
 | Telegram channels | Military blogs (Rybar, DeepState UA, WarGonzo), auto-translated | None |
-| OSINT databases | Air defense sites (S-400, Patriot, Iron Dome positions) | None (curated) |
+| OSINT databases | Air defense sites, military installations, radar systems, nuclear facilities | None (curated) |
 
 All external calls route through the server. Keys stay server-side.
 
@@ -140,9 +143,12 @@ The briefing panel auto-detects Ollama. Select a scope, timeframe, and click GEN
 | `1` | Toggle frontlines |
 | `2` | Toggle aircraft |
 | `3` | Toggle air defense |
-| `4` | Toggle heatmap |
-| `5` | Toggle maritime |
-| `6` | Toggle events |
+| `4` | Toggle installations |
+| `5` | Toggle radar / sensors |
+| `6` | Toggle nuclear / CBRN |
+| `7` | Toggle heatmap |
+| `8` | Toggle maritime |
+| `9` | Toggle events |
 | `Esc` | Close detail panel |
 
 ---
