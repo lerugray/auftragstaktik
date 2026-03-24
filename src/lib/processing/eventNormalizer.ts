@@ -1,5 +1,7 @@
 import type { EventRecord, ACLEDRecord, Severity } from '@/lib/types/events';
 import type { GeoConfirmedEvent } from '@/lib/data/geoconfirmed';
+import type { UCDPEvent } from '@/lib/data/ucdpGed';
+import { VIOLENCE_TYPES } from '@/lib/data/ucdpGed';
 import { isCBRNEvent } from '@/lib/processing/severityTagger';
 
 function hashId(source: string, ...parts: string[]): string {
@@ -102,4 +104,48 @@ export function normalizeGeoConfirmedEvent(event: GeoConfirmedEvent): EventRecor
 
 export function normalizeGeoConfirmedEvents(events: GeoConfirmedEvent[]): EventRecord[] {
   return events.map(normalizeGeoConfirmedEvent);
+}
+
+// UCDP GED normalization
+
+function ucdpSeverity(event: UCDPEvent): Severity {
+  const textToCheck = `${event.conflict_name} ${event.source_headline || ''} ${event.source_article || ''}`;
+  if (isCBRNEvent(textToCheck)) return 'critical';
+
+  if (event.best >= 50) return 'critical';
+  if (event.best >= 10) return 'high';
+  if (event.best >= 3) return 'medium';
+  if (event.best >= 1) return 'low';
+  return 'info';
+}
+
+function ucdpEventType(event: UCDPEvent): string {
+  return VIOLENCE_TYPES[event.type_of_violence] || 'Armed conflict';
+}
+
+function formatUCDPTitle(event: UCDPEvent): string {
+  const violenceType = ucdpEventType(event);
+  let title = `${violenceType} — ${event.country}`;
+  if (event.best > 0) {
+    title += ` (${event.best} killed)`;
+  }
+  return title;
+}
+
+export function normalizeUCDPEvent(event: UCDPEvent): EventRecord {
+  return {
+    id: `ucdp-${event.id}`,
+    source: 'ucdp',
+    timestamp: new Date(event.date_start).toISOString(),
+    coordinates: [event.longitude, event.latitude],
+    eventType: ucdpEventType(event),
+    severity: ucdpSeverity(event),
+    title: formatUCDPTitle(event),
+    description: `${event.conflict_name}: ${event.side_a} vs ${event.side_b}. ${event.best} fatalities (${event.deaths_civilians} civilian). ${event.source_headline || ''}`.trim(),
+    rawData: event as unknown as Record<string, unknown>,
+  };
+}
+
+export function normalizeUCDPEvents(events: UCDPEvent[]): EventRecord[] {
+  return events.map(normalizeUCDPEvent);
 }

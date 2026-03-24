@@ -7,14 +7,19 @@ interface FeedFiltersProps {
   activeSeverities: Severity[];
   onToggleSource: (source: EventSource) => void;
   onToggleSeverity: (severity: Severity) => void;
+  isHistorical?: boolean;
 }
 
-const sources: { key: EventSource; label: string; color: string }[] = [
+const liveSources: { key: EventSource; label: string; color: string }[] = [
   { key: 'geoconfirmed', label: 'GEOCON', color: 'text-terminal-green' },
   { key: 'adsb', label: 'ADS-B', color: 'text-terminal-blue' },
   { key: 'aisstream', label: 'AIS', color: 'text-terminal-amber' },
   { key: 'deepstate', label: 'DSTATE', color: 'text-terminal-red' },
   { key: 'telegram', label: 'TGRAM', color: 'text-terminal-green-dim' },
+];
+
+const historicalSources: { key: EventSource; label: string; color: string }[] = [
+  { key: 'ucdp', label: 'UCDP', color: 'text-terminal-amber' },
 ];
 
 const severities: { key: Severity; label: string; color: string }[] = [
@@ -30,7 +35,10 @@ export function FeedFilters({
   activeSeverities,
   onToggleSource,
   onToggleSeverity,
+  isHistorical = false,
 }: FeedFiltersProps) {
+  const sources = isHistorical ? historicalSources : liveSources;
+
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 border-b border-tactical-border bg-tactical-surface/30">
       {/* Source filters */}

@@ -4,7 +4,7 @@
 
 # AUFTRAGSTAKTIK
 
-**Live frontlines. Aircraft transponders. Ship tracking. Air defense envelopes. Radar coverage. Military installations. Nuclear facilities. Conflict events. Translated intel from military Telegram channels. One terminal. NATO symbology. All OSINT.**
+**Live frontlines. Aircraft transponders. Ship tracking. Air defense envelopes. Radar coverage. Military installations. Nuclear facilities. Conflict events. Translated intel from military Telegram channels. Historical conflict archives. One terminal. NATO symbology. All OSINT.**
 
 *Named for the German doctrine of mission-type tactics: give the objective, let subordinates figure out execution.*
 
@@ -29,6 +29,7 @@
 | **Installations Layer** | 35 military bases, naval ports, HQs, logistics hubs, and strategic chokepoints (Hormuz, Bab el-Mandeb, Suez, Malacca) across 4 theaters. NATO symbology with friendly/hostile affiliation. |
 | **Radar / Sensors** | 20 radar sites from Voronezh early warning (6000km) to coastal surveillance. Purple range rings show detection and tracking envelopes. |
 | **Nuclear / CBRN** | Known nuclear facilities — reactors, enrichment plants, weapons storage, test sites. Yellow exclusion zones. CBRN keywords in events auto-escalate to critical severity. |
+| **Historical Mode** | Switch to archived conflict data from UCDP GED (1989-2023). Yugoslav Wars, Gulf War, Iraq War, Afghanistan, Syrian Civil War. Year-by-year timeline with playback animation. |
 
 ---
 
@@ -55,6 +56,7 @@
 | [aisstream.io](https://aisstream.io) | Ship positions via AIS, military vessel classification | Free API key |
 | Telegram channels | Military blogs (Rybar, DeepState UA, WarGonzo), auto-translated | None |
 | OSINT databases | Air defense sites, military installations, radar systems, nuclear facilities | None (curated) |
+| [UCDP GED](https://ucdp.uu.se) | Historical conflict events, 1989-2023. Georeferenced, global. CC BY 4.0 | None |
 
 All external calls route through the server. Keys stay server-side.
 
@@ -62,14 +64,22 @@ All external calls route through the server. Keys stay server-side.
 
 ## Theaters
 
-Six theaters, 37 sub-regions. Switching theaters rescopes the map, data sources, feed, and briefings.
+Eleven theaters total — six live, five historical. Switching theaters rescopes the map, data sources, feed, and briefings.
 
+**Live** (real-time data):
 - **Ukraine** — Frontlines (DeepState), aircraft, Black Sea maritime, conflict events, Telegram blogs
 - **Middle East** — Israel/Gaza, Lebanon, Syria, Iran, Yemen. Persian Gulf and Red Sea maritime
 - **Baltic / N. Europe** — Kaliningrad, Baltic Sea, Finland border, Norwegian Coast
 - **East Asia / Pacific** — Korean Peninsula, Taiwan Strait, South China Sea
 - **Africa** — Sahel, Horn of Africa, Sudan, DR Congo, Libya, Mozambique
 - **Myanmar** — Shan, Kachin, Rakhine, Sagaing conflict zones
+
+**Historical** (UCDP archival data):
+- **Yugoslav Wars (1991-2001)** — Croatia, Bosnia, Kosovo, Serbia
+- **Gulf War (1990-1991)** — Iraq/Kuwait, Desert Storm
+- **Iraq War (2003-2011)** — Baghdad, Anbar, Basra, Kurdistan
+- **Afghanistan War (2001-2021)** — Kabul, Helmand, Kandahar, Nangarhar
+- **Syrian Civil War (2011-2023)** — Aleppo, Idlib, Damascus, Deir ez-Zor, Raqqa
 
 Add a new theater by writing a config object in `src/lib/theaters/index.ts`.
 

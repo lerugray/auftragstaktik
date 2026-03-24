@@ -14,16 +14,25 @@ const LAYER_ID = 'heatmap-layer';
 
 export function HeatmapLayer({ map, theater }: HeatmapLayerProps) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isHistorical = !!theater.historical;
 
   const fetchAndRender = useCallback(async () => {
-    const geoconSource = theater.dataSources.find((ds) => ds.source === 'geoconfirmed' && ds.enabled);
-    if (!geoconSource) return;
+    let url: string;
 
-    const conflicts = (geoconSource.params?.conflicts as string[]) || ['ukraine'];
-    const conflictsStr = conflicts.join(',');
+    if (isHistorical && theater.historical) {
+      const countries = theater.historical.countries.join(',');
+      url = `/api/historical?countries=${encodeURIComponent(countries)}&startYear=${theater.historical.startYear}&endYear=${theater.historical.endYear}`;
+    } else {
+      const geoconSource = theater.dataSources.find((ds) => ds.source === 'geoconfirmed' && ds.enabled);
+      if (!geoconSource) return;
+
+      const conflicts = (geoconSource.params?.conflicts as string[]) || ['ukraine'];
+      const conflictsStr = conflicts.join(',');
+      url = `/api/events?conflicts=${encodeURIComponent(conflictsStr)}`;
+    }
 
     try {
-      const res = await fetch(`/api/events?conflicts=${encodeURIComponent(conflictsStr)}`);
+      const res = await fetch(url);
       if (!res.ok) return;
       const data = await res.json();
       const events = data.events || [];
@@ -86,11 +95,15 @@ export function HeatmapLayer({ map, theater }: HeatmapLayerProps) {
     } catch (err) {
       console.error('Heatmap layer error:', err);
     }
-  }, [map, theater]);
+  }, [map, theater, isHistorical]);
 
   useEffect(() => {
     fetchAndRender();
-    intervalRef.current = setInterval(fetchAndRender, 60000);
+
+    // Only poll for live mode
+    if (!isHistorical) {
+      intervalRef.current = setInterval(fetchAndRender, 60000);
+    }
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -99,7 +112,7 @@ export function HeatmapLayer({ map, theater }: HeatmapLayerProps) {
         if (map.getSource(SOURCE_ID)) map.removeSource(SOURCE_ID);
       } catch { /* ignore */ }
     };
-  }, [fetchAndRender]);
+  }, [fetchAndRender, isHistorical]);
 
   return null;
 }

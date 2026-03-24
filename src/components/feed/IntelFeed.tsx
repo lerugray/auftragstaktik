@@ -4,30 +4,48 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { EventCard } from './EventCard';
 import { FeedFilters } from './FeedFilters';
 import type { EventRecord, EventSource, Severity } from '@/lib/types/events';
+import type { HistoricalConfig } from '@/lib/theaters';
 
 interface IntelFeedProps {
   theaterId: string;
   theaterConflicts: string; // comma-separated GeoConfirmed conflict slugs
   telegramChannels?: string; // comma-separated Telegram channel names
   onEventClick?: (event: EventRecord) => void;
+  historical?: HistoricalConfig;
 }
 
 const ALL_SOURCES: EventSource[] = ['geoconfirmed', 'adsb', 'aisstream', 'deepstate', 'telegram'];
+const HISTORICAL_SOURCES: EventSource[] = ['ucdp'];
 const ALL_SEVERITIES: Severity[] = ['critical', 'high', 'medium', 'low', 'info'];
 
-export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEventClick }: IntelFeedProps) {
+export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEventClick, historical }: IntelFeedProps) {
   const [events, setEvents] = useState<EventRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeSources, setActiveSources] = useState<EventSource[]>(ALL_SOURCES);
+  const isHistorical = !!historical;
+  const [activeSources, setActiveSources] = useState<EventSource[]>(isHistorical ? HISTORICAL_SOURCES : ALL_SOURCES);
   const [activeSeverities, setActiveSeverities] = useState<Severity[]>(ALL_SEVERITIES);
   const scrollRef = useRef<HTMLDivElement>(null);
   const pausedRef = useRef(false);
 
+  // Reset source filters when switching between live/historical
+  useEffect(() => {
+    setActiveSources(isHistorical ? HISTORICAL_SOURCES : ALL_SOURCES);
+  }, [isHistorical]);
+
   const fetchEvents = useCallback(async () => {
     try {
-      let url = `/api/events?conflicts=${encodeURIComponent(theaterConflicts)}`;
-      if (telegramChannels) url += `&telegram=${encodeURIComponent(telegramChannels)}`;
+      let url: string;
+      if (historical) {
+        // Historical mode — fetch from UCDP API
+        const countries = historical.countries.join(',');
+        url = `/api/historical?countries=${encodeURIComponent(countries)}&startYear=${historical.startYear}&endYear=${historical.endYear}`;
+      } else {
+        // Live mode — fetch from standard events API
+        url = `/api/events?conflicts=${encodeURIComponent(theaterConflicts)}`;
+        if (telegramChannels) url += `&telegram=${encodeURIComponent(telegramChannels)}`;
+      }
+
       const res = await fetch(url);
       if (!res.ok) throw new Error(`API returned ${res.status}`);
       const data = await res.json();
@@ -35,18 +53,20 @@ export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEve
       setError(null);
     } catch (err) {
       console.error('Failed to fetch events:', err);
-      setError('SIGNAL LOST');
+      setError(historical ? 'HISTORICAL DATA UNAVAILABLE' : 'SIGNAL LOST');
     } finally {
       setLoading(false);
     }
-  }, [theaterConflicts, telegramChannels]);
+  }, [theaterConflicts, telegramChannels, historical]);
 
-  // Initial fetch + polling every 30 seconds
+  // Initial fetch + polling (only poll for live mode)
   useEffect(() => {
     fetchEvents();
-    const interval = setInterval(fetchEvents, 30000);
-    return () => clearInterval(interval);
-  }, [fetchEvents]);
+    if (!historical) {
+      const interval = setInterval(fetchEvents, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [fetchEvents, historical]);
 
   // Re-fetch when theater changes
   useEffect(() => {
@@ -106,7 +126,9 @@ export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEve
       <div className="flex items-center justify-center h-full text-tactical-text-dim">
         <div className="text-center">
           <div className="text-terminal-amber/40 text-3xl mb-3 animate-pulse">&#x25B6;</div>
-          <div className="text-base font-mono tracking-wider">ACQUIRING INTEL...</div>
+          <div className="text-base font-mono tracking-wider">
+            {historical ? 'LOADING HISTORICAL RECORDS...' : 'ACQUIRING INTEL...'}
+          </div>
         </div>
       </div>
     );
@@ -130,6 +152,7 @@ export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEve
         activeSeverities={activeSeverities}
         onToggleSource={toggleSource}
         onToggleSeverity={toggleSeverity}
+        isHistorical={isHistorical}
       />
 
       {/* Event count + export */}

@@ -87,15 +87,36 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
           <HelpSection title="THEATERS">
             <p>
               Each theater covers a geographic region with its own data sources and sub-regions.
-              Switch theaters using the dropdown next to the title. Available theaters:
+              Switch theaters using the dropdown next to the title.
             </p>
-            <ul className="space-y-0.5 mt-1">
+            <p className="mt-1 mb-1 text-terminal-green/70">Live theaters (real-time data):</p>
+            <ul className="space-y-0.5">
               <li><Hl>Ukraine</Hl> — Frontlines, aircraft, Black Sea maritime, conflict events</li>
               <li><Hl>Middle East</Hl> — Israel/Gaza, Syria, Yemen, Iran. Aircraft, Persian Gulf/Red Sea maritime</li>
               <li><Hl>Baltic / N. Europe</Hl> — Kaliningrad, Baltic Sea, Finland border monitoring</li>
               <li><Hl>East Asia / Pacific</Hl> — Korean Peninsula, Taiwan Strait, South China Sea</li>
               <li><Hl>Africa</Hl> — Sahel, Horn of Africa, Sudan, DR Congo</li>
               <li><Hl>Myanmar</Hl> — Shan, Kachin, Rakhine conflict zones</li>
+            </ul>
+            <p className="mt-1.5 mb-1 text-terminal-amber/70">Historical theaters (UCDP archival data):</p>
+            <ul className="space-y-0.5">
+              <li><Hl>Yugoslav Wars</Hl> — Croatia, Bosnia, Kosovo. 1991-2001</li>
+              <li><Hl>Gulf War</Hl> — Desert Storm. Iraq/Kuwait, 1990-1991</li>
+              <li><Hl>Iraq War</Hl> — Invasion through withdrawal. 2003-2011</li>
+              <li><Hl>Afghanistan War</Hl> — OEF/ISAF/Resolute Support. 2001-2021</li>
+              <li><Hl>Syrian Civil War</Hl> — Multi-faction conflict. 2011-2023</li>
+            </ul>
+          </HelpSection>
+
+          <HelpSection title="HISTORICAL MODE">
+            <ul className="space-y-1">
+              <li>Select a historical theater from the dropdown to view archived conflict data.</li>
+              <li>Data comes from <Hl>UCDP GED</Hl> (Uppsala Conflict Data Program, Georeferenced Event Dataset) covering 1989-2023. CC BY 4.0 licensed.</li>
+              <li>Events are classified by violence type: <Hl>STATE</Hl> (government vs rebel), <Hl>NON-STATE</Hl> (rebel vs rebel), and <Hl>ONE-SIDED</Hl> (violence against civilians).</li>
+              <li>Use the <Hl>HISTORICAL TIMELINE</Hl> bar to filter events by year. Click a year to isolate it, or click <Hl>ALL</Hl> to show the full range.</li>
+              <li>Press the <Hl>play button</Hl> to animate through years. The map steps forward one year every 2 seconds.</li>
+              <li>Live data layers (aircraft, ships, frontlines) are disabled in historical mode. Static layers (air defense, installations, radar, nuclear) remain available.</li>
+              <li>Severity is derived from fatality counts: 50+ critical, 10+ high, 3+ medium, 1+ low.</li>
             </ul>
           </HelpSection>
 

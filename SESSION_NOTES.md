@@ -415,3 +415,106 @@
 ### Permissions Setup
 - Updated `.claude/settings.local.json` with 27 broad permission rules
 - Covers npm, git, node, docker, curl, file tools, web tools — no more constant approval prompts
+
+## Session 5 — 2026-03-23
+
+### Phase 15: Historical Mode — COMPLETE
+
+#### Data Layer
+- Created `src/lib/data/ucdpGed.ts` — UCDP GED API fetcher (Uppsala Conflict Data Program, Georeferenced Event Dataset)
+  - API endpoint: `https://ucdpapi.pcr.uu.se/api/gedevents/24.1`
+  - Covers 1989-2023, global, geocoded, CC BY 4.0 licensed
+  - Supports country filtering, year ranges, pagination
+  - 30-minute TTL cache (historical data doesn't change)
+- Added `'ucdp'` to `EventSource` type in `src/lib/types/events.ts`
+- Added UCDP normalization to `src/lib/processing/eventNormalizer.ts`:
+  - `normalizeUCDPEvent()` / `normalizeUCDPEvents()` — converts UCDP events to EventRecord
+  - Violence types: State-based conflict (gov vs rebel), Non-state conflict (rebel vs rebel), One-sided violence (against civilians)
+  - Severity derived from fatality counts: 50+ critical, 10+ high, 3+ medium, 1+ low
+  - Description includes conflict name, sides, fatality breakdown (civilian vs combatant)
+
+#### Historical API Route
+- Created `src/app/api/historical/route.ts` — serves UCDP data with country/year filtering
+  - Query params: `countries`, `startYear`, `endYear`, `filterStartYear`, `filterEndYear`, `severity`
+  - `filterStartYear`/`filterEndYear` allow the timeline scrubber to narrow within the theater's full range
+
+#### Historical Theater System
+- Added `HistoricalConfig` interface to `src/lib/theaters/index.ts`:
+  - `startYear`, `endYear`, `countries` (UCDP country names), `description`
+- Added `historical?: HistoricalConfig` optional field to `Theater` type
+- Created 5 historical theaters:
+  - **Yugoslav Wars (1991-2001)** — Croatia, Bosnia, Kosovo, Serbia. 4 sub-regions
+  - **Gulf War (1990-1991)** — Iraq/Kuwait, Desert Storm. 3 sub-regions
+  - **Iraq War (2003-2011)** — Baghdad, Anbar, Basra, Kurdistan. 4 sub-regions
+  - **Afghanistan War (2001-2021)** — Kabul, Helmand, Kandahar, Nangarhar. 4 sub-regions
+  - **Syrian Civil War (2011-2023)** — Aleppo, Idlib, Damascus, Deir ez-Zor, Raqqa. 5 sub-regions
+- Historical theaters only have `ucdp` data source (no ADS-B, AIS, GeoConfirmed, Telegram)
+- Exported `historicalTheaters` array and `allTheaters` combined array
+- `getTheater()` searches `allTheaters` (both live and historical)
+
+#### UI Integration
+- **Header** (`src/components/layout/Header.tsx`):
+  - Theater dropdown split into `<optgroup>` — "LIVE THEATERS" and "HISTORICAL"
+  - Status indicators switch: live shows FRONTLINE/ADS-B/AIS/GEOCON, historical shows UCDP + "HISTORICAL" label
+- **DashboardShell** (`src/components/layout/DashboardShell.tsx`):
+  - Detects `theater.historical` to toggle historical mode
+  - Shows amber banner with conflict description when in historical mode
+  - Feed panel title changes to "Historical Records — {startYear}-{endYear}"
+  - Passes `historical` config to IntelFeed
+  - Disables live data params (conflicts, telegram) for historical theaters
+- **IntelFeed** (`src/components/feed/IntelFeed.tsx`):
+  - Accepts `historical?: HistoricalConfig` prop
+  - Fetches from `/api/historical` instead of `/api/events` when in historical mode
+  - Disables 30-second polling for historical mode (data doesn't change)
+  - Source filters switch to UCDP only
+  - Loading text: "LOADING HISTORICAL RECORDS..."
+- **FeedFilters** (`src/components/feed/FeedFilters.tsx`):
+  - Accepts `isHistorical?: boolean` prop
+  - Shows UCDP source filter in historical mode, live sources in live mode
+- **MapControls** (`src/components/map/MapControls.tsx`):
+  - Accepts `isHistorical?: boolean` prop
+  - Live-only layers (frontlines, aircraft, maritime) visually disabled and non-clickable in historical mode
+  - Event type filters switch to UCDP violence types (STATE, NON-STATE, ONE-SIDED)
+- **ConflictEventLayer** (`src/components/map/ConflictEventLayer.tsx`):
+  - Fetches from `/api/historical` when theater is historical
+  - Accepts `historicalYearFilter` for year-based filtering
+  - Disables 60-second polling for historical mode
+  - Timeline days-back filter only applies in live mode
+- **HeatmapLayer** (`src/components/map/HeatmapLayer.tsx`):
+  - Fetches from `/api/historical` when theater is historical
+  - Disables polling for historical mode
+- **TacticalMap** (`src/components/map/TacticalMap.tsx`):
+  - Live-only layers (frontlines, aircraft, maritime) not rendered in historical mode
+  - Static layers (air defense, installations, radar, nuclear) remain available
+  - Events and heatmap work in both modes
+  - Shows HistoricalTimeline instead of TimelineScrubber in historical mode
+  - Bottom status bar shows current year filter in historical mode
+  - Default active event types include UCDP violence types
+
+#### Historical Timeline
+- Created `src/components/map/HistoricalTimeline.tsx`:
+  - Shows year buttons for the theater's full date range
+  - Click a year to filter to just that year
+  - ALL button shows the full range
+  - Play button: animates through years (one year every 2 seconds)
+  - Play auto-stops at end and resets to start
+  - Resets when theater changes
+  - Scrollable for long date ranges (e.g., Afghanistan 2001-2021)
+
+#### Documentation
+- Help modal updated with:
+  - Historical theaters listed under THEATERS section
+  - New "HISTORICAL MODE" section explaining UCDP data, violence types, timeline, playback, layer availability, severity calculation
+- README updated:
+  - Tagline includes "Historical conflict archives"
+  - New capability row for Historical Mode
+  - UCDP GED added to Data Sources table
+  - Theaters section split into Live (6) and Historical (5) with full list
+
+#### Architecture Notes
+- Historical mode is fully additive — no live mode functionality was changed or broken
+- All existing live theaters continue to work exactly as before
+- UCDP API is free, no auth, no rate limiting documented
+- Cache TTL set to 30 minutes for historical data (longer than live 10-minute cache)
+- Historical theaters have the same structure as live theaters (bounds, center, zoom, regions, dataSources) plus the `historical` config
+- Adding a new historical theater is just adding a config object to the `historicalTheaters` array

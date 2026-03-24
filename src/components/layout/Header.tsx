@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { StatusIndicator } from '@/components/ui/StatusIndicator';
 import { HelpModal } from '@/components/ui/HelpModal';
-import { theaters } from '@/lib/theaters';
+import { theaters, historicalTheaters, getTheater, getDefaultTheater } from '@/lib/theaters';
 import type { ThemeMode } from '@/lib/theme';
+import { useMemo } from 'react';
 
 interface HeaderProps {
   activeTheaterId: string;
@@ -23,6 +24,8 @@ function formatUTCTime(date: Date): string {
 export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme }: HeaderProps) {
   const [time, setTime] = useState<string>('');
   const [helpOpen, setHelpOpen] = useState(false);
+  const theater = useMemo(() => getTheater(activeTheaterId) ?? getDefaultTheater(), [activeTheaterId]);
+  const isHistorical = !!theater.historical;
 
   useEffect(() => {
     const update = () => setTime(formatUTCTime(new Date()));
@@ -44,11 +47,20 @@ export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme 
             onChange={(e) => onTheaterChange(e.target.value)}
             className="bg-tactical-dark border border-tactical-border text-tactical-text text-xs font-mono px-2 py-1 focus:outline-none focus:border-terminal-green/50"
           >
-            {theaters.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
+            <optgroup label="LIVE THEATERS">
+              {theaters.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="HISTORICAL">
+              {historicalTheaters.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </optgroup>
           </select>
           <button
             onClick={() => setHelpOpen(true)}
@@ -71,10 +83,19 @@ export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme 
 
         {/* Right: Status indicators */}
         <div className="flex items-center gap-4">
-          <StatusIndicator label="FRONTLINE" status="stale" />
-          <StatusIndicator label="ADS-B" status="stale" />
-          <StatusIndicator label="AIS" status="stale" />
-          <StatusIndicator label="GEOCON" status="stale" />
+          {isHistorical ? (
+            <>
+              <StatusIndicator label="UCDP" status="stale" />
+              <span className="text-xs font-mono text-terminal-amber/70 tracking-wider">HISTORICAL</span>
+            </>
+          ) : (
+            <>
+              <StatusIndicator label="FRONTLINE" status="stale" />
+              <StatusIndicator label="ADS-B" status="stale" />
+              <StatusIndicator label="AIS" status="stale" />
+              <StatusIndicator label="GEOCON" status="stale" />
+            </>
+          )}
         </div>
       </header>
 

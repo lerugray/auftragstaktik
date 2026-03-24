@@ -20,7 +20,11 @@ interface MapControlsProps {
   activeEventTypes?: Set<string>;
   onToggleEventType?: (type: string) => void;
   showEventFilters?: boolean;
+  isHistorical?: boolean;
 }
+
+// Layers that require live data feeds
+const LIVE_ONLY_LAYERS: Set<keyof LayerState> = new Set(['frontlines', 'aircraft', 'maritime']);
 
 const layerConfig: { key: keyof LayerState; label: string; color: string }[] = [
   { key: 'frontlines', label: 'FRONTLINES', color: 'text-terminal-red' },
@@ -44,40 +48,60 @@ const eventTypeFilters: { type: string; label: string }[] = [
   { type: 'Conflict event', label: 'OTHER' },
 ];
 
+const historicalEventTypeFilters: { type: string; label: string }[] = [
+  { type: 'State-based conflict', label: 'STATE' },
+  { type: 'Non-state conflict', label: 'NON-STATE' },
+  { type: 'One-sided violence', label: 'ONE-SIDED' },
+];
+
 export function MapControls({
   layers,
   onToggle,
   activeEventTypes,
   onToggleEventType,
   showEventFilters,
+  isHistorical = false,
 }: MapControlsProps) {
   const [filtersExpanded, setFiltersExpanded] = useState(false);
+  const eventFilters = isHistorical ? historicalEventTypeFilters : eventTypeFilters;
 
   return (
     <div className="absolute top-2 right-2 bg-tactical-dark/90 border border-tactical-border p-3 flex flex-col gap-1.5">
       <div className="text-xs font-mono text-tactical-text-dim tracking-widest mb-1">
         LAYERS
       </div>
-      {layerConfig.map(({ key, label, color }) => (
-        <button
-          key={key}
-          onClick={() => onToggle(key)}
-          className={`flex items-center gap-2.5 px-1.5 py-1 text-sm font-mono tracking-wider transition-opacity hover:opacity-100 ${
-            layers[key] ? 'opacity-100' : 'opacity-30'
-          }`}
-        >
-          <span
-            className={`w-3 h-3 border ${
-              layers[key]
-                ? `${color} border-current bg-current/20`
-                : 'border-tactical-text-dim'
+      {layerConfig.map(({ key, label, color }) => {
+        const isLiveOnly = LIVE_ONLY_LAYERS.has(key);
+        const disabled = isHistorical && isLiveOnly;
+
+        return (
+          <button
+            key={key}
+            onClick={() => !disabled && onToggle(key)}
+            className={`flex items-center gap-2.5 px-1.5 py-1 text-sm font-mono tracking-wider transition-opacity ${
+              disabled
+                ? 'opacity-15 cursor-not-allowed'
+                : layers[key]
+                  ? 'opacity-100 hover:opacity-100'
+                  : 'opacity-30 hover:opacity-100'
             }`}
-          />
-          <span className={layers[key] ? color : 'text-tactical-text-dim'}>
-            {label}
-          </span>
-        </button>
-      ))}
+            title={disabled ? 'Not available in historical mode' : undefined}
+          >
+            <span
+              className={`w-3 h-3 border ${
+                disabled
+                  ? 'border-tactical-text-dim/30'
+                  : layers[key]
+                    ? `${color} border-current bg-current/20`
+                    : 'border-tactical-text-dim'
+              }`}
+            />
+            <span className={disabled ? 'text-tactical-text-dim/30' : layers[key] ? color : 'text-tactical-text-dim'}>
+              {label}
+            </span>
+          </button>
+        );
+      })}
 
       {/* Event type sub-filters */}
       {showEventFilters && activeEventTypes && onToggleEventType && (
@@ -87,12 +111,12 @@ export function MapControls({
             className="flex items-center justify-between mt-1 pt-1.5 border-t border-tactical-border text-xs font-mono text-tactical-text-dim tracking-wider hover:text-tactical-text"
           >
             <span>EVENT FILTER</span>
-            <span className="text-[10px]">{filtersExpanded ? '▲' : '▼'}</span>
+            <span className="text-[10px]">{filtersExpanded ? '\u25B2' : '\u25BC'}</span>
           </button>
 
           {filtersExpanded && (
             <div className="flex flex-col gap-1 pl-1">
-              {eventTypeFilters.map(({ type, label }) => {
+              {eventFilters.map(({ type, label }) => {
                 const active = activeEventTypes.has(type);
                 return (
                   <button

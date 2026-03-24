@@ -10,6 +10,13 @@ export interface DataSourceConfig {
   params?: Record<string, unknown>;
 }
 
+export interface HistoricalConfig {
+  startYear: number;
+  endYear: number;
+  countries: string[]; // UCDP country names for API queries
+  description: string;
+}
+
 export interface Theater {
   id: string;
   name: string;
@@ -18,6 +25,7 @@ export interface Theater {
   zoom: number;
   regions: TheaterRegion[];
   dataSources: DataSourceConfig[];
+  historical?: HistoricalConfig;
 }
 
 export const theaters: Theater[] = [
@@ -144,8 +152,125 @@ export const theaters: Theater[] = [
   },
 ];
 
+// Historical theaters — use UCDP GED data instead of live sources
+export const historicalTheaters: Theater[] = [
+  {
+    id: 'hist-yugoslav',
+    name: 'Yugoslav Wars (1991-2001)',
+    bounds: [13.0, 40.5, 23.5, 47.0],
+    center: [18.5, 44.0],
+    zoom: 6,
+    regions: [
+      { id: 'croatia', name: 'Croatia', bounds: [13.0, 42.3, 19.5, 46.6] },
+      { id: 'bosnia', name: 'Bosnia & Herzegovina', bounds: [15.7, 42.5, 19.7, 45.3] },
+      { id: 'kosovo', name: 'Kosovo', bounds: [20.0, 41.8, 21.8, 43.3] },
+      { id: 'serbia', name: 'Serbia', bounds: [18.8, 42.2, 23.0, 46.2] },
+    ],
+    dataSources: [
+      { source: 'ucdp', enabled: true, params: { countries: ['Bosnia-Herzegovina', 'Croatia', 'Serbia (Yugoslavia)'] } },
+    ],
+    historical: {
+      startYear: 1991,
+      endYear: 2001,
+      countries: ['Bosnia-Herzegovina', 'Croatia', 'Serbia (Yugoslavia)'],
+      description: 'Series of wars following the dissolution of Yugoslavia. Includes the Croatian War of Independence, Bosnian War, and Kosovo War.',
+    },
+  },
+  {
+    id: 'hist-desert-storm',
+    name: 'Gulf War (1990-1991)',
+    bounds: [38.0, 27.0, 50.0, 37.5],
+    center: [44.0, 33.0],
+    zoom: 6,
+    regions: [
+      { id: 'kuwait', name: 'Kuwait', bounds: [46.5, 28.5, 48.5, 30.1] },
+      { id: 'southern-iraq', name: 'Southern Iraq', bounds: [43.0, 29.0, 48.0, 33.0] },
+      { id: 'northern-iraq', name: 'Northern Iraq (Kurdistan)', bounds: [42.0, 35.0, 46.5, 37.5] },
+    ],
+    dataSources: [
+      { source: 'ucdp', enabled: true, params: { countries: ['Iraq', 'Kuwait'] } },
+    ],
+    historical: {
+      startYear: 1990,
+      endYear: 1991,
+      countries: ['Iraq', 'Kuwait'],
+      description: 'Iraq invasion of Kuwait and the US-led coalition response. Operation Desert Shield and Desert Storm.',
+    },
+  },
+  {
+    id: 'hist-iraq-war',
+    name: 'Iraq War (2003-2011)',
+    bounds: [38.0, 29.0, 49.0, 37.5],
+    center: [44.0, 33.5],
+    zoom: 6,
+    regions: [
+      { id: 'baghdad', name: 'Baghdad', bounds: [44.0, 33.0, 44.8, 33.6] },
+      { id: 'anbar', name: 'Anbar Province', bounds: [38.5, 31.0, 44.0, 34.5] },
+      { id: 'basra', name: 'Basra', bounds: [46.0, 29.5, 48.5, 31.5] },
+      { id: 'kurdistan', name: 'Kurdistan Region', bounds: [42.0, 35.0, 46.5, 37.5] },
+    ],
+    dataSources: [
+      { source: 'ucdp', enabled: true, params: { countries: ['Iraq'] } },
+    ],
+    historical: {
+      startYear: 2003,
+      endYear: 2011,
+      countries: ['Iraq'],
+      description: 'US-led invasion and occupation of Iraq. Includes the initial invasion, insurgency, sectarian violence, and the surge.',
+    },
+  },
+  {
+    id: 'hist-afghanistan',
+    name: 'Afghanistan War (2001-2021)',
+    bounds: [60.0, 29.0, 75.0, 39.0],
+    center: [67.5, 34.0],
+    zoom: 6,
+    regions: [
+      { id: 'kabul', name: 'Kabul Province', bounds: [68.5, 34.2, 69.8, 35.0] },
+      { id: 'helmand', name: 'Helmand Province', bounds: [63.0, 29.5, 66.0, 33.0] },
+      { id: 'kandahar', name: 'Kandahar Province', bounds: [64.5, 30.0, 67.5, 32.5] },
+      { id: 'nangarhar', name: 'Nangarhar Province', bounds: [69.5, 33.5, 71.5, 35.0] },
+    ],
+    dataSources: [
+      { source: 'ucdp', enabled: true, params: { countries: ['Afghanistan'] } },
+    ],
+    historical: {
+      startYear: 2001,
+      endYear: 2021,
+      countries: ['Afghanistan'],
+      description: 'US-led intervention following 9/11. Includes initial invasion, Taliban insurgency, NATO ISAF mission, surge, and withdrawal.',
+    },
+  },
+  {
+    id: 'hist-syria',
+    name: 'Syrian Civil War (2011-2023)',
+    bounds: [35.5, 32.0, 42.5, 37.5],
+    center: [38.5, 35.0],
+    zoom: 6,
+    regions: [
+      { id: 'aleppo', name: 'Aleppo', bounds: [36.0, 35.5, 38.5, 37.0] },
+      { id: 'idlib', name: 'Idlib', bounds: [35.7, 35.3, 37.0, 36.3] },
+      { id: 'damascus', name: 'Damascus', bounds: [36.0, 33.2, 36.8, 33.8] },
+      { id: 'deir-ez-zor', name: 'Deir ez-Zor', bounds: [39.5, 34.0, 41.5, 36.0] },
+      { id: 'raqqa', name: 'Raqqa', bounds: [38.5, 35.5, 40.5, 36.5] },
+    ],
+    dataSources: [
+      { source: 'ucdp', enabled: true, params: { countries: ['Syria'] } },
+    ],
+    historical: {
+      startYear: 2011,
+      endYear: 2023,
+      countries: ['Syria'],
+      description: 'Multi-sided civil war including government forces, rebel groups, ISIS, Kurdish YPG/SDF, and foreign interventions by Russia, Turkey, Iran, and the US-led coalition.',
+    },
+  },
+];
+
+// All theaters combined
+export const allTheaters: Theater[] = [...theaters, ...historicalTheaters];
+
 export function getTheater(id: string): Theater | undefined {
-  return theaters.find((t) => t.id === id);
+  return allTheaters.find((t) => t.id === id);
 }
 
 export function getDefaultTheater(): Theater {

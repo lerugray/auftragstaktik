@@ -27,6 +27,7 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 - Telegram (military blogs) — scraped from public preview pages, auto-translated
 - adsb.lol (aircraft) — no key needed
 - aisstream.io (maritime/AIS) — free API key via GitHub auth
+- UCDP GED (historical conflicts, 1989-2023) — no key needed, CC BY 4.0
 
 ## Key Directories
 - `src/lib/theaters/` — Theater configs (bounding boxes, regions, data sources)
@@ -64,3 +65,4 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 - **Phase 12: Radar / Sensor Layer** — COMPLETE (20 radars, detection + tracking range rings, 4 theaters)
 - **Phase 13: Nuclear / CBRN Layer** — COMPLETE (20 facilities, exclusion zones, CBRN keyword detection, proximity alerts)
 - **Phase 14: Data Model Normalization** — COMPLETE (source 'acled' → 'geoconfirmed', layer key 'acled' → 'events', EventSource type updated)
+- **Phase 15: Historical Mode** — COMPLETE (UCDP GED API, 5 historical theaters, year timeline with playback, live layers disabled)

@@ -16,6 +16,7 @@ interface ConflictEventLayerProps {
   highlightedEventId?: string | null;
   onHighlightClear?: () => void;
   timelineDaysBack?: number; // 0 = show all
+  historicalYearFilter?: { startYear: number; endYear: number } | null;
 }
 
 const SEVERITY_COLORS: Record<string, string> = {
@@ -26,19 +27,32 @@ const SEVERITY_COLORS: Record<string, string> = {
   info: '#00aaff',
 };
 
-export function ConflictEventLayer({ map, theater, onEventClick, activeEventTypes, highlightedEventId, onHighlightClear, timelineDaysBack = 0 }: ConflictEventLayerProps) {
+export function ConflictEventLayer({ map, theater, onEventClick, activeEventTypes, highlightedEventId, onHighlightClear, timelineDaysBack = 0, historicalYearFilter }: ConflictEventLayerProps) {
   const markersRef = useRef<Map<string, { marker: maplibregl.Marker; eventType: string; timestamp?: string }>>(new Map());
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const isHistorical = !!theater.historical;
 
   const fetchAndRender = useCallback(async () => {
-    const geoconSource = theater.dataSources.find((ds) => ds.source === 'geoconfirmed' && ds.enabled);
-    if (!geoconSource) return;
+    let url: string;
 
-    const conflicts = (geoconSource.params?.conflicts as string[]) || ['ukraine'];
-    const conflictsStr = conflicts.join(',');
+    if (isHistorical && theater.historical) {
+      // Historical mode — fetch from UCDP API
+      const countries = theater.historical.countries.join(',');
+      const startYear = historicalYearFilter?.startYear ?? theater.historical.startYear;
+      const endYear = historicalYearFilter?.endYear ?? theater.historical.endYear;
+      url = `/api/historical?countries=${encodeURIComponent(countries)}&startYear=${theater.historical.startYear}&endYear=${theater.historical.endYear}&filterStartYear=${startYear}&filterEndYear=${endYear}`;
+    } else {
+      // Live mode — fetch from standard events API
+      const geoconSource = theater.dataSources.find((ds) => ds.source === 'geoconfirmed' && ds.enabled);
+      if (!geoconSource) return;
+
+      const conflicts = (geoconSource.params?.conflicts as string[]) || ['ukraine'];
+      const conflictsStr = conflicts.join(',');
+      url = `/api/events?conflicts=${encodeURIComponent(conflictsStr)}`;
+    }
 
     try {
-      const res = await fetch(`/api/events?conflicts=${encodeURIComponent(conflictsStr)}`);
+      const res = await fetch(url);
       if (!res.ok) return;
       const data = await res.json();
       const events: EventRecord[] = data.events || [];
@@ -100,11 +114,15 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
     } catch (err) {
       console.error('Conflict event layer error:', err);
     }
-  }, [map, theater, onEventClick]);
+  }, [map, theater, onEventClick, isHistorical, historicalYearFilter]);
 
   useEffect(() => {
     fetchAndRender();
-    intervalRef.current = setInterval(fetchAndRender, 60000); // Refresh every 60s
+
+    // Only poll for live mode — historical data doesn't change
+    if (!isHistorical) {
+      intervalRef.current = setInterval(fetchAndRender, 60000);
+    }
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -113,7 +131,7 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
       }
       markersRef.current.clear();
     };
-  }, [fetchAndRender]);
+  }, [fetchAndRender, isHistorical]);
 
   // Toggle marker visibility based on active event type filters and timeline
   useEffect(() => {
@@ -124,8 +142,8 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
     for (const [id, entry] of markersRef.current) {
       let visible = !activeEventTypes || activeEventTypes.has(entry.eventType);
 
-      // Apply timeline filter if set
-      if (visible && cutoff > 0 && entry.timestamp) {
+      // Apply timeline filter if set (live mode only)
+      if (visible && cutoff > 0 && entry.timestamp && !isHistorical) {
         visible = new Date(entry.timestamp).getTime() >= cutoff;
       }
 
@@ -134,7 +152,7 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
         el.style.display = visible ? '' : 'none';
       }
     }
-  }, [activeEventTypes, timelineDaysBack]);
+  }, [activeEventTypes, timelineDaysBack, isHistorical]);
 
   // Highlight (pulse) a specific marker when clicked from the feed
   useEffect(() => {

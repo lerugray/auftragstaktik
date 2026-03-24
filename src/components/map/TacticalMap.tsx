@@ -15,6 +15,7 @@ import { RadarLayer } from './RadarLayer';
 import { NuclearLayer } from './NuclearLayer';
 import { HeatmapLayer } from './HeatmapLayer';
 import { TimelineScrubber } from './TimelineScrubber';
+import { HistoricalTimeline } from './HistoricalTimeline';
 import { DetailPanel } from './DetailPanel';
 import { MapControls } from './MapControls';
 import { MapLegend } from './MapLegend';
@@ -47,6 +48,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
   const [selectedNuclear, setSelectedNuclear] = useState<NuclearFacility | null>(null);
   const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
   const [timelineDaysBack, setTimelineDaysBack] = useState(0); // 0 = all
+  const [historicalYearFilter, setHistoricalYearFilter] = useState<{ startYear: number; endYear: number } | null>(null);
   const [activeEventTypes, setActiveEventTypes] = useState<Set<string>>(new Set([
     'Missile strike', 'Drone strike', 'Air/drone strike',
     'Explosion/Strike', 'Artillery/Shelling', 'Shelling/artillery/missile attack',
@@ -54,7 +56,12 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     'Tank destroyed', 'Vehicle destroyed', 'APC/IFV destroyed',
     'Fire/Smoke', 'Fortification', 'Troops', 'Conflict event',
     'Strategic developments', 'Other',
+    // UCDP event types
+    'State-based conflict', 'Non-state conflict', 'One-sided violence',
   ]));
+
+  const isHistorical = !!theater.historical;
+
   const [layers, setLayers] = useState({
     frontlines: true,
     aircraft: true,
@@ -66,6 +73,11 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     maritime: true,
     events: true,
   });
+
+  // Reset historical year filter when theater changes
+  useEffect(() => {
+    setHistoricalYearFilter(null);
+  }, [theater.id]);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -224,27 +236,34 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     setSelectedNuclear(facility);
   }, [clearSelections]);
 
+  const handleHistoricalYearChange = useCallback((startYear: number, endYear: number) => {
+    setHistoricalYearFilter({ startYear, endYear });
+  }, []);
+
   return (
     <div className="relative w-full h-full">
       <div ref={containerRef} className="w-full h-full" />
 
       {mapReady && mapRef.current && (
         <>
-          {layers.frontlines && <FrontlineLayer map={mapRef.current} theater={theater} />}
-          {layers.aircraft && (
+          {/* Live-only layers — disabled in historical mode */}
+          {!isHistorical && layers.frontlines && <FrontlineLayer map={mapRef.current} theater={theater} />}
+          {!isHistorical && layers.aircraft && (
             <AircraftLayer
               map={mapRef.current}
               theater={theater}
               onAircraftClick={handleAircraftClick}
             />
           )}
-          {layers.maritime && (
+          {!isHistorical && layers.maritime && (
             <MaritimeLayer
               map={mapRef.current}
               theater={theater}
               onVesselClick={handleVesselClick}
             />
           )}
+
+          {/* Events layer — works in both modes */}
           {layers.events && (
             <ConflictEventLayer
               map={mapRef.current}
@@ -254,14 +273,19 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
               highlightedEventId={highlightedEventId}
               onHighlightClear={() => setHighlightedEventId(null)}
               timelineDaysBack={timelineDaysBack}
+              historicalYearFilter={historicalYearFilter}
             />
           )}
+
+          {/* Heatmap — works in both modes */}
           {layers.heatmap && (
             <HeatmapLayer
               map={mapRef.current}
               theater={theater}
             />
           )}
+
+          {/* Static layers — available in both modes */}
           {layers.airDefense && (
             <AirDefenseLayer
               map={mapRef.current}
@@ -306,6 +330,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
           });
         }}
         showEventFilters={layers.events}
+        isHistorical={isHistorical}
       />
 
       <MapLegend />
@@ -322,14 +347,33 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
         onClose={clearSelections}
       />
 
-      <TimelineScrubber
-        visible={layers.events}
-        onRangeChange={setTimelineDaysBack}
-      />
+      {/* Timeline — different component for live vs historical */}
+      {isHistorical && theater.historical ? (
+        <HistoricalTimeline
+          visible={layers.events}
+          startYear={theater.historical.startYear}
+          endYear={theater.historical.endYear}
+          onYearRangeChange={handleHistoricalYearChange}
+        />
+      ) : (
+        <TimelineScrubber
+          visible={layers.events}
+          onRangeChange={setTimelineDaysBack}
+        />
+      )}
 
       {/* Bottom status bar */}
       <div className="absolute bottom-2 left-2 right-2 flex items-center gap-6 bg-tactical-dark/80 border border-tactical-border px-3 py-1.5 pointer-events-none">
         <span className="text-xs font-mono text-terminal-green/80 tracking-wider">THEATER: {theater.name.toUpperCase()}</span>
+        {isHistorical && (
+          <span className="text-xs font-mono text-terminal-amber tracking-wider">
+            {historicalYearFilter
+              ? historicalYearFilter.startYear === historicalYearFilter.endYear
+                ? `YEAR: ${historicalYearFilter.startYear}`
+                : `YEARS: ${historicalYearFilter.startYear}-${historicalYearFilter.endYear}`
+              : `YEARS: ${theater.historical!.startYear}-${theater.historical!.endYear}`}
+          </span>
+        )}
         <span className="text-xs font-mono text-terminal-amber tracking-wider">ZOOM: {zoom}</span>
         {cursor && (
           <span className="text-xs font-mono text-tactical-text-dim tracking-wider">
