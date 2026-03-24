@@ -141,7 +141,26 @@ const SEVERITY_BADGE: Record<string, string> = {
 
 function ConflictEventDetail({ event, onClose }: { event: EventRecord; onClose: () => void }) {
   const badgeClass = SEVERITY_BADGE[event.severity] || SEVERITY_BADGE.info;
-  const newsUrl = `https://news.google.com/search?q=${encodeURIComponent(event.eventType + ' ' + event.title.split(' ').slice(0, 4).join(' '))}`;
+  const isUCDP = event.source === 'ucdp';
+  const rawData = event.rawData as Record<string, unknown>;
+
+  // UCDP-specific fields
+  const sideA = rawData?.side_a as string | undefined;
+  const sideB = rawData?.side_b as string | undefined;
+  const conflictName = rawData?.conflict_name as string | undefined;
+  const bestFatalities = rawData?.best as number | undefined;
+  const deathsA = rawData?.deaths_a as number | undefined;
+  const deathsB = rawData?.deaths_b as number | undefined;
+  const deathsCivilians = rawData?.deaths_civilians as number | undefined;
+  const eventYear = rawData?.year as number | undefined;
+
+  // Links
+  const newsUrl = isUCDP
+    ? `https://news.google.com/search?q=${encodeURIComponent((conflictName || event.eventType) + ' ' + (rawData?.country as string || '') + ' ' + (eventYear || ''))}`
+    : `https://news.google.com/search?q=${encodeURIComponent(event.eventType + ' ' + event.title.split(' ').slice(0, 4).join(' '))}`;
+  const wikiUrl = conflictName
+    ? `https://en.wikipedia.org/wiki/Special:Search/${encodeURIComponent(conflictName)}`
+    : null;
 
   return (
     <>
@@ -166,14 +185,46 @@ function ConflictEventDetail({ event, onClose }: { event: EventRecord; onClose: 
         <DetailRow label="LAT" value={event.coordinates[1].toFixed(4) + '°'} />
         <DetailRow label="LON" value={event.coordinates[0].toFixed(4) + '°'} />
       </div>
+
+      {/* UCDP faction and fatality breakdown */}
+      {isUCDP && (sideA || sideB) && (
+        <div className="mt-2 pt-2 border-t border-tactical-border">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+            {sideA && <DetailRow label="SIDE A" value={sideA} />}
+            {sideB && <DetailRow label="SIDE B" value={sideB} />}
+          </div>
+        </div>
+      )}
+
+      {isUCDP && bestFatalities !== undefined && bestFatalities > 0 && (
+        <div className="mt-2 pt-2 border-t border-tactical-border">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
+            <DetailRow label="KILLED" value={String(bestFatalities)} />
+            {deathsA !== undefined && deathsA > 0 && <DetailRow label="SIDE A KIA" value={String(deathsA)} />}
+            {deathsB !== undefined && deathsB > 0 && <DetailRow label="SIDE B KIA" value={String(deathsB)} />}
+            {deathsCivilians !== undefined && deathsCivilians > 0 && <DetailRow label="CIV DEAD" value={String(deathsCivilians)} />}
+          </div>
+        </div>
+      )}
+
       <div className="mt-2 pt-2 border-t border-tactical-border flex gap-3">
+        {isUCDP && wikiUrl && (
+          <a
+            href={wikiUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-mono text-terminal-amber hover:text-terminal-amber/80 hover:underline"
+          >
+            WIKIPEDIA
+          </a>
+        )}
         <a
           href={newsUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs font-mono text-terminal-blue hover:text-terminal-blue/80 hover:underline"
         >
-          NEWS COVERAGE
+          {isUCDP ? 'HISTORICAL COVERAGE' : 'NEWS COVERAGE'}
         </a>
       </div>
     </>

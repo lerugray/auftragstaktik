@@ -49,6 +49,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
   const [highlightedEventId, setHighlightedEventId] = useState<string | null>(null);
   const [timelineDaysBack, setTimelineDaysBack] = useState(0); // 0 = all
   const [historicalYearFilter, setHistoricalYearFilter] = useState<{ startYear: number; endYear: number } | null>(null);
+  const [historicalFatalities, setHistoricalFatalities] = useState(0);
   const [activeEventTypes, setActiveEventTypes] = useState<Set<string>>(new Set([
     'Missile strike', 'Drone strike', 'Air/drone strike',
     'Explosion/Strike', 'Artillery/Shelling', 'Shelling/artillery/missile attack',
@@ -274,6 +275,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
               onHighlightClear={() => setHighlightedEventId(null)}
               timelineDaysBack={timelineDaysBack}
               historicalYearFilter={historicalYearFilter}
+              onFatalityUpdate={setHistoricalFatalities}
             />
           )}
 
@@ -354,6 +356,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
           startYear={theater.historical.startYear}
           endYear={theater.historical.endYear}
           onYearRangeChange={handleHistoricalYearChange}
+          cumulativeFatalities={historicalFatalities}
         />
       ) : (
         <TimelineScrubber

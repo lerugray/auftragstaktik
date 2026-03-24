@@ -7,9 +7,10 @@ interface HistoricalTimelineProps {
   endYear: number;
   visible: boolean;
   onYearRangeChange: (startYear: number, endYear: number) => void;
+  cumulativeFatalities?: number;
 }
 
-export function HistoricalTimeline({ startYear, endYear, visible, onYearRangeChange }: HistoricalTimelineProps) {
+export function HistoricalTimeline({ startYear, endYear, visible, onYearRangeChange, cumulativeFatalities = 0 }: HistoricalTimelineProps) {
   const [selectedStart, setSelectedStart] = useState(startYear);
   const [selectedEnd, setSelectedEnd] = useState(endYear);
   const [playing, setPlaying] = useState(false);
@@ -81,6 +82,7 @@ export function HistoricalTimeline({ startYear, endYear, visible, onYearRangeCha
   }
 
   const isAllSelected = selectedStart === startYear && selectedEnd === endYear;
+  const showFatalities = cumulativeFatalities > 0;
 
   return (
     <div className="absolute bottom-14 left-1/2 -translate-x-1/2 bg-tactical-dark/90 border border-tactical-border px-4 py-2 flex items-center gap-1 z-10 max-w-[90vw] overflow-x-auto">
@@ -128,6 +130,16 @@ export function HistoricalTimeline({ startYear, endYear, visible, onYearRangeCha
           </button>
         );
       })}
+
+      {/* Cumulative fatality counter */}
+      {showFatalities && (
+        <div className="flex items-center gap-1.5 ml-3 pl-3 border-l border-tactical-border flex-shrink-0">
+          <span className="text-xs font-mono text-terminal-red/70 tracking-wider">KIA:</span>
+          <span className="text-xs font-mono text-terminal-red font-bold tracking-wider">
+            {cumulativeFatalities.toLocaleString()}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
