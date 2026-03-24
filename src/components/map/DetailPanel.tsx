@@ -72,7 +72,7 @@ function AircraftDetail({ aircraft, onClose }: { aircraft: AircraftRecord; onClo
     <>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className={`w-2 h-2 rounded-full ${aircraft.military ? 'bg-terminal-red' : 'bg-terminal-blue'}`} />
+          <span className={`w-3 h-3 rounded-full ${aircraft.military ? 'bg-terminal-red' : 'bg-terminal-blue'}`} />
           <span className="text-sm font-mono font-bold text-tactical-text">
             {aircraft.callsign || aircraft.icao}
           </span>
@@ -109,7 +109,7 @@ function VesselDetail({ vessel, onClose }: { vessel: MaritimeRecord; onClose: ()
     <>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-terminal-amber" />
+          <span className="w-3 h-3 rounded-full bg-terminal-amber" />
           <span className="text-sm font-mono font-bold text-tactical-text">
             {vessel.name || vessel.mmsi}
           </span>
@@ -318,7 +318,7 @@ function InstallationDetail({ installation, onClose }: { installation: MilitaryI
       <div className="mt-2 pt-2 border-t border-tactical-border text-xs font-mono text-tactical-text-dim leading-relaxed">
         {installation.description}
       </div>
-      <div className="mt-1 text-[11px] font-mono text-tactical-text-dim/60">
+      <div className="mt-1 text-sm font-mono text-tactical-text-dim/60">
         {installation.source}
       </div>
     </>
@@ -419,7 +419,7 @@ function NuclearDetail({ facility, onClose }: { facility: NuclearFacility; onClo
       <div className="mt-2 pt-2 border-t border-tactical-border text-xs font-mono text-tactical-text-dim leading-relaxed">
         {facility.description}
       </div>
-      <div className="mt-1 text-[11px] font-mono text-tactical-text-dim/60">
+      <div className="mt-1 text-sm font-mono text-tactical-text-dim/60">
         {facility.source}
       </div>
     </>

@@ -158,7 +158,7 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="px-4 py-2 border-t border-tactical-border text-[11px] font-mono text-tactical-text-dim">
+        <div className="px-4 py-2 border-t border-tactical-border text-sm font-mono text-tactical-text-dim">
           Built with Claude Code. Source at github.com/lerugray/auftragstaktik
         </div>
       </div>

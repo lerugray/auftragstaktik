@@ -111,7 +111,7 @@ export function MapControls({
             className="flex items-center justify-between mt-1 pt-1.5 border-t border-tactical-border text-xs font-mono text-tactical-text-dim tracking-wider hover:text-tactical-text"
           >
             <span>EVENT FILTER</span>
-            <span className="text-[10px]">{filtersExpanded ? '\u25B2' : '\u25BC'}</span>
+            <span className="text-xs">{filtersExpanded ? '\u25B2' : '\u25BC'}</span>
           </button>
 
           {filtersExpanded && (
@@ -122,12 +122,12 @@ export function MapControls({
                   <button
                     key={type}
                     onClick={() => onToggleEventType(type)}
-                    className={`flex items-center gap-2 px-1 py-0.5 text-xs font-mono tracking-wider transition-opacity hover:opacity-100 ${
+                    className={`flex items-center gap-2 px-2 py-1 text-xs font-mono tracking-wider transition-opacity hover:opacity-100 ${
                       active ? 'opacity-100' : 'opacity-30'
                     }`}
                   >
                     <span
-                      className={`w-2 h-2 ${
+                      className={`w-3 h-3 ${
                         active
                           ? 'bg-terminal-green/40 border border-terminal-green'
                           : 'border border-tactical-text-dim'

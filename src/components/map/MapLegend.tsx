@@ -170,14 +170,14 @@ export function MapLegend({ historical }: MapLegendProps) {
                   style={{ background: buildGradientStops() }}
                 />
                 <div className="flex justify-between mt-0.5">
-                  <span className="text-[10px] font-mono text-tactical-text-dim">{historical.startYear}</span>
-                  <span className="text-[10px] font-mono text-tactical-text-dim">YEAR</span>
-                  <span className="text-[10px] font-mono text-tactical-text-dim">{historical.endYear}</span>
+                  <span className="text-xs font-mono text-tactical-text-dim">{historical.startYear}</span>
+                  <span className="text-xs font-mono text-tactical-text-dim">YEAR</span>
+                  <span className="text-xs font-mono text-tactical-text-dim">{historical.endYear}</span>
                 </div>
               </div>
 
               {/* Size by fatalities */}
-              <div className="text-[10px] font-mono text-tactical-text-dim mb-1.5">SIZE = FATALITIES</div>
+              <div className="text-xs font-mono text-tactical-text-dim mb-1.5">SIZE = FATALITIES</div>
               <div className="flex items-center gap-3">
                 {[
                   { size: 5, label: '1-2' },
@@ -194,7 +194,7 @@ export function MapLegend({ historical }: MapLegendProps) {
                         strokeWidth="1"
                       />
                     </svg>
-                    <span className="text-[10px] font-mono text-tactical-text-dim">{label}</span>
+                    <span className="text-xs font-mono text-tactical-text-dim">{label}</span>
                   </div>
                 ))}
               </div>
@@ -203,11 +203,11 @@ export function MapLegend({ historical }: MapLegendProps) {
               <div className="flex items-center gap-2 mt-2">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-sm bg-terminal-amber/90" />
-                  <span className="text-[10px] font-mono text-tactical-text-dim">Current year</span>
+                  <span className="text-xs font-mono text-tactical-text-dim">Current year</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-sm bg-terminal-amber/30" />
-                  <span className="text-[10px] font-mono text-tactical-text-dim">Past years</span>
+                  <span className="text-xs font-mono text-tactical-text-dim">Past years</span>
                 </div>
               </div>
             </div>
@@ -232,7 +232,7 @@ export function MapLegend({ historical }: MapLegendProps) {
                   />
                   <div>
                     <div className="text-xs font-mono text-tactical-text font-bold">{label}</div>
-                    <div className="text-[11px] font-mono text-tactical-text-dim leading-snug">{desc}</div>
+                    <div className="text-sm font-mono text-tactical-text-dim leading-snug">{desc}</div>
                   </div>
                 </div>
               ))}

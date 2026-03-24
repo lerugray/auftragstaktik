@@ -193,7 +193,7 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
     return (
       <div className="flex flex-col h-full p-3 gap-3">
         <div className="flex items-center gap-2 text-xs font-mono text-tactical-text-dim">
-          <span className="w-2 h-2 bg-terminal-green/80 rounded-full" />
+          <span className="w-3 h-3 bg-terminal-green/80 rounded-full" />
           <span className="tracking-wider">
             {providerInfo?.provider?.toUpperCase()} — {providerInfo?.model}
           </span>
@@ -283,7 +283,7 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
           <span className="text-xs font-mono text-terminal-green tracking-wider font-bold">
             {briefing?.title}
           </span>
-          <span className="text-[11px] font-mono text-tactical-text-dim">
+          <span className="text-sm font-mono text-tactical-text-dim">
             DTG: {briefing?.dtg} | Sources: {briefing?.sourceCount}
           </span>
         </div>
@@ -335,7 +335,7 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
 
         {/* Footer */}
         <div className="mt-4 pt-2 border-t border-tactical-border">
-          <div className="text-[11px] font-mono text-tactical-text-dim">
+          <div className="text-sm font-mono text-tactical-text-dim">
             {briefing?.classification} | Generated {briefing?.generatedAt?.substring(0, 16)} via {briefing?.provider}
           </div>
         </div>
