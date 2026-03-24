@@ -43,7 +43,7 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 - **Use stop-slop** when writing any human-facing copy (READMEs, docs, descriptions, briefing output)
 - **Update help menu** (`src/components/ui/HelpModal.tsx`) when adding new functionality — keep it current with stop-slop
 - Session notes tracked in `SESSION_NOTES.md`
-- Plan file: `.claude/plans/cosmic-marinating-lemur.md`
+- Plan files: `.claude/plans/cosmic-marinating-lemur.md`, `.claude/plans/future-features.md`
 - All external API calls go through Next.js API routes (never from client directly)
 - Use `@/*` import alias for src directory
 - After clearing `.next` cache, always restart dev server (stale webpack chunks cause "Cannot find module './331.js'" errors)
@@ -60,3 +60,7 @@ Tactical OSINT command terminal for tracking military/conflict movements using o
 - **Phase 8: Theater Expansion + Help + Accessibility** — COMPLETE (6 theaters, help menu, light theme)
 - **Phase 9: Telegram + AD/SAM Layer** — COMPLETE (Telegram scraping + translation, 18 AD installations)
 - **Phase 10: PDF Export + Advanced Features** — COMPLETE (PDF SITREP, range rings, heatmap, timeline, keyboard shortcuts, data export)
+- **Phase 11: Military Installations & Strategic Sites** — COMPLETE (35 installations, 6 types, 4 theaters, chokepoints)
+- **Phase 12: Radar / Sensor Layer** — COMPLETE (20 radars, detection + tracking range rings, 4 theaters)
+- **Phase 13: Nuclear / CBRN Layer** — COMPLETE (20 facilities, exclusion zones, CBRN keyword detection, proximity alerts)
+- **Phase 14: Data Model Normalization** — COMPLETE (source 'acled' → 'geoconfirmed', layer key 'acled' → 'events', EventSource type updated)

@@ -1,22 +1,33 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:acleddata.com)",
-      "WebFetch(domain:github.com)",
+      "Bash(npm:*)",
+      "Bash(npx:*)",
+      "Bash(node:*)",
+      "Bash(next:*)",
+      "Bash(git:*)",
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(curl:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(taskkill:*)",
+      "Bash(gh:*)",
+      "Bash(python3:*)",
+      "Bash(ollama:*)",
+      "Read",
+      "Write",
+      "Edit",
+      "Glob",
+      "Grep",
       "WebSearch",
-      "Bash(curl -s \"https://hapi.humdata.org/api/v2/coordination-context/conflict-event?location_code=UKR&output_format=json&limit=2&app_identifier=Y29uZmxpY3RfbW9uaXRvcjp0ZXN0QGV4YW1wbGUuY29t\")",
-      "Bash(curl -s \"http://data.gdeltproject.org/documentation/GDELT-Event_Codebook-V2.0.pdf\" -o /tmp/gdelt_codebook.pdf)",
-      "Bash(curl -s https://geoconfirmed.org/api/Placemark/Ukraine/1/2?search=missile)",
-      "Bash(curl -s -v \"https://geoconfirmed.org/api/Placemark/Ukraine/1/2?search=missile\")",
-      "Bash(curl -s \"https://geoconfirmed.org/api/Placemark/Ukraine/1/5\")",
-      "Bash(python3 -c \":*)",
-      "WebFetch(domain:aisstream.io)",
-      "Bash(gh api:*)",
-      "Bash(npx kill-port:*)",
-      "Bash(taskkill //f //im node.exe)",
-      "Bash(rm -rf .next)",
-      "Bash(npx next:*)",
-      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3117)"
+      "WebFetch",
+      "Skill(update-config:*)",
+      "Skill(update-config)"
     ]
   }
 }
