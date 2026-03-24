@@ -27,3 +27,10 @@ export const severityLabels: Record<Severity, string> = {
 export function compareSeverity(a: Severity, b: Severity): number {
   return severityOrder[a] - severityOrder[b];
 }
+
+// CBRN keyword detection — matches against event text for nuclear/chemical/biological/radiological content
+const CBRN_PATTERN = /\b(nuclear|radiological|chemical\s*(?:weapon|attack|agent)|biological\s*(?:weapon|attack|agent)|cbrn|nbc|dirty\s*bomb|contamination|fallout|radiation\s*(?:leak|release|spike)|enrichment|fissile|warhead|mushroom\s*cloud|yellowcake|centrifuge|sarin|nerve\s*agent|mustard\s*gas|anthrax|plutonium|uranium)\b/i;
+
+export function isCBRNEvent(text: string): boolean {
+  return CBRN_PATTERN.test(text);
+}
