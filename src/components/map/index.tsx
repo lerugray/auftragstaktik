@@ -13,7 +13,7 @@ const TacticalMapInner = dynamic(
     loading: () => (
       <div className="flex items-center justify-center h-full text-tactical-text-dim">
         <div className="text-center">
-          <div className="text-terminal-green/40 text-2xl mb-2">&#x25A0; &#x25A0; &#x25A0;</div>
+          <div className="text-terminal-green/30 text-2xl mb-2">&#x25A0; &#x25A0; &#x25A0;</div>
           <div className="tracking-wider font-mono text-base">INITIALIZING MAP ENGINE...</div>
         </div>
       </div>

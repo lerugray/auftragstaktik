@@ -30,7 +30,7 @@ const CLASSIFICATION_LABELS: Record<string, { label: string; color: string }> = 
   'coast-guard': { label: 'COAST GRD', color: 'bg-severity-high/20 text-severity-high' },
   auxiliary: { label: 'AUXILIARY', color: 'bg-terminal-amber/20 text-terminal-amber' },
   merchant: { label: 'MERCHANT', color: 'bg-terminal-blue/20 text-terminal-blue' },
-  fishing: { label: 'FISHING', color: 'bg-terminal-green/20 text-terminal-green' },
+  fishing: { label: 'FISHING', color: 'bg-status-green/20 text-status-green' },
   unknown: { label: 'UNKNOWN', color: 'bg-tactical-text-dim/20 text-tactical-text-dim' },
 };
 
@@ -232,7 +232,7 @@ function ConflictEventDetail({ event, onClose }: { event: EventRecord; onClose: 
 }
 
 const STATUS_BADGE: Record<string, string> = {
-  confirmed: 'bg-terminal-green/20 text-terminal-green',
+  confirmed: 'bg-status-green/20 text-status-green',
   suspected: 'bg-terminal-amber/20 text-terminal-amber',
   relocated: 'bg-tactical-text-dim/20 text-tactical-text-dim',
 };
@@ -282,7 +282,7 @@ const INSTALLATION_TYPE_LABELS: Record<string, string> = {
 };
 
 const INSTALLATION_STATUS_BADGE: Record<string, string> = {
-  active: 'bg-terminal-green/20 text-terminal-green',
+  active: 'bg-status-green/20 text-status-green',
   damaged: 'bg-terminal-amber/20 text-terminal-amber',
   destroyed: 'bg-terminal-red/20 text-terminal-red',
   contested: 'bg-severity-high/20 text-severity-high',
@@ -381,7 +381,7 @@ const FACILITY_TYPE_LABELS: Record<string, string> = {
 };
 
 const NUCLEAR_STATUS_BADGE: Record<string, string> = {
-  active: 'bg-terminal-green/20 text-terminal-green',
+  active: 'bg-status-green/20 text-status-green',
   suspended: 'bg-terminal-amber/20 text-terminal-amber',
   decommissioned: 'bg-tactical-text-dim/20 text-tactical-text-dim',
   'under-construction': 'bg-terminal-blue/20 text-terminal-blue',

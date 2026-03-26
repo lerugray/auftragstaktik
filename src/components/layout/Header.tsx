@@ -39,7 +39,7 @@ export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme 
       <header className="flex items-center justify-between px-4 py-2 bg-tactical-surface border-b border-tactical-border">
         {/* Left: Title + Theater + Help */}
         <div className="flex items-center gap-4">
-          <h1 className="text-lg font-mono font-bold text-terminal-green tracking-[0.3em] uppercase">
+          <h1 className="text-lg font-mono font-bold text-terminal-green tracking-wider uppercase">
             Auftragstaktik
           </h1>
           <select

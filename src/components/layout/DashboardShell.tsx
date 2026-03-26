@@ -2,7 +2,6 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { ClassificationBanner } from '@/components/ui/ClassificationBanner';
-import { ScanlineOverlay } from '@/components/ui/ScanlineOverlay';
 import { Header } from './Header';
 import { PanelFrame } from './PanelFrame';
 import { MapWrapper } from '@/components/map';
@@ -117,7 +116,6 @@ export function DashboardShell() {
       </div>
 
       <ClassificationBanner />
-      <ScanlineOverlay />
     </div>
   );
 }

@@ -193,7 +193,7 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
     return (
       <div className="flex flex-col h-full p-3 gap-3">
         <div className="flex items-center gap-2 text-xs font-mono text-tactical-text-dim">
-          <span className="w-3 h-3 bg-terminal-green/80 rounded-full" />
+          <span className="w-3 h-3 bg-status-green/80 rounded-full" />
           <span className="tracking-wider">
             {providerInfo?.provider?.toUpperCase()} — {providerInfo?.model}
           </span>

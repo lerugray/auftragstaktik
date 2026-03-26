@@ -11,11 +11,11 @@ interface FeedFiltersProps {
 }
 
 const liveSources: { key: EventSource; label: string; color: string }[] = [
-  { key: 'geoconfirmed', label: 'GEOCON', color: 'text-terminal-green' },
+  { key: 'geoconfirmed', label: 'GEOCON', color: 'text-status-green' },
   { key: 'adsb', label: 'ADS-B', color: 'text-terminal-blue' },
   { key: 'aisstream', label: 'AIS', color: 'text-terminal-amber' },
   { key: 'deepstate', label: 'DSTATE', color: 'text-terminal-red' },
-  { key: 'telegram', label: 'TGRAM', color: 'text-terminal-green-dim' },
+  { key: 'telegram', label: 'TGRAM', color: 'text-terminal-blue' },
 ];
 
 const historicalSources: { key: EventSource; label: string; color: string }[] = [

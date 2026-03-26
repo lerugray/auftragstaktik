@@ -35,7 +35,7 @@ const layerConfig: { key: keyof LayerState; label: string; color: string }[] = [
   { key: 'nuclear', label: 'NUCLEAR / CBRN', color: 'text-yellow-400' },
   { key: 'heatmap', label: 'HEATMAP', color: 'text-severity-medium' },
   { key: 'maritime', label: 'MARITIME', color: 'text-terminal-amber' },
-  { key: 'events', label: 'EVENTS', color: 'text-terminal-green' },
+  { key: 'events', label: 'EVENTS', color: 'text-severity-low' },
 ];
 
 const eventTypeFilters: { type: string; label: string }[] = [

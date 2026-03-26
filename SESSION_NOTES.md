@@ -553,3 +553,55 @@
 - GeoConfirmed live feed confirmed working — returning fresh March 2026 events
 - Help modal HISTORICAL MODE section rewritten with cumulative playback, color gradient, fatality sizing, source links
 - README Historical Mode capability row updated with 140K events and feature list
+
+## Session 6 — 2026-03-25
+
+### "Slate Command" Design System Overhaul
+- Used `ui-ux-pro-max` skill to research typography, color palettes, and style recommendations
+- Direction: professional intelligence dashboard (Bloomberg/Palantir), not Hollywood hacker terminal
+
+#### Fonts
+- **Old:** Share Tech Mono + Rajdhani (generic Claude app fonts)
+- **New:** IBM Plex Mono + IBM Plex Sans (designed for data-dense enterprise UIs)
+
+#### Colors
+- Primary accent: neon green (#00ff41) → blue-500 (#3B82F6) — professional, data-oriented
+- Backgrounds: purple-black (#0a0a0f) → deep navy (#0B1120) — more depth
+- Panels: #12121a → gray-900 (#111827) — warmer
+- Borders: #1e1e2e → slate-700 (#334155) — actually visible
+- Text: improved contrast with slate-200/slate-400
+- Severity colors standardized to Tailwind palette
+- New `--color-status-green` (#22C55E) for connected/active status indicators
+
+#### Removed
+- CRT scanline overlay (biggest "vibe-coded" tell)
+- Green glow borders
+- Green rotated diamond in panel headers → subtle vertical accent bar
+- Wide letter-spacing on title (tracking-[0.3em] → tracking-wider)
+
+#### Light Theme
+- Updated to complement new dark palette (navy-on-white variants)
+
+#### Files Modified (12 files)
+- `src/app/globals.css` — All color values, fonts, removed scanline/glow CSS, updated effects
+- `src/app/layout.tsx` — Font import URL
+- `src/components/layout/DashboardShell.tsx` — Removed ScanlineOverlay
+- `src/components/layout/PanelFrame.tsx` — Removed glow-border, replaced diamond with bar
+- `src/components/layout/Header.tsx` — Reduced title tracking
+- `src/components/ui/StatusIndicator.tsx` — Uses status-green for connected
+- `src/components/ui/ClassificationBanner.tsx` — Reduced tracking
+- `src/components/map/DetailPanel.tsx` — Status badges use status-green
+- `src/components/map/MapControls.tsx` — Events layer uses severity-low green
+- `src/components/feed/EventCard.tsx` — Source colors updated
+- `src/components/feed/FeedFilters.tsx` — Source colors updated
+- `src/components/briefing/BriefingPanel.tsx` — Connected indicator uses status-green
+- `src/components/map/index.tsx` — Loading indicator opacity adjusted
+
+#### MapLibre Zoom Controls Fix
+- Moved +/- zoom buttons from top-right (overlapping LAYERS panel) to bottom-right
+- `.maplibregl-ctrl-top-right` repositioned: `top: auto; bottom: 80px; right: 10px`
+
+#### Sandkasten Handoff
+- Created `DESIGN_SYSTEM_HANDOFF.md` with complete color tables, font imports, and change list
+- Includes MapLibre zoom control repositioning note
+- Another Claude instance working in the Sandkasten folder can apply the same system

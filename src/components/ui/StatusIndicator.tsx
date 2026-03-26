@@ -3,7 +3,7 @@
 type Status = 'connected' | 'stale' | 'error';
 
 const statusColors: Record<Status, string> = {
-  connected: 'bg-terminal-green',
+  connected: 'bg-status-green',
   stale: 'bg-terminal-amber',
   error: 'bg-terminal-red',
 };

@@ -1,51 +1,50 @@
 @import "tailwindcss";
 
 @theme {
-  --color-terminal-green: #00ff41;
-  --color-terminal-green-dim: #00cc33;
-  --color-terminal-amber: #ffbf00;
-  --color-terminal-red: #ff3333;
-  --color-terminal-blue: #00aaff;
-  --color-tactical-dark: #0a0a0f;
-  --color-tactical-panel: #12121a;
-  --color-tactical-border: #1e1e2e;
-  --color-tactical-surface: #181824;
-  --color-tactical-text: #c8c8d4;
-  --color-tactical-text-dim: #8e8ea2;
-  --color-severity-critical: #ff2020;
-  --color-severity-high: #ff6b2b;
-  --color-severity-medium: #ffbf00;
-  --color-severity-low: #00cc33;
-  --color-severity-info: #00aaff;
+  --color-terminal-green: #3B82F6;
+  --color-terminal-green-dim: #2563EB;
+  --color-terminal-amber: #F59E0B;
+  --color-terminal-red: #EF4444;
+  --color-terminal-blue: #06B6D4;
+  --color-status-green: #22C55E;
+  --color-tactical-dark: #0B1120;
+  --color-tactical-panel: #111827;
+  --color-tactical-border: #334155;
+  --color-tactical-surface: #1F2937;
+  --color-tactical-text: #E2E8F0;
+  --color-tactical-text-dim: #94A3B8;
+  --color-severity-critical: #EF4444;
+  --color-severity-high: #F97316;
+  --color-severity-medium: #EAB308;
+  --color-severity-low: #22C55E;
+  --color-severity-info: #3B82F6;
 
-  --font-mono: "Share Tech Mono", "Courier New", monospace;
-  --font-heading: "Rajdhani", "Arial Narrow", sans-serif;
+  --font-mono: "IBM Plex Mono", "Courier New", monospace;
+  --font-heading: "IBM Plex Sans", "Arial", sans-serif;
 }
 
 /* Light / high-contrast theme overrides */
 .theme-light {
-  --color-terminal-green: #006622;
-  --color-terminal-green-dim: #338844;
-  --color-terminal-amber: #996600;
-  --color-terminal-red: #cc0000;
-  --color-terminal-blue: #0055aa;
-  --color-tactical-dark: #f0f0f4;
-  --color-tactical-panel: #ffffff;
-  --color-tactical-border: #c0c0cc;
-  --color-tactical-surface: #e8e8f0;
-  --color-tactical-text: #1a1a2e;
-  --color-tactical-text-dim: #52526a;
-  --color-severity-critical: #cc0000;
-  --color-severity-high: #cc4400;
-  --color-severity-medium: #996600;
-  --color-severity-low: #006622;
-  --color-severity-info: #0055aa;
+  --color-terminal-green: #1D4ED8;
+  --color-terminal-green-dim: #1E40AF;
+  --color-terminal-amber: #B45309;
+  --color-terminal-red: #DC2626;
+  --color-terminal-blue: #0E7490;
+  --color-status-green: #15803D;
+  --color-tactical-dark: #F1F5F9;
+  --color-tactical-panel: #FFFFFF;
+  --color-tactical-border: #CBD5E1;
+  --color-tactical-surface: #E2E8F0;
+  --color-tactical-text: #0F172A;
+  --color-tactical-text-dim: #475569;
+  --color-severity-critical: #DC2626;
+  --color-severity-high: #EA580C;
+  --color-severity-medium: #CA8A04;
+  --color-severity-low: #15803D;
+  --color-severity-info: #1D4ED8;
 }
 
-/* Hide scanline overlay in light mode */
-.theme-light .scanline-overlay {
-  display: none;
-}
+/* Scanline overlay removed — no longer used */
 
 /* Light mode scrollbar */
 .theme-light ::-webkit-scrollbar-track {
@@ -74,20 +73,7 @@
   background-color: rgba(0, 0, 0, 0.05) !important;
 }
 
-/* Scanline CRT effect overlay */
-.scanline-overlay {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0, 0, 0, 0.03) 2px,
-    rgba(0, 0, 0, 0.03) 4px
-  );
-}
+/* (scanline CRT overlay removed) */
 
 /* Pulsing status indicator */
 @keyframes pulse-live {
@@ -101,9 +87,9 @@
 
 /* Pulsing ring for highlighted map markers */
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgba(255, 191, 0, 0.8); }
-  70% { box-shadow: 0 0 0 18px rgba(255, 191, 0, 0); }
-  100% { box-shadow: 0 0 0 18px rgba(255, 191, 0, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.8); }
+  70% { box-shadow: 0 0 0 18px rgba(59, 130, 246, 0); }
+  100% { box-shadow: 0 0 0 18px rgba(59, 130, 246, 0); }
 }
 
 .marker-pulse {
@@ -111,10 +97,7 @@
   border-radius: 50%;
 }
 
-/* Subtle glow for borders */
-.glow-border {
-  box-shadow: inset 0 0 1px rgba(0, 255, 65, 0.15), 0 0 2px rgba(0, 255, 65, 0.05);
-}
+/* (green glow border removed) */
 
 /* Classification banner styling */
 .classification-banner {
@@ -125,11 +108,13 @@
 
 /* MapLibre control overrides */
 .maplibregl-ctrl-top-right {
-  top: 170px !important;
+  top: auto !important;
+  bottom: 80px !important;
+  right: 10px !important;
 }
 
 .maplibregl-ctrl-group {
-  background: rgba(10, 10, 15, 0.85) !important;
+  background: rgba(11, 17, 32, 0.9) !important;
   border: 1px solid var(--color-tactical-border) !important;
 }
 

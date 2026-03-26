@@ -11,11 +11,11 @@ const severityStyles: Record<Severity, { bg: string; text: string; label: string
 };
 
 const sourceStyles: Record<string, { color: string; label: string }> = {
-  acled: { color: 'text-terminal-green', label: 'GEOCON' },
+  acled: { color: 'text-status-green', label: 'GEOCON' },
   adsb: { color: 'text-terminal-blue', label: 'ADS-B' },
   aisstream: { color: 'text-terminal-amber', label: 'AIS' },
   deepstate: { color: 'text-terminal-red', label: 'DSTATE' },
-  telegram: { color: 'text-terminal-green-dim', label: 'TGRAM' },
+  telegram: { color: 'text-terminal-blue', label: 'TGRAM' },
 };
 
 function formatDTG(isoDate: string): string {
