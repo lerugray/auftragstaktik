@@ -41,3 +41,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# GS state junction (gs-232 parallel-picker workaround)
+state/
+
