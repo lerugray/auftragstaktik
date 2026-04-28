@@ -45,3 +45,6 @@ next-env.d.ts
 # GS state junction (gs-232 parallel-picker workaround)
 state/
 
+# Claude Code per-machine permissions allowlist (machine-specific)
+.claude/settings.local.json
+
