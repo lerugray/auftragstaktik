@@ -45,6 +45,9 @@ next-env.d.ts
 # GS state junction (gs-232 parallel-picker workaround)
 state/
 
+# GS dispatcher per-project worktree — bot scratch space, never tracked.
+.bot-worktree/
+
 # Claude Code per-machine permissions allowlist (machine-specific)
 .claude/settings.local.json
 
