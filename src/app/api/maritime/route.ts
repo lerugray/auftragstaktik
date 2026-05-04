@@ -3,7 +3,7 @@ import { fetchMaritimeData, getVesselStoreSize } from '@/lib/data/aisstream';
 import { AisstreamMaritimeSchema } from '@/lib/data/schemas';
 import { isAbortError } from '@/lib/net/isAbortError';
 
-/** Maritime collector uses WebSocket, not `fetch`; same 10s SLA as other upstream routes. */
+/** Maritime collector uses a child WebSocket process with retries; allow time for backoff + runs. */
 function raceUpstreamTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return new Promise((resolve, reject) => {
     const id = setTimeout(() => {
@@ -31,10 +31,10 @@ export async function GET(request: NextRequest) {
 
     let vesselsRaw: Awaited<ReturnType<typeof fetchMaritimeData>>;
     try {
-      vesselsRaw = await raceUpstreamTimeout(fetchMaritimeData(bounds), 10_000);
+      vesselsRaw = await raceUpstreamTimeout(fetchMaritimeData(bounds), 90_000);
     } catch (e) {
       if (isAbortError(e)) {
-        console.error('upstream:aisstream timeout: 10s exceeded');
+        console.error('upstream:aisstream timeout: 90s exceeded');
         vesselsRaw = [];
       } else {
         throw e;

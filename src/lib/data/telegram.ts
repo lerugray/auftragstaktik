@@ -28,7 +28,11 @@ function stripHtml(html: string): string {
     .trim();
 }
 
-async function translateText(text: string): Promise<string> {
+async function translateText(
+  text: string,
+  channel: string,
+  messageId: string
+): Promise<string> {
   const cacheKey = `${TRANSLATION_CACHE_PREFIX}-${hashString(text)}`;
   const cached = cacheGet<string>(cacheKey);
   if (cached) return cached;
@@ -41,7 +45,11 @@ async function translateText(text: string): Promise<string> {
     cacheSet(cacheKey, translated, TRANSLATION_CACHE_TTL);
     return translated;
   } catch (err) {
-    console.error('Translation failed:', err);
+    console.error('telegram: translate failed:', {
+      channel,
+      message_id: messageId,
+      error: err instanceof Error ? err.message : String(err),
+    });
     return text;
   }
 }
@@ -100,9 +108,26 @@ function parsePreviewPage(html: string, channelName: string): TelegramPost[] {
   return posts.slice(0, 20); // Limit to 20 most recent
 }
 
+function bodyLooksLikeChannelNotFound(html: string): boolean {
+  return /channel not found/i.test(html);
+}
+
+function parseRetryAfterSeconds(res: Response): number | undefined {
+  const raw = res.headers.get('Retry-After');
+  if (!raw) return undefined;
+  const asInt = parseInt(raw, 10);
+  if (!Number.isNaN(asInt)) return asInt;
+  const asDate = Date.parse(raw);
+  if (!Number.isNaN(asDate)) {
+    return Math.max(0, Math.ceil((asDate - Date.now()) / 1000));
+  }
+  return undefined;
+}
+
 export async function fetchTelegramChannel(
   channelName: string,
-  translate: boolean = true
+  translate: boolean = true,
+  fetchImpl: typeof fetch = fetch
 ): Promise<TelegramPost[]> {
   const cacheKey = `${CACHE_KEY_PREFIX}-${channelName}`;
   const cached = cacheGet<TelegramPost[]>(cacheKey);
@@ -110,7 +135,7 @@ export async function fetchTelegramChannel(
 
   try {
     // Fetch Telegram's public preview page directly
-    const res = await fetch(`https://t.me/s/${channelName}`, {
+    const res = await fetchImpl(`https://t.me/s/${channelName}`, {
       signal: AbortSignal.timeout(10000),
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
@@ -118,19 +143,36 @@ export async function fetchTelegramChannel(
       },
     });
 
-    if (!res.ok) {
-      console.error(`Telegram preview fetch failed for ${channelName}: ${res.status}`);
+    if (res.status === 429) {
+      const retryAfter = parseRetryAfterSeconds(res);
+      console.error('telegram: rate-limited:', { channel: channelName, retryAfter });
+      return [];
+    }
+
+    if (res.status === 404) {
+      console.error('telegram: channel not found:', channelName);
       return [];
     }
 
     const html = await res.text();
+
+    if (bodyLooksLikeChannelNotFound(html)) {
+      console.error('telegram: channel not found:', channelName);
+      return [];
+    }
+
+    if (!res.ok) {
+      console.error('telegram: preview fetch failed:', { channel: channelName, status: res.status });
+      return [];
+    }
+
     const posts = parsePreviewPage(html, channelName);
 
     // Translate non-Latin posts
     if (translate) {
       for (const post of posts) {
         if (/[\u0400-\u04FF\u0500-\u052F\u0600-\u06FF\u1000-\u109F]/.test(post.text)) {
-          post.translatedText = await translateText(post.text);
+          post.translatedText = await translateText(post.text, channelName, post.id);
         }
       }
     }
@@ -138,17 +180,18 @@ export async function fetchTelegramChannel(
     cacheSet(cacheKey, posts, CACHE_TTL);
     return posts;
   } catch (err) {
-    console.error(`Telegram fetch error for ${channelName}:`, err);
+    console.error('telegram: fetch error:', { channel: channelName, error: err });
     return [];
   }
 }
 
 export async function fetchMultipleChannels(
   channels: string[],
-  translate: boolean = true
+  translate: boolean = true,
+  fetchImpl: typeof fetch = fetch
 ): Promise<TelegramPost[]> {
   const results = await Promise.allSettled(
-    channels.map(ch => fetchTelegramChannel(ch, translate))
+    channels.map(ch => fetchTelegramChannel(ch, translate, fetchImpl))
   );
 
   const allPosts: TelegramPost[] = [];
