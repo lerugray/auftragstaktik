@@ -43,6 +43,7 @@ export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme 
             Auftragstaktik
           </h1>
           <select
+            aria-label="Active theater"
             value={activeTheaterId}
             onChange={(e) => onTheaterChange(e.target.value)}
             className="bg-tactical-dark border border-tactical-border text-tactical-text text-xs font-mono px-2 py-1 focus:outline-none focus:border-terminal-green/50"
@@ -63,12 +64,18 @@ export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme 
             </optgroup>
           </select>
           <button
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded={helpOpen}
+            aria-label="Open help"
             onClick={() => setHelpOpen(true)}
             className="text-xs font-mono text-tactical-text-dim hover:text-terminal-green border border-tactical-border px-2 py-1"
           >
             HELP
           </button>
           <button
+            type="button"
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
             onClick={onToggleTheme}
             className="text-xs font-mono text-tactical-text-dim hover:text-terminal-green border border-tactical-border px-2 py-1"
           >

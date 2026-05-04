@@ -26,16 +26,16 @@ interface MapControlsProps {
 // Layers that require live data feeds
 const LIVE_ONLY_LAYERS: Set<keyof LayerState> = new Set(['frontlines', 'aircraft', 'maritime']);
 
-const layerConfig: { key: keyof LayerState; label: string; color: string }[] = [
-  { key: 'frontlines', label: 'FRONTLINES', color: 'text-terminal-red' },
-  { key: 'aircraft', label: 'AIRCRAFT', color: 'text-terminal-blue' },
-  { key: 'airDefense', label: 'AIR DEFENSE', color: 'text-severity-high' },
-  { key: 'installations', label: 'INSTALLATIONS', color: 'text-terminal-amber' },
-  { key: 'radar', label: 'RADAR / SENSORS', color: 'text-purple-400' },
-  { key: 'nuclear', label: 'NUCLEAR / CBRN', color: 'text-yellow-400' },
-  { key: 'heatmap', label: 'HEATMAP', color: 'text-severity-medium' },
-  { key: 'maritime', label: 'MARITIME', color: 'text-terminal-amber' },
-  { key: 'events', label: 'EVENTS', color: 'text-severity-low' },
+const layerConfig: { key: keyof LayerState; label: string; color: string; ariaLabel: string }[] = [
+  { key: 'frontlines', label: 'FRONTLINES', color: 'text-terminal-red', ariaLabel: 'Frontlines and occupied territory layer' },
+  { key: 'aircraft', label: 'AIRCRAFT', color: 'text-terminal-blue', ariaLabel: 'ADS-B aircraft positions layer' },
+  { key: 'airDefense', label: 'AIR DEFENSE', color: 'text-severity-high', ariaLabel: 'Air defense installations and range rings layer' },
+  { key: 'installations', label: 'INSTALLATIONS', color: 'text-terminal-amber', ariaLabel: 'Military installations and strategic sites layer' },
+  { key: 'radar', label: 'RADAR / SENSORS', color: 'text-purple-400', ariaLabel: 'Radar and sensor coverage layer' },
+  { key: 'nuclear', label: 'NUCLEAR / CBRN', color: 'text-yellow-400', ariaLabel: 'Nuclear and CBRN facilities layer' },
+  { key: 'heatmap', label: 'HEATMAP', color: 'text-severity-medium', ariaLabel: 'Event density heatmap layer' },
+  { key: 'maritime', label: 'MARITIME', color: 'text-terminal-amber', ariaLabel: 'Maritime AIS vessel positions layer' },
+  { key: 'events', label: 'EVENTS', color: 'text-severity-low', ariaLabel: 'Geoconfirmed conflict events layer' },
 ];
 
 const eventTypeFilters: { type: string; label: string }[] = [
@@ -66,17 +66,27 @@ export function MapControls({
   const eventFilters = isHistorical ? historicalEventTypeFilters : eventTypeFilters;
 
   return (
-    <div className="absolute top-2 right-2 bg-tactical-dark/90 border border-tactical-border p-3 flex flex-col gap-1.5">
+    <div
+      role="region"
+      aria-label="Map layers"
+      className="absolute top-2 right-2 bg-tactical-dark/90 border border-tactical-border p-3 flex flex-col gap-1.5"
+    >
       <div className="text-xs font-mono text-tactical-text-dim tracking-widest mb-1">
         LAYERS
       </div>
-      {layerConfig.map(({ key, label, color }) => {
+      {layerConfig.map(({ key, label, color, ariaLabel }, index) => {
         const isLiveOnly = LIVE_ONLY_LAYERS.has(key);
         const disabled = isHistorical && isLiveOnly;
+        const shortcutHint = `Keyboard shortcut: ${index + 1}`;
+        const stateLabel = disabled ? 'unavailable in historical mode' : layers[key] ? 'on' : 'off';
 
         return (
           <button
             key={key}
+            type="button"
+            aria-pressed={disabled ? undefined : layers[key]}
+            aria-disabled={disabled}
+            aria-label={`${ariaLabel}. ${shortcutHint}. Currently ${stateLabel}.`}
             onClick={() => !disabled && onToggle(key)}
             className={`flex items-center gap-2.5 px-1.5 py-1 text-sm font-mono tracking-wider transition-opacity ${
               disabled
@@ -107,6 +117,10 @@ export function MapControls({
       {showEventFilters && activeEventTypes && onToggleEventType && (
         <>
           <button
+            type="button"
+            aria-expanded={filtersExpanded}
+            aria-controls="map-event-type-filters"
+            aria-label={filtersExpanded ? 'Collapse event type filters' : 'Expand event type filters'}
             onClick={() => setFiltersExpanded(!filtersExpanded)}
             className="flex items-center justify-between mt-1 pt-1.5 border-t border-tactical-border text-xs font-mono text-tactical-text-dim tracking-wider hover:text-tactical-text"
           >
@@ -115,12 +129,15 @@ export function MapControls({
           </button>
 
           {filtersExpanded && (
-            <div className="flex flex-col gap-1 pl-1">
+            <div id="map-event-type-filters" className="flex flex-col gap-1 pl-1">
               {eventFilters.map(({ type, label }) => {
                 const active = activeEventTypes.has(type);
                 return (
                   <button
                     key={type}
+                    type="button"
+                    aria-pressed={active}
+                    aria-label={`Toggle ${type} events on the map. Currently ${active ? 'visible' : 'hidden'}.`}
                     onClick={() => onToggleEventType(type)}
                     className={`flex items-center gap-2 px-2 py-1 text-xs font-mono tracking-wider transition-opacity hover:opacity-100 ${
                       active ? 'opacity-100' : 'opacity-30'

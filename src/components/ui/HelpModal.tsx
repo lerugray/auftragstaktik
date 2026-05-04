@@ -22,17 +22,30 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70"
-      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
-    >
-      <div className="bg-tactical-panel border border-tactical-border max-w-[600px] w-full max-h-[80vh] flex flex-col m-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <button
+        type="button"
+        className="absolute inset-0 m-0 h-full w-full cursor-default border-0 bg-black/70 p-0"
+        aria-label="Dismiss help"
+        onClick={onClose}
+      />
+      <div
+        id="help-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="help-modal-title"
+        className="relative z-10 m-4 flex max-h-[80vh] w-full max-w-[600px] flex-col border border-tactical-border bg-tactical-panel"
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-tactical-border bg-tactical-surface/50">
-          <h2 className="text-sm font-mono text-terminal-green tracking-widest">AUFTRAGSTAKTIK — HELP</h2>
+          <h2 id="help-modal-title" className="text-sm font-mono text-terminal-green tracking-widest">
+            AUFTRAGSTAKTIK — HELP
+          </h2>
           <button
+            type="button"
             onClick={onClose}
             className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-2"
+            aria-label="Close help"
           >
             ESC
           </button>

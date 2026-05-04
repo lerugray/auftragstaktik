@@ -201,8 +201,11 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
 
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <label className="text-xs font-mono text-tactical-text-dim tracking-wider w-24">SCOPE:</label>
+            <label htmlFor="briefing-scope" className="text-xs font-mono text-tactical-text-dim tracking-wider w-24">
+              SCOPE:
+            </label>
             <select
+              id="briefing-scope"
               value={selectedRegion}
               onChange={(e) => setSelectedRegion(e.target.value)}
               className="flex-1 bg-tactical-dark border border-tactical-border text-xs font-mono text-tactical-text px-2 py-1"
@@ -215,8 +218,11 @@ export function BriefingPanel({ theaterId, theaterName }: BriefingPanelProps) {
           </div>
 
           <div className="flex items-center gap-2">
-            <label className="text-xs font-mono text-tactical-text-dim tracking-wider w-24">TIMEFRAME:</label>
+            <label htmlFor="briefing-timeframe" className="text-xs font-mono text-tactical-text-dim tracking-wider w-24">
+              TIMEFRAME:
+            </label>
             <select
+              id="briefing-timeframe"
               value={timeframe}
               onChange={(e) => setTimeframe(Number(e.target.value))}
               className="flex-1 bg-tactical-dark border border-tactical-border text-xs font-mono text-tactical-text px-2 py-1"

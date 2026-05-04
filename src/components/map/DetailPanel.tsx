@@ -38,7 +38,11 @@ export function DetailPanel({ aircraft, vessel, event, airDefense, installation,
   if (!aircraft && !vessel && !event && !airDefense && !installation && !radar && !nuclear) return null;
 
   return (
-    <div className="absolute bottom-12 left-2 bg-tactical-dark/95 border border-tactical-border p-3 min-w-[280px] max-w-[350px]">
+    <div
+      role="region"
+      aria-labelledby="detail-panel-heading"
+      className="absolute bottom-12 left-2 bg-tactical-dark/95 border border-tactical-border p-3 min-w-[280px] max-w-[350px]"
+    >
       {aircraft && <AircraftDetail aircraft={aircraft} onClose={onClose} />}
       {vessel && <VesselDetail vessel={vessel} onClose={onClose} />}
       {event && <ConflictEventDetail event={event} onClose={onClose} />}
@@ -73,14 +77,21 @@ function AircraftDetail({ aircraft, onClose }: { aircraft: AircraftRecord; onClo
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className={`w-3 h-3 rounded-full ${aircraft.military ? 'bg-terminal-red' : 'bg-terminal-blue'}`} />
-          <span className="text-sm font-mono font-bold text-tactical-text">
+          <span id="detail-panel-heading" className="text-sm font-mono font-bold text-tactical-text">
             {aircraft.callsign || aircraft.icao}
           </span>
           {aircraft.military && (
             <span className="text-xs font-mono px-1.5 py-0.5 bg-terminal-red/20 text-terminal-red">MIL</span>
           )}
         </div>
-        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1"
+          aria-label="Close detail panel"
+        >
+          X
+        </button>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
         <DetailRow label="ICAO" value={aircraft.icao.toUpperCase()} />
@@ -110,12 +121,19 @@ function VesselDetail({ vessel, onClose }: { vessel: MaritimeRecord; onClose: ()
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-terminal-amber" />
-          <span className="text-sm font-mono font-bold text-tactical-text">
+          <span id="detail-panel-heading" className="text-sm font-mono font-bold text-tactical-text">
             {vessel.name || vessel.mmsi}
           </span>
           <span className={`text-xs font-mono px-1.5 py-0.5 ${cls.color}`}>{cls.label}</span>
         </div>
-        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1"
+          aria-label="Close detail panel"
+        >
+          X
+        </button>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
         <DetailRow label="MMSI" value={vessel.mmsi} />
@@ -169,11 +187,18 @@ function ConflictEventDetail({ event, onClose }: { event: EventRecord; onClose: 
           <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${badgeClass}`}>
             {event.severity.toUpperCase()}
           </span>
-          <span className="text-sm font-mono font-bold text-tactical-text">
+          <span id="detail-panel-heading" className="text-sm font-mono font-bold text-tactical-text">
             {event.eventType}
           </span>
         </div>
-        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1"
+          aria-label="Close detail panel"
+        >
+          X
+        </button>
       </div>
       <div className="text-sm font-mono text-tactical-text mb-2">{event.title}</div>
       {event.description && (
@@ -248,11 +273,18 @@ function AirDefenseDetail({ installation, onClose }: { installation: AirDefenseI
           <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${statusClass}`}>
             {installation.status.toUpperCase()}
           </span>
-          <span className="text-sm font-mono font-bold text-tactical-text">
+          <span id="detail-panel-heading" className="text-sm font-mono font-bold text-tactical-text">
             AIR DEFENSE
           </span>
         </div>
-        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1"
+          aria-label="Close detail panel"
+        >
+          X
+        </button>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
         <DetailRow label="SYSTEM" value={
@@ -300,11 +332,18 @@ function InstallationDetail({ installation, onClose }: { installation: MilitaryI
           <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${statusClass}`}>
             {installation.status.toUpperCase()}
           </span>
-          <span className="text-sm font-mono font-bold text-tactical-text">
+          <span id="detail-panel-heading" className="text-sm font-mono font-bold text-tactical-text">
             {typeLabel}
           </span>
         </div>
-        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1"
+          aria-label="Close detail panel"
+        >
+          X
+        </button>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
         <DetailRow label="NAME" value={
@@ -345,11 +384,18 @@ function RadarDetail({ radar, onClose }: { radar: RadarInstallation; onClose: ()
           <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${statusClass}`}>
             {radar.status.toUpperCase()}
           </span>
-          <span className="text-sm font-mono font-bold text-tactical-text">
+          <span id="detail-panel-heading" className="text-sm font-mono font-bold text-tactical-text">
             RADAR / SENSOR
           </span>
         </div>
-        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1"
+          aria-label="Close detail panel"
+        >
+          X
+        </button>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
         <DetailRow label="SYSTEM" value={
@@ -400,11 +446,18 @@ function NuclearDetail({ facility, onClose }: { facility: NuclearFacility; onClo
           <span className={`text-xs font-mono px-1.5 py-0.5 font-bold ${statusClass}`}>
             {facility.status.toUpperCase()}
           </span>
-          <span className="text-sm font-mono font-bold text-terminal-amber">
+          <span id="detail-panel-heading" className="text-sm font-mono font-bold text-terminal-amber">
             NUCLEAR / CBRN
           </span>
         </div>
-        <button onClick={onClose} className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1">X</button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-tactical-text-dim hover:text-tactical-text text-sm font-mono px-1"
+          aria-label="Close detail panel"
+        >
+          X
+        </button>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-mono">
         <DetailRow label="NAME" value={

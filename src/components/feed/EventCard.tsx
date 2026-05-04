@@ -48,11 +48,18 @@ export function EventCard({ event, onClick }: EventCardProps) {
     onClick?.(event);
   };
 
+  const titleId = `event-card-title-${event.id}`;
+
   return (
-    <button
-      onClick={handleClick}
-      className="w-full text-left px-3 py-2.5 border-b border-tactical-border hover:bg-tactical-surface/50 transition-colors"
+    <article
+      aria-labelledby={titleId}
+      className="border-b border-tactical-border hover:bg-tactical-surface/50 transition-colors"
     >
+      <button
+        type="button"
+        onClick={handleClick}
+        className="w-full text-left px-3 py-2.5"
+      >
       {/* Top row: severity badge + DTG + source */}
       <div className="flex items-center gap-2 mb-1">
         <span className={`px-1.5 py-0.5 text-xs font-mono font-bold ${severity.bg} ${severity.text}`}>
@@ -67,7 +74,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
       </div>
 
       {/* Title */}
-      <div className="text-sm font-mono text-tactical-text leading-tight mb-1">
+      <div id={titleId} className="text-sm font-mono text-tactical-text leading-tight mb-1">
         {event.title}
       </div>
 
@@ -77,6 +84,7 @@ export function EventCard({ event, onClick }: EventCardProps) {
           {event.description}
         </div>
       )}
-    </button>
+      </button>
+    </article>
   );
 }

@@ -160,12 +160,16 @@ export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEve
         <span>{filteredEvents.length} EVENTS / {events.length} TOTAL</span>
         <div className="flex gap-2">
           <button
+            type="button"
+            aria-label="Download filtered events as JSON"
             onClick={() => exportData('json')}
             className="text-terminal-blue hover:text-terminal-blue/80"
           >
             JSON
           </button>
           <button
+            type="button"
+            aria-label="Download filtered events as CSV"
             onClick={() => exportData('csv')}
             className="text-terminal-blue hover:text-terminal-blue/80"
           >
@@ -174,7 +178,8 @@ export function IntelFeed({ theaterId, theaterConflicts, telegramChannels, onEve
         </div>
       </div>
 
-      {/* Scrolling event list */}
+      {/* Scrolling event list — hover pauses auto-refresh polling; not a keyboard interaction */}
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions -- mouse-only pause for scroll area */}
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto"

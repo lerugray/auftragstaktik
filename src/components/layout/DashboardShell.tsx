@@ -86,33 +86,33 @@ export function DashboardShell() {
         </div>
       )}
 
-      {/* Main content: 3-panel layout */}
+      {/* Main workspace: map + sidebar panels */}
       <div className="flex-1 flex overflow-hidden p-2 gap-2">
-        {/* Left: Map (65%) */}
-        <div className="flex-[65] min-w-0">
-          <PanelFrame title="Tactical Map" className="h-full">
+        <main className="flex-[65] min-w-0" aria-labelledby="panel-tactical-map-title">
+          <PanelFrame title="Tactical Map" titleId="panel-tactical-map-title" className="h-full">
             <MapWrapper theater={theater} mapHandleRef={mapHandleRef} theme={theme} />
           </PanelFrame>
-        </div>
+        </main>
 
-        {/* Right: Feed + Briefing (35%) */}
-        <div className="flex-[35] flex flex-col gap-2 min-w-0">
-          {/* Top: Intel Feed (60%) */}
-          <PanelFrame title={feedTitle} className="flex-[60]">
-            <IntelFeed
-              theaterId={theaterId}
-              theaterConflicts={theaterConflicts}
-              telegramChannels={telegramChannels}
-              onEventClick={handleEventClick}
-              historical={theater.historical}
-            />
-          </PanelFrame>
+        <aside className="flex-[35] flex flex-col gap-2 min-w-0" aria-label="Intelligence and briefing column">
+          <section className="flex-[60] min-h-0 flex flex-col" aria-labelledby="panel-feed-title">
+            <PanelFrame title={feedTitle} titleId="panel-feed-title" className="flex-[60]">
+              <IntelFeed
+                theaterId={theaterId}
+                theaterConflicts={theaterConflicts}
+                telegramChannels={telegramChannels}
+                onEventClick={handleEventClick}
+                historical={theater.historical}
+              />
+            </PanelFrame>
+          </section>
 
-          {/* Bottom: Briefing (40%) */}
-          <PanelFrame title="Briefing Generator" className="flex-[40]">
-            <BriefingPanel theaterId={theaterId} theaterName={theater.name} />
-          </PanelFrame>
-        </div>
+          <section className="flex-[40] min-h-0 flex flex-col" aria-labelledby="panel-briefing-title">
+            <PanelFrame title="Briefing Generator" titleId="panel-briefing-title" className="flex-[40]">
+              <BriefingPanel theaterId={theaterId} theaterName={theater.name} />
+            </PanelFrame>
+          </section>
+        </aside>
       </div>
 
       <ClassificationBanner />
