@@ -31,6 +31,8 @@
 | **Nuclear / CBRN** | Known nuclear facilities — reactors, enrichment plants, weapons storage, test sites. Yellow exclusion zones. CBRN keywords in events auto-escalate to critical severity. |
 | **Historical Mode** | 140,000+ archived events from UCDP GED (1989-2023). Five theaters: Yugoslav Wars, Gulf War, Iraq War, Afghanistan, Syrian Civil War. Cumulative playback with year-based color gradient, fatality-scaled markers, running KIA counter, and Wikipedia/news archive links. |
 
+HTTP route contracts (query params, caches, failure modes): [docs/API.md](docs/API.md).
+
 ---
 
 ## Screenshots
