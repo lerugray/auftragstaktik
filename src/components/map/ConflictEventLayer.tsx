@@ -5,6 +5,7 @@ import maplibregl from 'maplibre-gl';
 import type { Map as MaplibreMap } from 'maplibre-gl';
 import type { Theater } from '@/lib/theaters';
 import type { EventRecord } from '@/lib/types/events';
+import { safeLatLng } from '@/lib/processing/coords';
 import { getEventSIDC } from '@/lib/symbols/sidcMapper';
 import { createEventSymbolSvg } from '@/lib/symbols/milsymbolFactory';
 
@@ -123,7 +124,8 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
       for (const event of events) {
         currentIds.add(event.id);
         if (liveMarkersRef.current.has(event.id)) continue;
-        if (!event.coordinates[0] || !event.coordinates[1]) continue;
+        const ll = safeLatLng(event.coordinates[1], event.coordinates[0]);
+        if (!ll) continue;
 
         const rawData = event.rawData as Record<string, unknown>;
         const side = (rawData?.side as string) || undefined;
@@ -152,7 +154,7 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
         });
 
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
-          .setLngLat([event.coordinates[0], event.coordinates[1]])
+          .setLngLat([ll[1], ll[0]])
           .addTo(map);
 
         liveMarkersRef.current.set(event.id, { marker, eventType: event.eventType, timestamp: event.timestamp });
@@ -198,7 +200,8 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
       const maxYear = theater.historical!.endYear;
 
       for (const event of events) {
-        if (!event.coordinates[0] || !event.coordinates[1]) continue;
+        const ll = safeLatLng(event.coordinates[1], event.coordinates[0]);
+        if (!ll) continue;
 
         const rawData = event.rawData as Record<string, unknown>;
         const year = (rawData?.year as number) || new Date(event.timestamp).getFullYear();
@@ -221,7 +224,7 @@ export function ConflictEventLayer({ map, theater, onEventClick, activeEventType
         });
 
         const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
-          .setLngLat([event.coordinates[0], event.coordinates[1]])
+          .setLngLat([ll[1], ll[0]])
           .addTo(map);
 
         historicalMarkersRef.current.set(event.id, {

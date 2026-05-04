@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import type { Map as MaplibreMap } from 'maplibre-gl';
 import type { Theater } from '@/lib/theaters';
+import { safeLatLng } from '@/lib/processing/coords';
 
 interface HeatmapLayerProps {
   map: MaplibreMap;
@@ -38,18 +39,22 @@ export function HeatmapLayer({ map, theater }: HeatmapLayerProps) {
       const events = data.events || [];
 
       // Build GeoJSON from events with valid coordinates
-      const features = events
-        .filter((e: { coordinates: number[] }) => e.coordinates[0] !== 0 && e.coordinates[1] !== 0)
-        .map((e: { coordinates: number[]; severity: string }) => ({
-          type: 'Feature' as const,
-          properties: {
-            weight: e.severity === 'critical' ? 1.0 : e.severity === 'high' ? 0.7 : e.severity === 'medium' ? 0.4 : 0.2,
+      const features = events.flatMap((e: { coordinates: number[]; severity: string }) => {
+        const ll = safeLatLng(e.coordinates[1], e.coordinates[0]);
+        if (!ll) return [];
+        return [
+          {
+            type: 'Feature' as const,
+            properties: {
+              weight: e.severity === 'critical' ? 1.0 : e.severity === 'high' ? 0.7 : e.severity === 'medium' ? 0.4 : 0.2,
+            },
+            geometry: {
+              type: 'Point' as const,
+              coordinates: [ll[1], ll[0]] as [number, number],
+            },
           },
-          geometry: {
-            type: 'Point' as const,
-            coordinates: [e.coordinates[0], e.coordinates[1]],
-          },
-        }));
+        ];
+      });
 
       const geojson = { type: 'FeatureCollection' as const, features };
 

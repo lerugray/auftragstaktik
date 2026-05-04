@@ -5,6 +5,7 @@ import maplibregl from 'maplibre-gl';
 import type { Map as MaplibreMap } from 'maplibre-gl';
 import type { Theater } from '@/lib/theaters';
 import type { AircraftRecord } from '@/lib/types/events';
+import { safeLatLng } from '@/lib/processing/coords';
 import { createAircraftSymbolSvg } from '@/lib/symbols/milsymbolFactory';
 
 interface AircraftLayerProps {
@@ -39,12 +40,15 @@ export function AircraftLayer({ map, theater, onAircraftClick }: AircraftLayerPr
         // Skip stationary ground transponders (towers, ground stations)
         if (ac.onGround && ac.speed === 0 && ac.altitude <= 0) continue;
 
+        const ll = safeLatLng(ac.latitude, ac.longitude);
+        if (!ll) continue;
+
         currentHexes.add(ac.icao);
 
         const existing = markersRef.current.get(ac.icao);
         if (existing) {
           // Update position of existing marker
-          existing.setLngLat([ac.longitude, ac.latitude]);
+          existing.setLngLat([ll[1], ll[0]]);
           // Update rotation
           const el = existing.getElement();
           if (el) {
@@ -75,7 +79,7 @@ export function AircraftLayer({ map, theater, onAircraftClick }: AircraftLayerPr
           });
 
           const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
-            .setLngLat([ac.longitude, ac.latitude])
+            .setLngLat([ll[1], ll[0]])
             .addTo(map);
 
           markersRef.current.set(ac.icao, marker);

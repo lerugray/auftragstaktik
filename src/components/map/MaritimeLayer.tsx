@@ -5,6 +5,7 @@ import maplibregl from 'maplibre-gl';
 import type { Map as MaplibreMap } from 'maplibre-gl';
 import type { Theater } from '@/lib/theaters';
 import type { MaritimeRecord } from '@/lib/types/events';
+import { safeLatLng } from '@/lib/processing/coords';
 
 interface MaritimeLayerProps {
   map: MaplibreMap;
@@ -61,11 +62,14 @@ export function MaritimeLayer({ map, theater, onVesselClick }: MaritimeLayerProp
       const currentMMSIs = new Set<string>();
 
       for (const vessel of vessels) {
+        const ll = safeLatLng(vessel.latitude, vessel.longitude);
+        if (!ll) continue;
+
         currentMMSIs.add(vessel.mmsi);
 
         const existing = markersRef.current.get(vessel.mmsi);
         if (existing) {
-          existing.setLngLat([vessel.longitude, vessel.latitude]);
+          existing.setLngLat([ll[1], ll[0]]);
         } else {
           const el = document.createElement('div');
           el.className = 'vessel-marker';
@@ -85,7 +89,7 @@ export function MaritimeLayer({ map, theater, onVesselClick }: MaritimeLayerProp
           });
 
           const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
-            .setLngLat([vessel.longitude, vessel.latitude])
+            .setLngLat([ll[1], ll[0]])
             .addTo(map);
 
           markersRef.current.set(vessel.mmsi, marker);
