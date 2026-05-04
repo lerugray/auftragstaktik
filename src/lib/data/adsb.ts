@@ -47,7 +47,8 @@ function inferMilitary(raw: ADSBRawAircraft): boolean {
 }
 
 export async function fetchAircraftData(
-  bounds: [number, number, number, number] // [west, south, east, north]
+  bounds: [number, number, number, number], // [west, south, east, north]
+  signal?: AbortSignal
 ): Promise<AircraftRecord[]> {
   const cached = cacheGet<AircraftRecord[]>(CACHE_KEY);
   if (cached) return cached;
@@ -61,9 +62,13 @@ export async function fetchAircraftData(
   const distNm = Math.max(latSpan, lonSpan) * 60 / 2;
 
   // Fetch all aircraft in area + military aircraft globally
+  const fetchOpts = signal ? { signal } : {};
   const [areaRes, milRes] = await Promise.allSettled([
-    fetch(`${ADSB_API_BASE}/lat/${centerLat.toFixed(2)}/lon/${centerLon.toFixed(2)}/dist/${Math.round(distNm)}`),
-    fetch(`${ADSB_API_BASE}/mil`),
+    fetch(
+      `${ADSB_API_BASE}/lat/${centerLat.toFixed(2)}/lon/${centerLon.toFixed(2)}/dist/${Math.round(distNm)}`,
+      fetchOpts
+    ),
+    fetch(`${ADSB_API_BASE}/mil`, fetchOpts),
   ]);
 
   const allRaw: ADSBRawAircraft[] = [];

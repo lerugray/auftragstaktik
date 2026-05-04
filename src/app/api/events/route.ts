@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchGeoConfirmedEvents } from '@/lib/data/geoconfirmed';
+import { isAbortError } from '@/lib/net/isAbortError';
 import { GeoConfirmedEventSchema } from '@/lib/data/schemas';
 import { normalizeGeoConfirmedEvents } from '@/lib/processing/eventNormalizer';
 import { deduplicateEvents } from '@/lib/processing/deduplicator';
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
     // Fetch GeoConfirmed events for each conflict slug
     for (const conflict of conflicts) {
       try {
-        const geoData = await fetchGeoConfirmedEvents(conflict, 5, 50);
+        const geoData = await fetchGeoConfirmedEvents(conflict, 5, 50, AbortSignal.timeout(10_000));
         const geoParsed = GeoConfirmedEventSchema.array().safeParse(geoData);
         if (!geoParsed.success) {
           console.error('upstream:geoconfirmed validation failed:', geoParsed.error.issues.slice(0, 5));
@@ -40,6 +41,10 @@ export async function GET(request: NextRequest) {
         const normalized = normalizeGeoConfirmedEvents(geoParsed.data);
         allEvents.push(...normalized);
       } catch (err) {
+        if (isAbortError(err)) {
+          console.error('upstream:geoconfirmed timeout: 10s exceeded');
+          continue;
+        }
         console.error(`Failed to fetch GeoConfirmed events for ${conflict}:`, err);
       }
     }

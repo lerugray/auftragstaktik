@@ -54,7 +54,7 @@ function classifyFeature(properties: Record<string, unknown>): {
   return { status: 'other', fillColor: '#ff6d00', strokeColor: '#ff9100' };
 }
 
-export async function fetchDeepStateData(): Promise<DeepStateGeoJSON> {
+export async function fetchDeepStateData(signal?: AbortSignal): Promise<DeepStateGeoJSON> {
   const cached = cacheGet<DeepStateGeoJSON>(CACHE_KEY);
   if (cached) return cached;
 
@@ -63,6 +63,7 @@ export async function fetchDeepStateData(): Promise<DeepStateGeoJSON> {
   try {
     // Try the live API first (richer data with status categories)
     const res = await fetch(LIVE_API_URL, {
+      ...(signal ? { signal } : {}),
       headers: { 'User-Agent': 'Auftragstaktik-OSINT/0.1' },
     });
     if (!res.ok) throw new Error(`Live API returned ${res.status}`);
@@ -72,7 +73,7 @@ export async function fetchDeepStateData(): Promise<DeepStateGeoJSON> {
   } catch {
     // Fallback to GitHub daily file
     const fallbackUrl = getGitHubFallbackUrl();
-    const res = await fetch(fallbackUrl);
+    const res = await fetch(fallbackUrl, signal ? { signal } : {});
     if (!res.ok) throw new Error(`GitHub fallback returned ${res.status}`);
     data = await res.json();
   }

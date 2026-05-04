@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import { ClassificationBanner } from '@/components/ui/ClassificationBanner';
+import { ErrorBoundary, SignalLost } from './ErrorBoundary';
 import { Header } from './Header';
 import { PanelFrame } from './PanelFrame';
 import { MapWrapper } from '@/components/map';
@@ -90,26 +91,41 @@ export function DashboardShell() {
       <div className="flex-1 flex overflow-hidden p-2 gap-2">
         <main className="flex-[65] min-w-0" aria-labelledby="panel-tactical-map-title">
           <PanelFrame title="Tactical Map" titleId="panel-tactical-map-title" className="h-full">
-            <MapWrapper theater={theater} mapHandleRef={mapHandleRef} theme={theme} />
+            <ErrorBoundary
+              fallback={<SignalLost label="MAP" />}
+              onError={(error) => console.error('errorboundary:map', error)}
+            >
+              <MapWrapper theater={theater} mapHandleRef={mapHandleRef} theme={theme} />
+            </ErrorBoundary>
           </PanelFrame>
         </main>
 
         <aside className="flex-[35] flex flex-col gap-2 min-w-0" aria-label="Intelligence and briefing column">
           <section className="flex-[60] min-h-0 flex flex-col" aria-labelledby="panel-feed-title">
             <PanelFrame title={feedTitle} titleId="panel-feed-title" className="flex-[60]">
-              <IntelFeed
-                theaterId={theaterId}
-                theaterConflicts={theaterConflicts}
-                telegramChannels={telegramChannels}
-                onEventClick={handleEventClick}
-                historical={theater.historical}
-              />
+              <ErrorBoundary
+                fallback={<SignalLost label="INTEL FEED" />}
+                onError={(error) => console.error('errorboundary:intel-feed', error)}
+              >
+                <IntelFeed
+                  theaterId={theaterId}
+                  theaterConflicts={theaterConflicts}
+                  telegramChannels={telegramChannels}
+                  onEventClick={handleEventClick}
+                  historical={theater.historical}
+                />
+              </ErrorBoundary>
             </PanelFrame>
           </section>
 
           <section className="flex-[40] min-h-0 flex flex-col" aria-labelledby="panel-briefing-title">
             <PanelFrame title="Briefing Generator" titleId="panel-briefing-title" className="flex-[40]">
-              <BriefingPanel theaterId={theaterId} theaterName={theater.name} />
+              <ErrorBoundary
+                fallback={<SignalLost label="BRIEFING" />}
+                onError={(error) => console.error('errorboundary:briefing', error)}
+              >
+                <BriefingPanel theaterId={theaterId} theaterName={theater.name} />
+              </ErrorBoundary>
             </PanelFrame>
           </section>
         </aside>

@@ -1,4 +1,5 @@
 import { cacheGet, cacheSet } from './cache';
+import { isAbortError } from '@/lib/net/isAbortError';
 
 const CACHE_KEY_PREFIX = 'geoconfirmed';
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
@@ -66,7 +67,8 @@ function parseIcon(iconPath: string): { faction: string; side: string; eventType
 export async function fetchGeoConfirmedEvents(
   conflict: string = 'Ukraine',
   pages: number = 5,
-  perPage: number = 50
+  perPage: number = 50,
+  signal?: AbortSignal
 ): Promise<GeoConfirmedEvent[]> {
   const cacheKey = `${CACHE_KEY_PREFIX}-${conflict}-${pages}`;
   const cached = cacheGet<GeoConfirmedEvent[]>(cacheKey);
@@ -76,7 +78,9 @@ export async function fetchGeoConfirmedEvents(
 
   for (let page = 1; page <= pages; page++) {
     try {
-      const res = await fetch(`${API_BASE}/Placemark/${conflict}/${page}/${perPage}`);
+      const res = await fetch(`${API_BASE}/Placemark/${conflict}/${page}/${perPage}`, {
+        ...(signal ? { signal } : {}),
+      });
       if (!res.ok) break;
       const json = await res.json();
 
@@ -97,6 +101,7 @@ export async function fetchGeoConfirmedEvents(
         });
       }
     } catch (err) {
+      if (isAbortError(err)) throw err;
       console.error(`GeoConfirmed page ${page} fetch error:`, err);
       break;
     }
