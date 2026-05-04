@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchGeoConfirmedEvents } from '@/lib/data/geoconfirmed';
+import { GeoConfirmedEventSchema } from '@/lib/data/schemas';
 import { normalizeGeoConfirmedEvents } from '@/lib/processing/eventNormalizer';
 import { deduplicateEvents } from '@/lib/processing/deduplicator';
 import { severityOrder } from '@/lib/processing/severityTagger';
@@ -31,7 +32,12 @@ export async function GET(request: NextRequest) {
     for (const conflict of conflicts) {
       try {
         const geoData = await fetchGeoConfirmedEvents(conflict, 5, 50);
-        const normalized = normalizeGeoConfirmedEvents(geoData);
+        const geoParsed = GeoConfirmedEventSchema.array().safeParse(geoData);
+        if (!geoParsed.success) {
+          console.error('upstream:geoconfirmed validation failed:', geoParsed.error.issues.slice(0, 5));
+          continue;
+        }
+        const normalized = normalizeGeoConfirmedEvents(geoParsed.data);
         allEvents.push(...normalized);
       } catch (err) {
         console.error(`Failed to fetch GeoConfirmed events for ${conflict}:`, err);

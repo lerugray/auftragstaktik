@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { UcdpEventSchema } from '@/lib/data/schemas';
 import { normalizeUCDPEvents } from '@/lib/processing/eventNormalizer';
 import { severityOrder } from '@/lib/processing/severityTagger';
 import type { UCDPEvent } from '@/lib/data/ucdpGed';
@@ -115,7 +116,13 @@ export async function GET(request: NextRequest) {
 
     const allEvents = loadGedData();
     const ucdpEvents = filterByCountryAndYear(allEvents, countries, queryStart, queryEnd);
-    let events: EventRecord[] = normalizeUCDPEvents(ucdpEvents);
+    const ucdpParsed = UcdpEventSchema.array().safeParse(ucdpEvents);
+    let events: EventRecord[] = [];
+    if (!ucdpParsed.success) {
+      console.error('upstream:ucdp validation failed:', ucdpParsed.error.issues.slice(0, 5));
+    } else {
+      events = normalizeUCDPEvents(ucdpParsed.data);
+    }
 
     if (severityFilter && severityFilter.length > 0) {
       events = events.filter((e) => severityFilter.includes(e.severity));
@@ -131,7 +138,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       events,
       count: events.length,
-      totalUcdpEvents: ucdpEvents.length,
+      totalUcdpEvents: ucdpParsed.success ? ucdpEvents.length : 0,
       sources: {
         ucdp: { status: 'connected', eventCount: events.length },
       },

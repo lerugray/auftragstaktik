@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchMaritimeData, getVesselStoreSize } from '@/lib/data/aisstream';
+import { AisstreamMaritimeSchema } from '@/lib/data/schemas';
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,7 +9,12 @@ export async function GET(request: NextRequest) {
     const bounds = boundsStr.split(',').map(Number) as [number, number, number, number];
     const filter = searchParams.get('filter') || 'all'; // all | naval | flagged
 
-    let vessels = await fetchMaritimeData(bounds);
+    const vesselsRaw = await fetchMaritimeData(bounds);
+    const vesselsParsed = AisstreamMaritimeSchema.array().safeParse(vesselsRaw);
+    let vessels = vesselsParsed.success ? vesselsParsed.data : [];
+    if (!vesselsParsed.success) {
+      console.error('upstream:aisstream validation failed:', vesselsParsed.error.issues.slice(0, 5));
+    }
 
     if (filter === 'naval') {
       vessels = vessels.filter((v) =>
