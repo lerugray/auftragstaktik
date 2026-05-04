@@ -47,7 +47,7 @@ export function SignalLost({
         <button
           type="button"
           onClick={onRetry}
-          className="mt-1 text-[10px] font-mono tracking-wider text-terminal-amber/90 border border-terminal-amber/40 px-3 py-1 hover:bg-terminal-amber/10 focus:outline-none focus:ring-1 focus:ring-terminal-amber/50"
+          className="mt-1 text-[10px] font-mono tracking-wider text-terminal-amber/90 border border-terminal-amber/40 px-3 py-1 hover:bg-terminal-amber/10 focus-visible:ring-1 focus-visible:ring-terminal-amber/50"
         >
           RETRY
         </button>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { isTypingTarget, isInsideAriaModal } from '@/lib/hooks/keyboardNavGuards';
 import { StatusIndicator } from '@/components/ui/StatusIndicator';
 import { HelpModal } from '@/components/ui/HelpModal';
 import { theaters, historicalTheaters, getTheater, getDefaultTheater } from '@/lib/theaters';
@@ -34,6 +35,18 @@ export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme 
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== '?' || e.ctrlKey || e.metaKey || e.altKey) return;
+      if (helpOpen) return;
+      if (isTypingTarget(e.target) || isInsideAriaModal(e.target)) return;
+      e.preventDefault();
+      setHelpOpen(true);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [helpOpen]);
+
   return (
     <>
       <header className="flex items-center justify-between px-4 py-2 bg-tactical-surface border-b border-tactical-border">
@@ -46,7 +59,7 @@ export function Header({ activeTheaterId, onTheaterChange, theme, onToggleTheme 
             aria-label="Active theater"
             value={activeTheaterId}
             onChange={(e) => onTheaterChange(e.target.value)}
-            className="bg-tactical-dark border border-tactical-border text-tactical-text text-xs font-mono px-2 py-1 focus:outline-none focus:border-terminal-green/50"
+            className="bg-tactical-dark border border-tactical-border text-tactical-text text-xs font-mono px-2 py-1 focus:border-terminal-green/50"
           >
             <optgroup label="LIVE THEATERS">
               {theaters.map((t) => (

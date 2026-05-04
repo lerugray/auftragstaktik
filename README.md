@@ -160,6 +160,9 @@ The briefing panel auto-detects Ollama. Select a scope, timeframe, and click GEN
 | `8` | Toggle maritime |
 | `9` | Toggle events |
 | `Esc` | Close detail panel |
+| `?` | Open help |
+
+See [docs/KEYBOARD.md](docs/KEYBOARD.md) for the full table (Tab trap, arrows, zoom, and focus rules).
 
 ---
 

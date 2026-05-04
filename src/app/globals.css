@@ -21,6 +21,8 @@
 
   --font-mono: "IBM Plex Mono", "Courier New", monospace;
   --font-heading: "IBM Plex Sans", "Arial", sans-serif;
+  /* Focus rings — mirrors primary tactical accent */
+  --accent: var(--color-terminal-green);
 }
 
 /* Light / high-contrast theme overrides */
@@ -42,6 +44,13 @@
   --color-severity-medium: #CA8A04;
   --color-severity-low: #15803D;
   --color-severity-info: #1D4ED8;
+  --accent: var(--color-terminal-green);
+}
+
+/* Keyboard focus — :focus-visible avoids outlines on mouse clicks */
+:focus-visible {
+  outline: 2px solid var(--accent, currentColor);
+  outline-offset: 2px;
 }
 
 /* Scanline overlay removed — no longer used */

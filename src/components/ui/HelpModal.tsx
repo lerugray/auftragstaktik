@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
+import { useFocusTrap } from '@/lib/hooks/useFocusTrap';
 
 interface HelpModalProps {
   open: boolean;
@@ -8,8 +9,14 @@ interface HelpModalProps {
 }
 
 export function HelpModal({ open, onClose }: HelpModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open);
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key === 'Escape') onClose();
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      onClose();
+    }
   }, [onClose]);
 
   useEffect(() => {
@@ -25,11 +32,13 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <button
         type="button"
-        className="absolute inset-0 m-0 h-full w-full cursor-default border-0 bg-black/70 p-0"
+        tabIndex={-1}
+        className="absolute inset-0 z-0 m-0 h-full w-full cursor-default border-0 bg-black/70 p-0"
         aria-label="Dismiss help"
         onClick={onClose}
       />
       <div
+        ref={dialogRef}
         id="help-modal"
         role="dialog"
         aria-modal="true"
@@ -148,8 +157,11 @@ export function HelpModal({ open, onClose }: HelpModalProps) {
           <HelpSection title="KEYBOARD SHORTCUTS">
             <table className="w-full text-sm">
               <tbody>
-                <HelpRow label="1-9" desc="Toggle map layers (1=Frontlines, 2=Aircraft, 3=Air Defense, 4=Installations, 5=Radar, 6=Nuclear, 7=Heatmap, 8=Maritime, 9=Events)" />
-                <HelpRow label="ESC" desc="Close detail panel" />
+                <HelpRow label="1-9" desc="Toggle map layers when not typing in a field (1=Frontlines, 2=Aircraft, 3=Air Defense, 4=Installations, 5=Radar, 6=Nuclear, 7=Heatmap, 8=Maritime, 9=Events)" />
+                <HelpRow label="ARROWS" desc="Pan the map when the map is focused (MapLibre); disabled while focus is in inputs or this help dialog" />
+                <HelpRow label="?" desc="Open this help (Shift+/ on US layout); ignored while typing in a field" />
+                <HelpRow label="TAB" desc="While help is open, Tab stays inside the dialog" />
+                <HelpRow label="ESC" desc="Close help or the map detail panel" />
               </tbody>
             </table>
           </HelpSection>

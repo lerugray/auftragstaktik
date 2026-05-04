@@ -26,6 +26,7 @@ import type { AirDefenseInstallation } from '@/lib/data/airDefense';
 import type { MilitaryInstallation } from '@/lib/data/militaryInstallations';
 import type { RadarInstallation } from '@/lib/data/radarSites';
 import type { NuclearFacility } from '@/lib/data/nuclearFacilities';
+import { isTypingTarget, isInsideAriaModal, shouldAllowMapArrowPan } from '@/lib/hooks/keyboardNavGuards';
 
 interface TacticalMapProps {
   theater: Theater;
@@ -91,6 +92,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
       minZoom: 3,
       maxZoom: 15,
       attributionControl: false,
+      keyboard: false,
     });
 
     map.addControl(
@@ -181,10 +183,51 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     setSelectedNuclear(null);
   }, []);
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts + pan/zoom (MapLibre keyboard off so arrows respect typing targets)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+
+      const map = mapRef.current;
+      const blocked = isTypingTarget(e.target) || isInsideAriaModal(e.target);
+
+      if (map && mapReady) {
+        const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'] as const;
+        if (arrowKeys.includes(e.key as (typeof arrowKeys)[number]) && shouldAllowMapArrowPan(e)) {
+          e.preventDefault();
+          const step = 100;
+          let xDir = 0;
+          let yDir = 0;
+          if (e.key === 'ArrowLeft') xDir = -1;
+          if (e.key === 'ArrowRight') xDir = 1;
+          if (e.key === 'ArrowUp') yDir = -1;
+          if (e.key === 'ArrowDown') yDir = 1;
+          map.easeTo({
+            duration: 300,
+            easeId: 'keyboardPan',
+            easing: (t: number) => t * (2 - t),
+            offset: [-xDir * step, -yDir * step],
+            center: map.getCenter(),
+          });
+          return;
+        }
+
+        if (!blocked && (e.key === '=' || e.key === '+' || e.key === 'Add')) {
+          e.preventDefault();
+          const delta = e.shiftKey ? 2 : 1;
+          map.zoomTo(Math.round(map.getZoom()) + delta, { duration: 300 });
+          return;
+        }
+        if (!blocked && (e.key === '-' || e.key === '_' || e.key === 'Subtract')) {
+          e.preventDefault();
+          const delta = e.shiftKey ? 2 : 1;
+          map.zoomTo(Math.round(map.getZoom()) - delta, { duration: 300 });
+          return;
+        }
+      }
+
+      if (blocked) return;
+
       switch (e.key) {
         case '1': toggleLayer('frontlines'); break;
         case '2': toggleLayer('aircraft'); break;
@@ -200,7 +243,7 @@ export function TacticalMap({ theater, mapHandleRef, theme = 'dark' }: TacticalM
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [toggleLayer, clearSelections]);
+  }, [toggleLayer, clearSelections, mapReady]);
 
   const handleAircraftClick = useCallback((aircraft: AircraftRecord) => {
     clearSelections();
