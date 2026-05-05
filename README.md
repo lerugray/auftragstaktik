@@ -1,6 +1,6 @@
 <div align="center">
 
-![Tactical Terminal](docs/screenshots/coldwar.jpg)
+![Tactical Terminal](docs/screenshots/hero-1920x1080.png)
 
 # AUFTRAGSTAKTIK
 
@@ -37,14 +37,20 @@ HTTP route contracts (query params, caches, failure modes): [docs/API.md](docs/A
 
 ## Screenshots
 
-**Ukraine Theater** — Frontlines, conflict events, air defense range rings, Telegram feed
-![Ukraine Theater](docs/screenshots/built-a-tactical-osint-terminal-with-claude-code-in-two-v0-wjz5zn2vdgqg1.webp)
+**Hero** — Tactical terminal landing view
+![Hero](docs/screenshots/hero-1920x1080.png)
 
-**Middle East Theater** — Israel/Syria/Iran/Yemen events, aircraft, AD coverage zones
-![Middle East Theater](docs/screenshots/built-a-tactical-osint-terminal-with-claude-code-in-two-v0-ifjzmzrzdgqg1.webp)
+**Air Defense Layer** — SAM / AD sites with range rings
+![Air Defense Layer](docs/screenshots/map-air-defense-1920x1080.png)
 
-**Briefing Generator** — Ollama-powered SITREP with PDF export
-![Briefing Generator](docs/screenshots/built-a-tactical-osint-terminal-with-claude-code-in-two-v0-ko0zijfcegqg1.webp)
+**Intelligence Feed** — Events visible with filters
+![Intelligence Feed](docs/screenshots/intel-feed-1920x1080.png)
+
+**Briefing Generator** — SITREP panel UI (Ollama optional)
+![Briefing Generator](docs/screenshots/sitrep-1920x1080.png)
+
+**Historical Mode** — UCDP archive with year slider
+![Historical Mode](docs/screenshots/historical-1920x1080.png)
 
 ---
 
